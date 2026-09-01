@@ -145,7 +145,7 @@ function ProjectsTab({ onSaved }: { onSaved: () => void }) {
 
   useEffect(() => { setItems(getProjects()) }, [])
 
-  const save = () => { saveProjects(items); onSaved() }
+
 
   const startNew = () => {
     setEditing('new')
@@ -154,21 +154,28 @@ function ProjectsTab({ onSaved }: { onSaved: () => void }) {
 
   const saveItem = () => {
     const data = { ...form, technologies: form.technologies.split(',').map((t) => t.trim()).filter(Boolean) }
+    let updated: Project[]
     if (editing === 'new') {
       const p = addProject(data)
-      setItems([...items, p])
+      updated = [...items, p]
     } else if (editing) {
       updateProject(editing, data)
-      setItems(items.map((p) => p.id === editing ? { ...p, ...data } : p))
+      updated = items.map((p) => p.id === editing ? { ...p, ...data } : p)
+    } else {
+      return
     }
+    setItems(updated)
     setEditing(null)
-    save()
+    saveProjects(updated)
+    onSaved()
   }
 
   const remove = (id: string) => {
     deleteProject(id)
-    setItems(items.filter((p) => p.id !== id))
-    save()
+    const updated = items.filter((p) => p.id !== id)
+    setItems(updated)
+    saveProjects(updated)
+    onSaved()
   }
 
   return (
