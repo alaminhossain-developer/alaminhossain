@@ -1,3 +1,5 @@
+export const runtime = 'nodejs'
+
 import { NextResponse } from 'next/server'
 
 // Set your dashboard password here, or use env var DASHBOARD_PASSWORD
