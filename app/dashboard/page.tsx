@@ -30,6 +30,8 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('projects')
   const [refreshKey, setRefreshKey] = useState(0)
   const [saved, setSaved] = useState(false)
+  const [toastMsg, setToastMsg] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error'>('success')
   const [authed, setAuthed] = useState(false)
   const router = useRouter()
 
@@ -41,9 +43,18 @@ export default function DashboardPage() {
     }
   }, [router])
 
-  const flash = () => {
+  const flash = (msg?: string) => {
+    setToastMsg(msg || 'Saved successfully')
+    setToastType('success')
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }
+
+  const flashError = (msg: string) => {
+    setToastMsg(msg)
+    setToastType('error')
+    setSaved(true)
+    setTimeout(() => setSaved(false), 4000)
   }
 
   const logout = () => {
@@ -57,10 +68,18 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[#0a0e27] text-white">
       {/* Toast notification */}
       {saved && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-sm shadow-lg shadow-emerald-500/10 transition-all duration-300">
+        <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl backdrop-blur-sm shadow-lg transition-all duration-300 ${
+          toastType === 'error'
+            ? 'bg-red-500/20 border border-red-500/30 shadow-red-500/10'
+            : 'bg-emerald-500/20 border border-emerald-500/30 shadow-emerald-500/10'
+        }`}>
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-            <span className="text-sm font-medium text-emerald-400">Saved successfully</span>
+            {toastType === 'error' ? (
+              <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            ) : (
+              <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+            )}
+            <span className={`text-sm font-medium ${toastType === 'error' ? 'text-red-400' : 'text-emerald-400'}`}>{toastMsg}</span>
           </div>
         </div>
       )}
@@ -109,7 +128,7 @@ export default function DashboardPage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
-        {activeTab === 'projects' && <ProjectsTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'projects' && <ProjectsTab key={refreshKey} onSaved={flash} onError={flashError} />}
         {activeTab === 'testimonials' && <TestimonialsTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'services' && <ServicesTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'experience' && <ExperienceTab key={refreshKey} onSaved={flash} />}
@@ -168,7 +187,7 @@ function Btn({ children, onClick, variant = 'primary', small }: {
 // ============================================================
 // Projects Tab
 // ============================================================
-function ProjectsTab({ onSaved }: { onSaved: () => void }) {
+function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
   const [items, setItems] = useState<Project[]>([])
   const [editing, setEditing] = useState<string | null>(null)
   const [form, setForm] = useState({ title: '', category: '', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [] as string[] })
@@ -181,29 +200,39 @@ function ProjectsTab({ onSaved }: { onSaved: () => void }) {
   }
 
   const saveItem = () => {
-    const data = { ...form, technologies: form.technologies.split(',').map((t) => t.trim()).filter(Boolean) }
-    let updated: Project[]
-    if (editing === 'new') {
-      const p = addProject(data)
-      updated = [...items, p]
-    } else if (editing) {
-      updateProject(editing, data)
-      updated = items.map((p) => p.id === editing ? { ...p, ...data } : p)
-    } else {
-      return
+    try {
+      const data = { ...form, technologies: form.technologies.split(',').map((t) => t.trim()).filter(Boolean) }
+      let updated: Project[]
+      if (editing === 'new') {
+        const p = addProject(data)
+        updated = [...items, p]
+      } else if (editing) {
+        updateProject(editing, data)
+        updated = items.map((p) => p.id === editing ? { ...p, ...data } : p)
+      } else {
+        return
+      }
+      setItems(updated)
+      setEditing(null)
+      saveProjects(updated)
+      onSaved()
+    } catch (err) {
+      console.error('Save failed:', err)
+      onError('Save failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
     }
-    setItems(updated)
-    setEditing(null)
-    saveProjects(updated)
-    onSaved()
   }
 
   const remove = (id: string) => {
-    deleteProject(id)
-    const updated = items.filter((p) => p.id !== id)
-    setItems(updated)
-    saveProjects(updated)
-    onSaved()
+    try {
+      deleteProject(id)
+      const updated = items.filter((p) => p.id !== id)
+      setItems(updated)
+      saveProjects(updated)
+      onSaved()
+    } catch (err) {
+      console.error('Delete failed:', err)
+      onError('Delete failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
   }
 
   return (
