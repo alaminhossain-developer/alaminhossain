@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { compressImage, getBase64Size } from '@/lib/image-utils'
 import { useRouter } from 'next/navigation'
 import {
   getProjects, saveProjects, addProject, updateProject, deleteProject,
@@ -259,12 +260,16 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
           {/* Screenshots Upload */}
           <div className="space-y-1.5">
             <label className="text-xs text-white/40 font-medium">Website Screenshots</label>
-            <p className="text-[10px] text-white/25">Upload one or more screenshots. First one shows in the browser frame. All show in the project popup.</p>
+            <p className="text-[10px] text-white/25">Upload screenshots (auto-compressed). First shows in browser frame. All show in project popup.</p>
+            {form.screenshots.length > 0 && (
+              <p className="text-[10px] text-white/20">{form.screenshots.length} screenshot{form.screenshots.length > 1 ? 's' : ''} — {getBase64Size(form.screenshots.join(''))} total</p>
+            )}
             <div className="flex flex-wrap gap-3 items-center">
               {form.screenshots.map((src, idx) => (
                 <div key={idx} className="relative group">
                   <img src={src} alt={`Screenshot ${idx + 1}`} className="h-16 w-28 object-cover rounded border border-white/[0.06]" />
                   <span className="absolute top-0.5 left-1 text-[9px] bg-black/60 text-white/60 px-1 rounded">{idx + 1}</span>
+                  <span className="absolute bottom-0.5 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded">{getBase64Size(src)}</span>
                   <button
                     onClick={() => setForm({ ...form, screenshots: form.screenshots.filter((_, i) => i !== idx) })}
                     className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[9px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
@@ -278,14 +283,16 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
+                  onChange={async (e) => {
                     const file = e.target.files?.[0]
                     if (!file) return
-                    const reader = new FileReader()
-                    reader.onload = (ev) => {
-                      setForm({ ...form, screenshots: [...form.screenshots, ev.target?.result as string] })
+                    try {
+                      const compressed = await compressImage(file, 1200, 0.65)
+                      const size = getBase64Size(compressed)
+                      setForm({ ...form, screenshots: [...form.screenshots, compressed] })
+                    } catch (err) {
+                      alert('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
                     }
-                    reader.readAsDataURL(file)
                   }}
                 />
               </label>
