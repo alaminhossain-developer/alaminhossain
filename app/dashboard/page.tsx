@@ -165,15 +165,13 @@ function Btn({ children, onClick, variant = 'primary', small }: {
 function ProjectsTab({ onSaved }: { onSaved: () => void }) {
   const [items, setItems] = useState<Project[]>([])
   const [editing, setEditing] = useState<string | null>(null)
-  const [form, setForm] = useState({ title: '', category: '', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshot: '' })
+  const [form, setForm] = useState({ title: '', category: '', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [] as string[] })
 
   useEffect(() => { setItems(getProjects()) }, [])
 
-
-
   const startNew = () => {
     setEditing('new')
-    setForm({ title: '', category: 'WordPress', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshot: '' })
+    setForm({ title: '', category: 'WordPress', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [] })
   }
 
   const saveItem = () => {
@@ -223,14 +221,24 @@ function ProjectsTab({ onSaved }: { onSaved: () => void }) {
           <Field label="Short Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={2} />
           <Field label="Long Description" value={form.longDescription} onChange={(v) => setForm({ ...form, longDescription: v })} rows={3} />
           
-          {/* Screenshot Upload */}
+          {/* Screenshots Upload */}
           <div className="space-y-1.5">
-            <label className="text-xs text-white/40 font-medium">Website Screenshot</label>
-            <p className="text-[10px] text-white/25">Upload a full-page screenshot of the project. Shows inside the browser frame.</p>
-            <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/[0.06] bg-white/[0.04] text-white/60 text-sm cursor-pointer hover:bg-white/[0.08] transition-colors">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                Choose Screenshot
+            <label className="text-xs text-white/40 font-medium">Website Screenshots</label>
+            <p className="text-[10px] text-white/25">Upload one or more screenshots. First one shows in the browser frame. All show in the project popup.</p>
+            <div className="flex flex-wrap gap-3 items-center">
+              {form.screenshots.map((src, idx) => (
+                <div key={idx} className="relative group">
+                  <img src={src} alt={`Screenshot ${idx + 1}`} className="h-16 w-28 object-cover rounded border border-white/[0.06]" />
+                  <span className="absolute top-0.5 left-1 text-[9px] bg-black/60 text-white/60 px-1 rounded">{idx + 1}</span>
+                  <button
+                    onClick={() => setForm({ ...form, screenshots: form.screenshots.filter((_, i) => i !== idx) })}
+                    className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[9px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >×</button>
+                </div>
+              ))}
+              <label className="flex items-center gap-2 px-4 py-3 rounded-lg border border-dashed border-white/[0.08] bg-white/[0.02] text-white/40 text-xs cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                Add Screenshot
                 <input
                   type="file"
                   accept="image/*"
@@ -240,23 +248,12 @@ function ProjectsTab({ onSaved }: { onSaved: () => void }) {
                     if (!file) return
                     const reader = new FileReader()
                     reader.onload = (ev) => {
-                      setForm({ ...form, screenshot: ev.target?.result as string })
+                      setForm({ ...form, screenshots: [...form.screenshots, ev.target?.result as string] })
                     }
                     reader.readAsDataURL(file)
                   }}
                 />
               </label>
-              {form.screenshot && (
-                <div className="flex items-center gap-3">
-                  <img src={form.screenshot} alt="Preview" className="h-16 w-28 object-cover rounded border border-white/[0.06]" />
-                  <button
-                    onClick={() => setForm({ ...form, screenshot: '' })}
-                    className="text-xs text-red-400 hover:text-red-300"
-                  >
-                    Remove
-                  </button>
-                </div>
-              )}
             </div>
           </div>
           <div className="flex gap-3">
@@ -275,8 +272,15 @@ function ProjectsTab({ onSaved }: { onSaved: () => void }) {
               <div className="text-sm font-medium text-white/80 truncate">{p.title}</div>
               <div className="text-xs text-white/30">{p.category} · {p.year}</div>
             </div>
-            <Btn small onClick={() => { setEditing(p.id); setForm({ ...p, technologies: p.technologies.join(', ') }) }}>Edit</Btn>
-            {p.screenshot && <div className="w-8 h-5 rounded overflow-hidden border border-white/[0.06]"><img src={p.screenshot} alt="" className="w-full h-full object-cover" /></div>}
+            <Btn small onClick={() => { setEditing(p.id); setForm({ ...p, technologies: p.technologies.join(', '), screenshots: p.screenshots || [] }) }}>Edit</Btn>
+            {p.screenshots && p.screenshots.length > 0 && (
+              <div className="flex gap-0.5">
+                {p.screenshots.slice(0, 3).map((src, idx) => (
+                  <div key={idx} className="w-6 h-4 rounded overflow-hidden border border-white/[0.06]"><img src={src} alt="" className="w-full h-full object-cover" /></div>
+                ))}
+                {p.screenshots.length > 3 && <span className="text-[9px] text-white/25 self-center">+{p.screenshots.length - 3}</span>}
+              </div>
+            )}
             <Btn small variant="danger" onClick={() => remove(p.id)}>Delete</Btn>
           </div>
         ))}

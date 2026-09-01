@@ -12,7 +12,7 @@ export interface Project {
   image: string
   liveUrl: string
   color: string
-  screenshot: string
+  screenshots: string[]
 }
 
 export const projects: Project[] = [
@@ -27,7 +27,7 @@ export const projects: Project[] = [
     image: '/images/projects/project-1.jpg',
     liveUrl: '#',
     color: '#0ea5e9',
-    screenshot: '',
+    screenshots: [],
   },
   {
     id: 'project-2',
@@ -40,7 +40,7 @@ export const projects: Project[] = [
     image: '/images/projects/project-2.jpg',
     liveUrl: '#',
     color: '#22c55e',
-    screenshot: '',
+    screenshots: [],
   },
   {
     id: 'project-3',
@@ -53,7 +53,7 @@ export const projects: Project[] = [
     image: '/images/projects/project-3.jpg',
     liveUrl: '#',
     color: '#f59e0b',
-    screenshot: '',
+    screenshots: [],
   },
   {
     id: 'project-4',
@@ -66,7 +66,7 @@ export const projects: Project[] = [
     image: '/images/projects/project-4.jpg',
     liveUrl: '#',
     color: '#8b5cf6',
-    screenshot: '',
+    screenshots: [],
   },
 ]
 
