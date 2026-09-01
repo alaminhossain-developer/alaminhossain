@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   getProjects, saveProjects, addProject, updateProject, deleteProject,
   getServices, saveServices, addService, updateService, deleteService,
@@ -29,11 +30,28 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('projects')
   const [refreshKey, setRefreshKey] = useState(0)
   const [saved, setSaved] = useState(false)
+  const [authed, setAuthed] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (sessionStorage.getItem('dashboard_auth') !== 'true') {
+      router.replace('/dashboard/login')
+    } else {
+      setAuthed(true)
+    }
+  }, [router])
 
   const flash = () => {
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
+
+  const logout = () => {
+    sessionStorage.removeItem('dashboard_auth')
+    router.replace('/dashboard/login')
+  }
+
+  if (!authed) return null
 
   return (
     <div className="min-h-screen bg-[#0a0e27] text-white">
@@ -48,6 +66,12 @@ export default function DashboardPage() {
             {saved && (
               <span className="text-xs text-emerald-400 animate-pulse">✓ Saved</span>
             )}
+            <button
+              onClick={logout}
+              className="text-xs text-red-400/60 hover:text-red-400 transition-colors"
+            >
+              Logout
+            </button>
             <a
               href="/"
               className="text-xs text-white/40 hover:text-white/70 transition-colors"
