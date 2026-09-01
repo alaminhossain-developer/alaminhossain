@@ -271,7 +271,7 @@ function TestimonialsTab({ onSaved }: { onSaved: () => void }) {
 
   useEffect(() => { setItems(getTestimonials()) }, [])
 
-  const save = () => { saveTestimonials(items); onSaved() }
+
 
   const startNew = () => {
     setEditing('new')
@@ -279,21 +279,28 @@ function TestimonialsTab({ onSaved }: { onSaved: () => void }) {
   }
 
   const saveItem = () => {
+    let updated: Testimonial[]
     if (editing === 'new') {
       const t = addTestimonial(form)
-      setItems([...items, t])
+      updated = [...items, t]
     } else if (editing) {
       updateTestimonial(editing, form)
-      setItems(items.map((t) => t.id === editing ? { ...t, ...form } : t))
+      updated = items.map((t) => t.id === editing ? { ...t, ...form } : t)
+    } else {
+      return
     }
+    setItems(updated)
     setEditing(null)
-    save()
+    saveTestimonials(updated)
+    onSaved()
   }
 
   const remove = (id: string) => {
     deleteTestimonial(id)
-    setItems(items.filter((t) => t.id !== id))
-    save()
+    const updated = items.filter((t) => t.id !== id)
+    setItems(updated)
+    saveTestimonials(updated)
+    onSaved()
   }
 
   return (
@@ -347,7 +354,7 @@ function ServicesTab({ onSaved }: { onSaved: () => void }) {
 
   useEffect(() => { setItems(getServices()) }, [])
 
-  const save = () => { saveServices(items); onSaved() }
+
 
   const startNew = () => {
     setEditing('new')
@@ -356,21 +363,28 @@ function ServicesTab({ onSaved }: { onSaved: () => void }) {
 
   const saveItem = () => {
     const data = { ...form, features: form.features.split(',').map((f) => f.trim()).filter(Boolean), technologies: [] as string[] }
+    let updated: Service[]
     if (editing === 'new') {
       const s = addService(data)
-      setItems([...items, s])
+      updated = [...items, s]
     } else if (editing) {
       updateService(editing, data)
-      setItems(items.map((s) => s.id === editing ? { ...s, ...data } : s))
+      updated = items.map((s) => s.id === editing ? { ...s, ...data } : s)
+    } else {
+      return
     }
+    setItems(updated)
     setEditing(null)
-    save()
+    saveServices(updated)
+    onSaved()
   }
 
   const remove = (id: string) => {
     deleteService(id)
-    setItems(items.filter((s) => s.id !== id))
-    save()
+    const updated = items.filter((s) => s.id !== id)
+    setItems(updated)
+    saveServices(updated)
+    onSaved()
   }
 
   return (
@@ -423,7 +437,7 @@ function ExperienceTab({ onSaved }: { onSaved: () => void }) {
 
   useEffect(() => { setItems(getExperience()) }, [])
 
-  const save = () => { saveExperience(items); onSaved() }
+
 
   const startNew = () => {
     setEditing('new')
@@ -436,21 +450,28 @@ function ExperienceTab({ onSaved }: { onSaved: () => void }) {
       technologies: form.technologies.split(',').map((t) => t.trim()).filter(Boolean),
       highlights: form.highlights.split('\n').map((h) => h.trim()).filter(Boolean),
     }
+    let updated: Experience[]
     if (editing === 'new') {
       const e = addExperience(data)
-      setItems([...items, e])
+      updated = [...items, e]
     } else if (editing) {
       updateExperience(editing, data)
-      setItems(items.map((e) => e.id === editing ? { ...e, ...data } : e))
+      updated = items.map((e) => e.id === editing ? { ...e, ...data } : e)
+    } else {
+      return
     }
+    setItems(updated)
     setEditing(null)
-    save()
+    saveExperience(updated)
+    onSaved()
   }
 
   const remove = (id: string) => {
     deleteExperience(id)
-    setItems(items.filter((e) => e.id !== id))
-    save()
+    const updated = items.filter((e) => e.id !== id)
+    setItems(updated)
+    saveExperience(updated)
+    onSaved()
   }
 
   return (
@@ -514,20 +535,22 @@ function SkillsTab({ onSaved }: { onSaved: () => void }) {
 
   useEffect(() => { setItems(getSkills()) }, [])
 
-  const save = () => { saveSkills(items); onSaved() }
-
   const add = () => {
     if (!form.name) return
     addSkill(form)
-    setItems([...items, form as SkillItem])
+    const updated = [...items, form as SkillItem]
+    setItems(updated)
     setForm({ name: '', category: 'core', level: 80 })
-    save()
+    saveSkills(updated)
+    onSaved()
   }
 
   const remove = (name: string) => {
     deleteSkill(name)
-    setItems(items.filter((s) => s.name !== name))
-    save()
+    const updated = items.filter((s) => s.name !== name)
+    setItems(updated)
+    saveSkills(updated)
+    onSaved()
   }
 
   const categories = ['core', 'frontend', 'backend', 'tools', 'platforms']
@@ -582,29 +605,34 @@ function ShopifyTab({ onSaved }: { onSaved: () => void }) {
 
   useEffect(() => { setItems(getShopifyFeatures()) }, [])
 
-  const save = () => { saveShopifyFeatures(items); onSaved() }
-
   const startNew = () => {
     setEditing('new')
     setForm({ title: '', description: '', icon: 'Zap', color: '#22c55e' })
   }
 
   const saveItem = () => {
+    let updated: ShopifyFeature[]
     if (editing === 'new') {
       const f = addShopifyFeature(form)
-      setItems([...items, f])
+      updated = [...items, f]
     } else if (editing) {
       updateShopifyFeature(editing, form)
-      setItems(items.map((f) => f.id === editing ? { ...f, ...form } : f))
+      updated = items.map((f) => f.id === editing ? { ...f, ...form } : f)
+    } else {
+      return
     }
+    setItems(updated)
     setEditing(null)
-    save()
+    saveShopifyFeatures(updated)
+    onSaved()
   }
 
   const remove = (id: string) => {
     deleteShopifyFeature(id)
-    setItems(items.filter((f) => f.id !== id))
-    save()
+    const updated = items.filter((f) => f.id !== id)
+    setItems(updated)
+    saveShopifyFeatures(updated)
+    onSaved()
   }
 
   return (
