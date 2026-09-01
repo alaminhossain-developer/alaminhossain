@@ -786,6 +786,17 @@ function DataTab({ onRefresh }: { onRefresh: () => void }) {
     }
   }
 
+  const handleClearScreenshots = () => {
+    if (confirm('Remove all screenshots from all projects? Project data will be kept.')) {
+      const projects = getProjects()
+      const cleaned = projects.map((p) => ({ ...p, screenshots: [] }))
+      saveProjects(cleaned)
+      onRefresh()
+      setMessage('All screenshots cleared. You can now re-upload compressed ones.')
+      setTimeout(() => setMessage(''), 3000)
+    }
+  }
+
   return (
     <div className="space-y-8">
       <h2 className="text-xl font-bold">Data Management</h2>
@@ -815,6 +826,13 @@ function DataTab({ onRefresh }: { onRefresh: () => void }) {
           placeholder="Paste exported JSON here..."
         />
         <Btn onClick={handleImport}>Import Data</Btn>
+      </div>
+
+      {/* Clear Screenshots */}
+      <div className="p-6 rounded-xl border border-amber-500/10 bg-amber-500/[0.02] space-y-4">
+        <h3 className="text-sm font-semibold text-amber-400">Clear Screenshots</h3>
+        <p className="text-xs text-white/30">Remove all uploaded screenshots to free up storage space. Project data will be kept. Re-upload compressed screenshots after.</p>
+        <Btn onClick={handleClearScreenshots} variant="danger">Clear All Screenshots</Btn>
       </div>
 
       {/* Reset */}
