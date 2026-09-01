@@ -1,0 +1,723 @@
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
+import {
+  getProjects, saveProjects, addProject, updateProject, deleteProject,
+  getServices, saveServices, addService, updateService, deleteService,
+  getTestimonials, saveTestimonials, addTestimonial, updateTestimonial, deleteTestimonial,
+  getExperience, saveExperience, addExperience, updateExperience, deleteExperience,
+  getSkills, saveSkills, addSkill, updateSkill, deleteSkill,
+  getShopifyFeatures, saveShopifyFeatures, addShopifyFeature, updateShopifyFeature, deleteShopifyFeature,
+  exportAllData, importAllData, resetAllData,
+} from '@/lib/store'
+import type { Project, Service, Testimonial, Experience, SkillItem } from '@/lib/data'
+import type { ShopifyFeature } from '@/lib/store'
+
+type Tab = 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'data'
+
+const tabs: { key: Tab; label: string }[] = [
+  { key: 'projects', label: 'Projects' },
+  { key: 'testimonials', label: 'Testimonials' },
+  { key: 'services', label: 'Services' },
+  { key: 'experience', label: 'Experience' },
+  { key: 'skills', label: 'Skills' },
+  { key: 'shopify', label: 'Shopify Features' },
+  { key: 'data', label: 'Data' },
+]
+
+export default function DashboardPage() {
+  const [activeTab, setActiveTab] = useState<Tab>('projects')
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [saved, setSaved] = useState(false)
+
+  const flash = () => {
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0e27] text-white">
+      {/* Header */}
+      <div className="border-b border-white/[0.06] px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div>
+            <h1 className="text-lg font-bold tracking-tight">Portfolio Dashboard</h1>
+            <p className="text-xs text-white/30 font-light">Manage your portfolio content</p>
+          </div>
+          <div className="flex items-center gap-4">
+            {saved && (
+              <span className="text-xs text-emerald-400 animate-pulse">✓ Saved</span>
+            )}
+            <a
+              href="/"
+              className="text-xs text-white/40 hover:text-white/70 transition-colors"
+            >
+              ← View Site
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-white/[0.04] px-6">
+        <div className="max-w-7xl mx-auto flex gap-0 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 py-3 text-xs font-medium whitespace-nowrap transition-colors ${
+                activeTab === tab.key
+                  ? 'text-cyan-400 border-b-2 border-cyan-400'
+                  : 'text-white/30 hover:text-white/60'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-7xl mx-auto p-6">
+        {activeTab === 'projects' && <ProjectsTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'testimonials' && <TestimonialsTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'services' && <ServicesTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'experience' && <ExperienceTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'skills' && <SkillsTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'shopify' && <ShopifyTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'data' && <DataTab onRefresh={() => setRefreshKey((k) => k + 1)} />}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Shared form components
+// ============================================================
+function Field({ label, value, onChange, type = 'text', rows }: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  type?: string
+  rows?: number
+}) {
+  const base = 'w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/80 text-sm font-light focus:outline-none focus:border-cyan-400/40 transition-colors placeholder-white/20'
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs text-white/40 font-medium">{label}</label>
+      {rows ? (
+        <textarea rows={rows} value={value} onChange={(e) => onChange(e.target.value)} className={`${base} resize-none`} />
+      ) : (
+        <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className={base} />
+      )}
+    </div>
+  )
+}
+
+function Btn({ children, onClick, variant = 'primary', small }: {
+  children: React.ReactNode
+  onClick?: () => void
+  variant?: 'primary' | 'danger' | 'ghost'
+  small?: boolean
+}) {
+  const colors = {
+    primary: 'bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 border-cyan-500/30',
+    danger: 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border-red-500/20',
+    ghost: 'bg-white/[0.04] text-white/50 hover:bg-white/[0.08] border-white/[0.06]',
+  }
+  return (
+    <button
+      onClick={onClick}
+      className={`border rounded-lg font-medium transition-colors ${colors[variant]} ${small ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'}`}
+    >
+      {children}
+    </button>
+  )
+}
+
+// ============================================================
+// Projects Tab
+// ============================================================
+function ProjectsTab({ onSaved }: { onSaved: () => void }) {
+  const [items, setItems] = useState<Project[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ title: '', category: '', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshot: '' })
+
+  useEffect(() => { setItems(getProjects()) }, [])
+
+  const save = () => { saveProjects(items); onSaved() }
+
+  const startNew = () => {
+    setEditing('new')
+    setForm({ title: '', category: 'WordPress', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshot: '' })
+  }
+
+  const saveItem = () => {
+    const data = { ...form, technologies: form.technologies.split(',').map((t) => t.trim()).filter(Boolean) }
+    if (editing === 'new') {
+      const p = addProject(data)
+      setItems([...items, p])
+    } else if (editing) {
+      updateProject(editing, data)
+      setItems(items.map((p) => p.id === editing ? { ...p, ...data } : p))
+    }
+    setEditing(null)
+    save()
+  }
+
+  const remove = (id: string) => {
+    deleteProject(id)
+    setItems(items.filter((p) => p.id !== id))
+    save()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Projects ({items.length})</h2>
+        <Btn onClick={startNew}>+ Add Project</Btn>
+      </div>
+
+      {/* Form */}
+      {editing && (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} />
+            <Field label="Category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
+            <Field label="Year" value={form.year} onChange={(v) => setForm({ ...form, year: v })} />
+            <Field label="Color" value={form.color} onChange={(v) => setForm({ ...form, color: v })} type="color" />
+            <Field label="Live URL" value={form.liveUrl} onChange={(v) => setForm({ ...form, liveUrl: v })} />
+            <Field label="Technologies (comma-separated)" value={form.technologies} onChange={(v) => setForm({ ...form, technologies: v })} />
+          </div>
+          <Field label="Short Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={2} />
+          <Field label="Long Description" value={form.longDescription} onChange={(v) => setForm({ ...form, longDescription: v })} rows={3} />
+          
+          {/* Screenshot Upload */}
+          <div className="space-y-1.5">
+            <label className="text-xs text-white/40 font-medium">Website Screenshot</label>
+            <p className="text-[10px] text-white/25">Upload a full-page screenshot of the project. Shows inside the browser frame.</p>
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/[0.06] bg-white/[0.04] text-white/60 text-sm cursor-pointer hover:bg-white/[0.08] transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                Choose Screenshot
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    const reader = new FileReader()
+                    reader.onload = (ev) => {
+                      setForm({ ...form, screenshot: ev.target?.result as string })
+                    }
+                    reader.readAsDataURL(file)
+                  }}
+                />
+              </label>
+              {form.screenshot && (
+                <div className="flex items-center gap-3">
+                  <img src={form.screenshot} alt="Preview" className="h-16 w-28 object-cover rounded border border-white/[0.06]" />
+                  <button
+                    onClick={() => setForm({ ...form, screenshot: '' })}
+                    className="text-xs text-red-400 hover:text-red-300"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <Btn onClick={saveItem}>Save</Btn>
+            <Btn onClick={() => setEditing(null)} variant="ghost">Cancel</Btn>
+          </div>
+        </div>
+      )}
+
+      {/* List */}
+      <div className="space-y-3">
+        {items.map((p) => (
+          <div key={p.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+            <div className="w-2 h-8 rounded-full" style={{ background: p.color }} />
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-white/80 truncate">{p.title}</div>
+              <div className="text-xs text-white/30">{p.category} · {p.year}</div>
+            </div>
+            <Btn small onClick={() => { setEditing(p.id); setForm({ ...p, technologies: p.technologies.join(', ') }) }}>Edit</Btn>
+            {p.screenshot && <div className="w-8 h-5 rounded overflow-hidden border border-white/[0.06]"><img src={p.screenshot} alt="" className="w-full h-full object-cover" /></div>}
+            <Btn small variant="danger" onClick={() => remove(p.id)}>Delete</Btn>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Testimonials Tab
+// ============================================================
+function TestimonialsTab({ onSaved }: { onSaved: () => void }) {
+  const [items, setItems] = useState<Testimonial[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ quote: '', author: '', role: '', company: '', projectType: '' })
+
+  useEffect(() => { setItems(getTestimonials()) }, [])
+
+  const save = () => { saveTestimonials(items); onSaved() }
+
+  const startNew = () => {
+    setEditing('new')
+    setForm({ quote: '', author: '', role: '', company: '', projectType: '' })
+  }
+
+  const saveItem = () => {
+    if (editing === 'new') {
+      const t = addTestimonial(form)
+      setItems([...items, t])
+    } else if (editing) {
+      updateTestimonial(editing, form)
+      setItems(items.map((t) => t.id === editing ? { ...t, ...form } : t))
+    }
+    setEditing(null)
+    save()
+  }
+
+  const remove = (id: string) => {
+    deleteTestimonial(id)
+    setItems(items.filter((t) => t.id !== id))
+    save()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Testimonials ({items.length})</h2>
+        <Btn onClick={startNew}>+ Add Testimonial</Btn>
+      </div>
+
+      {editing && (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <Field label="Quote" value={form.quote} onChange={(v) => setForm({ ...form, quote: v })} rows={3} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Author" value={form.author} onChange={(v) => setForm({ ...form, author: v })} />
+            <Field label="Role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} />
+            <Field label="Company" value={form.company} onChange={(v) => setForm({ ...form, company: v })} />
+            <Field label="Project Type" value={form.projectType} onChange={(v) => setForm({ ...form, projectType: v })} />
+          </div>
+          <div className="flex gap-3">
+            <Btn onClick={saveItem}>Save</Btn>
+            <Btn onClick={() => setEditing(null)} variant="ghost">Cancel</Btn>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {items.map((t) => (
+          <div key={t.id} className="p-4 rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+            <p className="text-sm text-white/60 mb-2 line-clamp-2">&ldquo;{t.quote}&rdquo;</p>
+            <div className="flex items-center justify-between">
+              <div className="text-xs text-white/30">{t.author} · {t.company}</div>
+              <div className="flex gap-2">
+                <Btn small onClick={() => { setEditing(t.id); setForm({ ...t }) }}>Edit</Btn>
+                <Btn small variant="danger" onClick={() => remove(t.id)}>Delete</Btn>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Services Tab
+// ============================================================
+function ServicesTab({ onSaved }: { onSaved: () => void }) {
+  const [items, setItems] = useState<Service[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ number: '01', title: '', description: '', icon: 'Code', features: '' })
+
+  useEffect(() => { setItems(getServices()) }, [])
+
+  const save = () => { saveServices(items); onSaved() }
+
+  const startNew = () => {
+    setEditing('new')
+    setForm({ number: String(items.length + 1).padStart(2, '0'), title: '', description: '', icon: 'Code', features: '' })
+  }
+
+  const saveItem = () => {
+    const data = { ...form, features: form.features.split(',').map((f) => f.trim()).filter(Boolean), technologies: [] as string[] }
+    if (editing === 'new') {
+      const s = addService(data)
+      setItems([...items, s])
+    } else if (editing) {
+      updateService(editing, data)
+      setItems(items.map((s) => s.id === editing ? { ...s, ...data } : s))
+    }
+    setEditing(null)
+    save()
+  }
+
+  const remove = (id: string) => {
+    deleteService(id)
+    setItems(items.filter((s) => s.id !== id))
+    save()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Services ({items.length})</h2>
+        <Btn onClick={startNew}>+ Add Service</Btn>
+      </div>
+
+      {editing && (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Field label="Number" value={form.number} onChange={(v) => setForm({ ...form, number: v })} />
+            <Field label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} />
+            <Field label="Icon" value={form.icon} onChange={(v) => setForm({ ...form, icon: v })} />
+          </div>
+          <Field label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={2} />
+          <Field label="Features (comma-separated)" value={form.features} onChange={(v) => setForm({ ...form, features: v })} />
+          <div className="flex gap-3">
+            <Btn onClick={saveItem}>Save</Btn>
+            <Btn onClick={() => setEditing(null)} variant="ghost">Cancel</Btn>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {items.map((s) => (
+          <div key={s.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+            <div className="text-2xl font-bold text-white/10 w-10">{s.number}</div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-white/80">{s.title}</div>
+              <div className="text-xs text-white/30 line-clamp-1">{s.description}</div>
+            </div>
+            <Btn small onClick={() => { setEditing(s.id); setForm({ ...s, features: s.features.join(', ') }) }}>Edit</Btn>
+            <Btn small variant="danger" onClick={() => remove(s.id)}>Delete</Btn>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Experience Tab
+// ============================================================
+function ExperienceTab({ onSaved }: { onSaved: () => void }) {
+  const [items, setItems] = useState<Experience[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ role: '', company: '', period: '', description: '', technologies: '', current: false, highlights: '' })
+
+  useEffect(() => { setItems(getExperience()) }, [])
+
+  const save = () => { saveExperience(items); onSaved() }
+
+  const startNew = () => {
+    setEditing('new')
+    setForm({ role: '', company: '', period: '', description: '', technologies: '', current: false, highlights: '' })
+  }
+
+  const saveItem = () => {
+    const data = {
+      ...form,
+      technologies: form.technologies.split(',').map((t) => t.trim()).filter(Boolean),
+      highlights: form.highlights.split('\n').map((h) => h.trim()).filter(Boolean),
+    }
+    if (editing === 'new') {
+      const e = addExperience(data)
+      setItems([...items, e])
+    } else if (editing) {
+      updateExperience(editing, data)
+      setItems(items.map((e) => e.id === editing ? { ...e, ...data } : e))
+    }
+    setEditing(null)
+    save()
+  }
+
+  const remove = (id: string) => {
+    deleteExperience(id)
+    setItems(items.filter((e) => e.id !== id))
+    save()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Experience ({items.length})</h2>
+        <Btn onClick={startNew}>+ Add Experience</Btn>
+      </div>
+
+      {editing && (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Role" value={form.role} onChange={(v) => setForm({ ...form, role: v })} />
+            <Field label="Company" value={form.company} onChange={(v) => setForm({ ...form, company: v })} />
+            <Field label="Period" value={form.period} onChange={(v) => setForm({ ...form, period: v })} />
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/40 font-medium">Current?</label>
+              <button
+                onClick={() => setForm({ ...form, current: !form.current })}
+                className={`w-full px-3 py-2 rounded-lg border text-sm text-left transition-colors ${
+                  form.current ? 'border-cyan-400/40 bg-cyan-400/10 text-cyan-400' : 'border-white/[0.06] bg-white/[0.04] text-white/30'
+                }`}
+              >
+                {form.current ? 'Yes — Current Position' : 'No — Previous Position'}
+              </button>
+            </div>
+          </div>
+          <Field label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} />
+          <Field label="Highlights (one per line)" value={form.highlights} onChange={(v) => setForm({ ...form, highlights: v })} rows={4} />
+          <Field label="Technologies (comma-separated)" value={form.technologies} onChange={(v) => setForm({ ...form, technologies: v })} />
+          <div className="flex gap-3">
+            <Btn onClick={saveItem}>Save</Btn>
+            <Btn onClick={() => setEditing(null)} variant="ghost">Cancel</Btn>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {items.map((e) => (
+          <div key={e.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+            {e.current && <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />}
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-white/80">{e.role}</div>
+              <div className="text-xs text-white/30">{e.company} · {e.period}</div>
+            </div>
+            <Btn small onClick={() => { setEditing(e.id); setForm({ ...e, technologies: e.technologies.join(', '), highlights: e.highlights.join('\n') }) }}>Edit</Btn>
+            <Btn small variant="danger" onClick={() => remove(e.id)}>Delete</Btn>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Skills Tab
+// ============================================================
+function SkillsTab({ onSaved }: { onSaved: () => void }) {
+  const [items, setItems] = useState<SkillItem[]>([])
+  const [form, setForm] = useState({ name: '', category: 'core', level: 80 })
+
+  useEffect(() => { setItems(getSkills()) }, [])
+
+  const save = () => { saveSkills(items); onSaved() }
+
+  const add = () => {
+    if (!form.name) return
+    addSkill(form)
+    setItems([...items, form as SkillItem])
+    setForm({ name: '', category: 'core', level: 80 })
+    save()
+  }
+
+  const remove = (name: string) => {
+    deleteSkill(name)
+    setItems(items.filter((s) => s.name !== name))
+    save()
+  }
+
+  const categories = ['core', 'frontend', 'backend', 'tools', 'platforms']
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-xl font-bold">Skills ({items.length})</h2>
+
+      {/* Add form */}
+      <div className="flex gap-3 items-end">
+        <div className="flex-1">
+          <Field label="Skill Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+        </div>
+        <div className="w-40">
+          <label className="text-xs text-white/40 font-medium block mb-1.5">Category</label>
+          <select
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+            className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/80 text-sm"
+          >
+            {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div className="w-24">
+          <Field label="Level" value={String(form.level)} onChange={(v) => setForm({ ...form, level: Number(v) })} type="number" />
+        </div>
+        <Btn onClick={add}>Add</Btn>
+      </div>
+
+      {/* List */}
+      <div className="flex flex-wrap gap-2">
+        {items.map((s) => (
+          <div key={s.name} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/[0.06] bg-white/[0.02] text-sm">
+            <span className="text-white/60">{s.name}</span>
+            <span className="text-[10px] text-white/25 font-mono">{s.category}</span>
+            <span className="text-[10px] text-cyan-400/60">{s.level}%</span>
+            <button onClick={() => remove(s.name)} className="text-white/20 hover:text-red-400 ml-1">×</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Shopify Features Tab
+// ============================================================
+function ShopifyTab({ onSaved }: { onSaved: () => void }) {
+  const [items, setItems] = useState<ShopifyFeature[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ title: '', description: '', icon: 'Zap', color: '#22c55e' })
+
+  useEffect(() => { setItems(getShopifyFeatures()) }, [])
+
+  const save = () => { saveShopifyFeatures(items); onSaved() }
+
+  const startNew = () => {
+    setEditing('new')
+    setForm({ title: '', description: '', icon: 'Zap', color: '#22c55e' })
+  }
+
+  const saveItem = () => {
+    if (editing === 'new') {
+      const f = addShopifyFeature(form)
+      setItems([...items, f])
+    } else if (editing) {
+      updateShopifyFeature(editing, form)
+      setItems(items.map((f) => f.id === editing ? { ...f, ...form } : f))
+    }
+    setEditing(null)
+    save()
+  }
+
+  const remove = (id: string) => {
+    deleteShopifyFeature(id)
+    setItems(items.filter((f) => f.id !== id))
+    save()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Shopify Features ({items.length})</h2>
+        <Btn onClick={startNew}>+ Add Feature</Btn>
+      </div>
+
+      {editing && (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Field label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} />
+            <Field label="Icon (Lucide name)" value={form.icon} onChange={(v) => setForm({ ...form, icon: v })} />
+            <Field label="Color" value={form.color} onChange={(v) => setForm({ ...form, color: v })} type="color" />
+          </div>
+          <Field label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} />
+          <div className="flex gap-3">
+            <Btn onClick={saveItem}>Save</Btn>
+            <Btn onClick={() => setEditing(null)} variant="ghost">Cancel</Btn>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {items.map((f) => (
+          <div key={f.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+            <div className="w-3 h-8 rounded-full" style={{ background: f.color }} />
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-white/80">{f.title}</div>
+              <div className="text-xs text-white/30 line-clamp-1">{f.description}</div>
+            </div>
+            <Btn small onClick={() => { setEditing(f.id); setForm({ ...f }) }}>Edit</Btn>
+            <Btn small variant="danger" onClick={() => remove(f.id)}>Delete</Btn>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Data Tab (Export / Import / Reset)
+// ============================================================
+function DataTab({ onRefresh }: { onRefresh: () => void }) {
+  const [importJson, setImportJson] = useState('')
+  const [message, setMessage] = useState('')
+
+  const handleExport = () => {
+    const json = exportAllData()
+    const blob = new Blob([json], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `portfolio-data-${new Date().toISOString().split('T')[0]}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+    setMessage('Data exported!')
+    setTimeout(() => setMessage(''), 3000)
+  }
+
+  const handleImport = () => {
+    if (!importJson.trim()) return
+    const ok = importAllData(importJson)
+    if (ok) {
+      setMessage('Data imported successfully! Refresh to see changes.')
+      setImportJson('')
+      onRefresh()
+    } else {
+      setMessage('Invalid JSON data.')
+    }
+    setTimeout(() => setMessage(''), 3000)
+  }
+
+  const handleReset = () => {
+    if (confirm('Reset all data to defaults? This cannot be undone.')) {
+      resetAllData()
+      onRefresh()
+      setMessage('Data reset to defaults.')
+      setTimeout(() => setMessage(''), 3000)
+    }
+  }
+
+  return (
+    <div className="space-y-8">
+      <h2 className="text-xl font-bold">Data Management</h2>
+
+      {message && (
+        <div className="px-4 py-2 rounded-lg bg-emerald-400/10 border border-emerald-400/20 text-sm text-emerald-400">
+          {message}
+        </div>
+      )}
+
+      {/* Export */}
+      <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+        <h3 className="text-sm font-semibold text-white/70">Export Data</h3>
+        <p className="text-xs text-white/30">Download all portfolio data as a JSON file. Use this to backup or transfer data.</p>
+        <Btn onClick={handleExport}>Export All Data</Btn>
+      </div>
+
+      {/* Import */}
+      <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+        <h3 className="text-sm font-semibold text-white/70">Import Data</h3>
+        <p className="text-xs text-white/30">Paste JSON data exported from this dashboard to restore or update content.</p>
+        <textarea
+          value={importJson}
+          onChange={(e) => setImportJson(e.target.value)}
+          rows={6}
+          className="w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/60 text-xs font-mono focus:outline-none focus:border-cyan-400/40 resize-none"
+          placeholder="Paste exported JSON here..."
+        />
+        <Btn onClick={handleImport}>Import Data</Btn>
+      </div>
+
+      {/* Reset */}
+      <div className="p-6 rounded-xl border border-red-500/10 bg-red-500/[0.02] space-y-4">
+        <h3 className="text-sm font-semibold text-red-400">Reset to Defaults</h3>
+        <p className="text-xs text-white/30">Clear all custom data and revert to the original default content.</p>
+        <Btn onClick={handleReset} variant="danger">Reset All Data</Btn>
+      </div>
+    </div>
+  )
+}
