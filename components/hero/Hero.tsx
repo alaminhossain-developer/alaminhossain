@@ -179,11 +179,11 @@ export default function Hero() {
 
                 {/* Photo area */}
                 <div className="relative aspect-[4/5] w-[320px] sm:w-[360px] lg:w-[400px] overflow-hidden">
-                  {profile.photo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={profile.photo}
-                      alt={profile.name}
+                {profile.heroPhoto ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={profile.heroPhoto}
+                    alt={profile.name}
                       className="w-full h-full object-cover"
                     />
                   ) : (

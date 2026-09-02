@@ -192,7 +192,7 @@ function Btn({ children, onClick, variant = 'primary', small }: {
 // Profile Tab
 // ============================================================
 function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
-  const [form, setForm] = useState<Profile>({ name: '', tagline: '', bio: '', photo: '', email: '', location: '' })
+  const [form, setForm] = useState<Profile>({ name: '', tagline: '', bio: '', heroPhoto: '', aboutPhoto: '', techPhoto: '', email: '', location: '' })
 
   useEffect(() => { setForm(getProfile()) }, [])
 
@@ -221,42 +221,50 @@ function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onE
         </div>
         <Field label="Bio" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} rows={3} />
 
-        {/* Photo upload */}
-        <div className="space-y-1.5">
-          <label className="text-xs text-white/40 font-medium">Profile Photo</label>
-          <p className="text-[10px] text-white/25">Upload a photo (auto-compressed). Shows in the About section.</p>
-          <div className="flex items-center gap-4">
-            {form.photo ? (
-              <div className="relative group">
-                <img src={form.photo} alt="Profile" className="w-24 h-24 object-cover rounded-xl border border-white/[0.06]" />
-                <button
-                  onClick={() => setForm({ ...form, photo: '' })}
-                  className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                >×</button>
-                <span className="absolute bottom-1 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded">{getBase64Size(form.photo)}</span>
+        {/* Photo uploads — one per section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {([
+            { key: 'heroPhoto' as const, label: 'Hero Photo', desc: 'Terminal frame in Hero section' },
+            { key: 'aboutPhoto' as const, label: 'About Photo', desc: 'Bio section right column' },
+            { key: 'techPhoto' as const, label: 'Technology Photo', desc: 'Center of tech orbital map' },
+          ]).map(({ key, label, desc }) => (
+            <div key={key} className="space-y-1.5">
+              <label className="text-xs text-white/40 font-medium">{label}</label>
+              <p className="text-[10px] text-white/25">{desc}</p>
+              <div className="flex items-center gap-3">
+                {form[key] ? (
+                  <div className="relative group">
+                    <img src={form[key]} alt={label} className="w-20 h-20 object-cover rounded-xl border border-white/[0.06]" />
+                    <button
+                      onClick={() => setForm({ ...form, [key]: '' })}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >×</button>
+                    <span className="absolute bottom-1 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded">{getBase64Size(form[key])}</span>
+                  </div>
+                ) : (
+                  <label className="flex items-center gap-2 px-4 py-3 rounded-lg border border-dashed border-white/[0.08] bg-white/[0.02] text-white/40 text-xs cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors w-full">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                    Upload
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0]
+                        if (!file) return
+                        try {
+                          const compressed = await compressImage(file, 800, 0.75)
+                          setForm({ ...form, [key]: compressed })
+                        } catch (err) {
+                          onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                        }
+                      }}
+                    />
+                  </label>
+                )}
               </div>
-            ) : (
-              <label className="flex items-center gap-2 px-4 py-3 rounded-lg border border-dashed border-white/[0.08] bg-white/[0.02] text-white/40 text-xs cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                Upload Photo
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0]
-                    if (!file) return
-                    try {
-                      const compressed = await compressImage(file, 800, 0.75)
-                      setForm({ ...form, photo: compressed })
-                    } catch (err) {
-                      onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
-                    }
-                  }}
-                />
-              </label>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

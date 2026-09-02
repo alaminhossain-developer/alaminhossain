@@ -140,11 +140,11 @@ export default function About() {
 
           {/* Right — Photo (2 cols) */}
           <div className="lg:col-span-2 flex justify-center lg:justify-end">
-            {profile.photo ? (
+            {profile.aboutPhoto ? (
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={profile.photo}
+                  src={profile.aboutPhoto}
                   alt={profile.name}
                   className="w-full max-w-[340px] rounded-2xl object-cover border border-white/[0.06] shadow-2xl"
                 />
