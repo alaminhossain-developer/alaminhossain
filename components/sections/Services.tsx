@@ -64,7 +64,7 @@ export default function Services() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative h-[85vh] md:h-screen overflow-hidden" id="services">
+    <section ref={containerRef} className="relative h-[70vh] md:h-[80vh] overflow-hidden" id="services">
       {/* Fixed title */}
       <div className="absolute top-0 left-0 right-0 z-10 px-6 lg:px-12 pt-6 md:pt-8 max-w-7xl">
         <div className="flex items-center gap-4 mb-2">
