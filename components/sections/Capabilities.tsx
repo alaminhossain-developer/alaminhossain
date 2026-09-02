@@ -74,7 +74,7 @@ export default function Capabilities() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative py-24 lg:py-32" id="capabilities">
+    <section ref={sectionRef} className="relative py-16 lg:py-24" id="capabilities">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section header */}
         <div className="flex items-center gap-4 mb-8 md:mb-10">

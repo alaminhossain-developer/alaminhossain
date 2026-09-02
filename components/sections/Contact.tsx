@@ -84,7 +84,7 @@ export default function Contact() {
   return (
     <section
       ref={containerRef}
-      className="relative py-24 lg:py-32 px-6 overflow-hidden"
+      className="relative py-16 lg:py-24 px-6 overflow-hidden"
       id="contact"
     >
       {/* Animated background */}

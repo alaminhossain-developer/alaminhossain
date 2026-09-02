@@ -103,7 +103,7 @@ export default function Technology() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32"
+      className="relative py-16 lg:py-24"
       id="skills"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-12">

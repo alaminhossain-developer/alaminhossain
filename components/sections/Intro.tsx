@@ -59,7 +59,7 @@ export default function Intro() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative py-24 lg:py-36 overflow-hidden">
+    <section ref={sectionRef} className="relative py-16 lg:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Main statement */}
         <div className="flex flex-col gap-3 md:gap-5 mb-12 md:mb-16">

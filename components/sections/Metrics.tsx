@@ -71,7 +71,7 @@ export default function Metrics() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative py-16 md:py-24 opacity-0">
+    <section ref={sectionRef} className="relative py-12 md:py-16 opacity-0">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Dashboard card */}
         <div className="border border-cyan-500/10 rounded-2xl bg-white/[0.01] overflow-hidden">

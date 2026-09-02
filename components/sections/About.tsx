@@ -56,7 +56,7 @@ export default function About() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative py-24 lg:py-32 px-6" id="about">
+    <section ref={containerRef} className="relative py-16 lg:py-24 px-6" id="about">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           {/* Left — Title */}

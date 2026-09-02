@@ -84,7 +84,7 @@ export default function Skills() {
   return (
     <section
       ref={containerRef}
-      className="relative py-24 lg:py-32 px-6 overflow-hidden"
+      className="relative py-16 lg:py-24 px-6 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         {/* Title */}
