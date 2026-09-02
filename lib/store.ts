@@ -1,7 +1,7 @@
 'use client'
 
-import { projects as defaultProjects, services as defaultServices, testimonials as defaultTestimonials, experience as defaultExperience, skills as defaultSkills, processSteps as defaultProcessSteps, metrics as defaultMetrics } from './data'
-import type { Project, Service, Testimonial, Experience, SkillItem, ProcessStep, Metric } from './data'
+import { projects as defaultProjects, services as defaultServices, testimonials as defaultTestimonials, experience as defaultExperience, skills as defaultSkills, processSteps as defaultProcessSteps, metrics as defaultMetrics, profile as defaultProfile } from './data'
+import type { Project, Service, Testimonial, Experience, SkillItem, ProcessStep, Metric, Profile } from './data'
 
 // ============================================================
 // Storage keys
@@ -15,6 +15,7 @@ const KEYS = {
   processSteps: 'portfolio_processSteps',
   metrics: 'portfolio_metrics',
   shopifyFeatures: 'portfolio_shopifyFeatures',
+  profile: 'portfolio_profile',
 } as const
 
 // ============================================================
@@ -249,10 +250,22 @@ export function deleteShopifyFeature(id: string): void {
 }
 
 // ============================================================
+// Profile
+// ============================================================
+export function getProfile(): Profile {
+  return load(KEYS.profile, defaultProfile)
+}
+
+export function saveProfile(data: Profile): void {
+  save(KEYS.profile, data)
+}
+
+// ============================================================
 // Export / Import all data
 // ============================================================
 export function exportAllData(): string {
   const data = {
+    profile: getProfile(),
     projects: getProjects(),
     services: getServices(),
     testimonials: getTestimonials(),
@@ -272,6 +285,7 @@ export function importAllData(json: string): boolean {
     if (data.testimonials) saveTestimonials(data.testimonials)
     if (data.experience) saveExperience(data.experience)
     if (data.skills) saveSkills(data.skills)
+    if (data.profile) saveProfile(data.profile)
     if (data.shopifyFeatures) saveShopifyFeatures(data.shopifyFeatures)
     return true
   } catch {

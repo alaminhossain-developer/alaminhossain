@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getExperience } from '@/lib/store'
+import { getExperience, getProfile } from '@/lib/store'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,6 +13,7 @@ export default function About() {
   const contentRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
   const experience = getExperience()
+  const profile = getProfile()
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -114,6 +115,21 @@ export default function About() {
           </div>
 
           <div ref={contentRef} className="space-y-6 text-lg text-white/70">
+            {/* Profile photo */}
+            {profile.photo ? (
+              <div className="mb-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={profile.photo}
+                  alt={profile.name}
+                  className="w-32 h-32 lg:w-40 lg:h-40 rounded-2xl object-cover border border-white/[0.06] shadow-2xl"
+                />
+              </div>
+            ) : (
+              <div className="mb-6 w-32 h-32 lg:w-40 lg:h-40 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
+                <span className="text-4xl font-bold text-white/10">{profile.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}</span>
+              </div>
+            )}
             <p className="leading-relaxed">
               I'm a WordPress & Shopify developer and web performance specialist
               focused on building practical, scalable, and high-quality websites

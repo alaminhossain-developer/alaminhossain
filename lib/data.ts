@@ -300,6 +300,27 @@ export const processSteps: ProcessStep[] = [
 ]
 
 // ============================================================
+// PROFILE — personal info dashboard-ready
+// ============================================================
+export interface Profile {
+  name: string
+  tagline: string
+  bio: string
+  photo: string
+  email: string
+  location: string
+}
+
+export const profile: Profile = {
+  name: 'Md. Al Amin Hossain',
+  tagline: 'WordPress & Shopify Developer',
+  bio: 'I craft high-performance digital experiences. WordPress specialist. Shopify expert. Performance obsessed.',
+  photo: '',
+  email: '',
+  location: '',
+}
+
+// ============================================================
 // METRICS — dashboard-ready
 // ============================================================
 export interface Metric {

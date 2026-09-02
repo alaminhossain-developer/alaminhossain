@@ -10,14 +10,16 @@ import {
   getExperience, saveExperience, addExperience, updateExperience, deleteExperience,
   getSkills, saveSkills, addSkill, updateSkill, deleteSkill,
   getShopifyFeatures, saveShopifyFeatures, addShopifyFeature, updateShopifyFeature, deleteShopifyFeature,
+  getProfile, saveProfile,
   exportAllData, importAllData, resetAllData,
 } from '@/lib/store'
-import type { Project, Service, Testimonial, Experience, SkillItem } from '@/lib/data'
+import type { Project, Service, Testimonial, Experience, SkillItem, Profile } from '@/lib/data'
 import type { ShopifyFeature } from '@/lib/store'
 
-type Tab = 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'data'
+type Tab = 'profile' | 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'data'
 
 const tabs: { key: Tab; label: string }[] = [
+  { key: 'profile', label: 'Profile' },
   { key: 'projects', label: 'Projects' },
   { key: 'testimonials', label: 'Testimonials' },
   { key: 'services', label: 'Services' },
@@ -129,6 +131,7 @@ export default function DashboardPage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto p-6">
+        {activeTab === 'profile' && <ProfileTab key={refreshKey} onSaved={flash} onError={flashError} />}
         {activeTab === 'projects' && <ProjectsTab key={refreshKey} onSaved={flash} onError={flashError} />}
         {activeTab === 'testimonials' && <TestimonialsTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'services' && <ServicesTab key={refreshKey} onSaved={flash} />}
@@ -182,6 +185,81 @@ function Btn({ children, onClick, variant = 'primary', small }: {
     >
       {children}
     </button>
+  )
+}
+
+// ============================================================
+// Profile Tab
+// ============================================================
+function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
+  const [form, setForm] = useState<Profile>({ name: '', tagline: '', bio: '', photo: '', email: '', location: '' })
+
+  useEffect(() => { setForm(getProfile()) }, [])
+
+  const saveItem = () => {
+    try {
+      saveProfile(form)
+      onSaved()
+    } catch (err) {
+      onError('Save failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Profile</h2>
+        <Btn onClick={saveItem}>Save Profile</Btn>
+      </div>
+
+      <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+          <Field label="Tagline" value={form.tagline} onChange={(v) => setForm({ ...form, tagline: v })} />
+          <Field label="Email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+          <Field label="Location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
+        </div>
+        <Field label="Bio" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} rows={3} />
+
+        {/* Photo upload */}
+        <div className="space-y-1.5">
+          <label className="text-xs text-white/40 font-medium">Profile Photo</label>
+          <p className="text-[10px] text-white/25">Upload a photo (auto-compressed). Shows in the About section.</p>
+          <div className="flex items-center gap-4">
+            {form.photo ? (
+              <div className="relative group">
+                <img src={form.photo} alt="Profile" className="w-24 h-24 object-cover rounded-xl border border-white/[0.06]" />
+                <button
+                  onClick={() => setForm({ ...form, photo: '' })}
+                  className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >×</button>
+                <span className="absolute bottom-1 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded">{getBase64Size(form.photo)}</span>
+              </div>
+            ) : (
+              <label className="flex items-center gap-2 px-4 py-3 rounded-lg border border-dashed border-white/[0.08] bg-white/[0.02] text-white/40 text-xs cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                Upload Photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    try {
+                      const compressed = await compressImage(file, 800, 0.75)
+                      setForm({ ...form, photo: compressed })
+                    } catch (err) {
+                      onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                    }
+                  }}
+                />
+              </label>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
