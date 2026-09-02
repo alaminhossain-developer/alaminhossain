@@ -1,7 +1,8 @@
 'use client'
 
-import { projects as defaultProjects, services as defaultServices, testimonials as defaultTestimonials, experience as defaultExperience, skills as defaultSkills, processSteps as defaultProcessSteps, metrics as defaultMetrics, profile as defaultProfile } from './data'
-import type { Project, Service, Testimonial, Experience, SkillItem, ProcessStep, Metric, Profile } from './data'
+import { projects as defaultProjects, services as defaultServices, testimonials as defaultTestimonials, experience as defaultExperience, skills as defaultSkills, processSteps as defaultProcessSteps, metrics as defaultMetrics, profile as defaultProfile, apps as defaultApps } from './data'
+import type { Project, Service, Testimonial, Experience, SkillItem, ProcessStep, Metric, Profile, App } from './data'
+export type { App }
 
 // ============================================================
 // Storage keys
@@ -16,6 +17,7 @@ const KEYS = {
   metrics: 'portfolio_metrics',
   shopifyFeatures: 'portfolio_shopifyFeatures',
   profile: 'portfolio_profile',
+  apps: 'portfolio_apps',
 } as const
 
 // ============================================================
@@ -261,6 +263,38 @@ export function saveProfile(data: Profile): void {
 }
 
 // ============================================================
+// Apps (Shopify apps & tools)
+// ============================================================
+export function getApps(): App[] {
+  return load(KEYS.apps, defaultApps)
+}
+
+export function saveApps(data: App[]): void {
+  save(KEYS.apps, data)
+}
+
+export function addApp(app: Omit<App, 'id'>): App {
+  const newApp: App = { ...app, id: 'app-' + generateId() }
+  const all = getApps()
+  all.push(newApp)
+  saveApps(all)
+  return newApp
+}
+
+export function updateApp(id: string, updates: Partial<App>): void {
+  const all = getApps()
+  const idx = all.findIndex((a) => a.id === id)
+  if (idx !== -1) {
+    all[idx] = { ...all[idx], ...updates }
+    saveApps(all)
+  }
+}
+
+export function deleteApp(id: string): void {
+  saveApps(getApps().filter((a) => a.id !== id))
+}
+
+// ============================================================
 // Export / Import all data
 // ============================================================
 export function exportAllData(): string {
@@ -272,6 +306,7 @@ export function exportAllData(): string {
     experience: getExperience(),
     skills: getSkills(),
     shopifyFeatures: getShopifyFeatures(),
+    apps: getApps(),
     exportedAt: new Date().toISOString(),
   }
   return JSON.stringify(data, null, 2)
@@ -287,6 +322,7 @@ export function importAllData(json: string): boolean {
     if (data.skills) saveSkills(data.skills)
     if (data.profile) saveProfile(data.profile)
     if (data.shopifyFeatures) saveShopifyFeatures(data.shopifyFeatures)
+    if (data.apps) saveApps(data.apps)
     return true
   } catch {
     return false

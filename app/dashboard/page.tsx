@@ -10,13 +10,14 @@ import {
   getExperience, saveExperience, addExperience, updateExperience, deleteExperience,
   getSkills, saveSkills, addSkill, updateSkill, deleteSkill,
   getShopifyFeatures, saveShopifyFeatures, addShopifyFeature, updateShopifyFeature, deleteShopifyFeature,
+  getApps, saveApps, addApp, updateApp, deleteApp,
   getProfile, saveProfile,
   exportAllData, importAllData, resetAllData,
 } from '@/lib/store'
 import type { Project, Service, Testimonial, Experience, SkillItem, Profile } from '@/lib/data'
-import type { ShopifyFeature } from '@/lib/store'
+import type { ShopifyFeature, App } from '@/lib/store'
 
-type Tab = 'profile' | 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'data'
+type Tab = 'profile' | 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'apps' | 'data'
 
 const tabs: { key: Tab; label: string }[] = [
   { key: 'profile', label: 'Profile' },
@@ -26,6 +27,7 @@ const tabs: { key: Tab; label: string }[] = [
   { key: 'experience', label: 'Experience' },
   { key: 'skills', label: 'Skills' },
   { key: 'shopify', label: 'Shopify Features' },
+  { key: 'apps', label: 'Apps' },
   { key: 'data', label: 'Data' },
 ]
 
@@ -138,6 +140,7 @@ export default function DashboardPage() {
         {activeTab === 'experience' && <ExperienceTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'skills' && <SkillsTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'shopify' && <ShopifyTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'apps' && <AppsTab key={refreshKey} onSaved={flash} onError={flashError} />}
         {activeTab === 'data' && <DataTab onRefresh={() => setRefreshKey((k) => k + 1)} />}
       </div>
     </div>
@@ -837,6 +840,101 @@ function ShopifyTab({ onSaved }: { onSaved: () => void }) {
             </div>
             <Btn small onClick={() => { setEditing(f.id); setForm({ ...f }) }}>Edit</Btn>
             <Btn small variant="danger" onClick={() => remove(f.id)}>Delete</Btn>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Apps Tab
+// ============================================================
+function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
+  const [items, setItems] = useState<App[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ name: '', tagline: '', description: '', status: 'development' as App['status'], url: '', icon: '🚀', color: '#00d4e8', features: '' })
+
+  useEffect(() => { setItems(getApps()) }, [])
+
+  const startNew = () => {
+    setEditing(null)
+    setForm({ name: '', tagline: '', description: '', status: 'development', url: '', icon: '🚀', color: '#00d4e8', features: '' })
+  }
+
+  const save = () => {
+    try {
+      const data = { ...form, features: form.features.split(',').map((s) => s.trim()).filter(Boolean) }
+      if (editing) {
+        updateApp(editing, data)
+      } else {
+        addApp(data)
+      }
+      setItems(getApps())
+      startNew()
+      setEditing(null)
+      onSaved()
+    } catch (err) {
+      onError('Save failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }
+
+  const remove = (id: string) => {
+    deleteApp(id)
+    setItems(getApps())
+    onSaved()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Apps</h2>
+        <Btn onClick={startNew}>+ New App</Btn>
+      </div>
+
+      {editing !== null || form.name ? (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="App Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+            <Field label="Tagline" value={form.tagline} onChange={(v) => setForm({ ...form, tagline: v })} />
+            <Field label="URL" value={form.url} onChange={(v) => setForm({ ...form, url: v })} />
+            <Field label="Icon (emoji)" value={form.icon} onChange={(v) => setForm({ ...form, icon: v })} />
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/40 font-medium">Status</label>
+              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as App['status'] })} className="w-full px-3 py-2 rounded-lg bg-dark-900 border border-white/[0.06] text-white text-sm">
+                <option value="live">Live</option>
+                <option value="development">In Development</option>
+                <option value="planned">Planned</option>
+              </select>
+            </div>
+            <Field label="Accent Color" value={form.color} onChange={(v) => setForm({ ...form, color: v })} />
+          </div>
+          <Field label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={2} />
+          <Field label="Features (comma separated)" value={form.features} onChange={(v) => setForm({ ...form, features: v })} />
+          <div className="flex gap-3">
+            <Btn onClick={save}>{editing ? 'Update' : 'Add'} App</Btn>
+            <Btn variant="ghost" onClick={() => { startNew(); setEditing(null) }}>Cancel</Btn>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="space-y-3">
+        {items.map((app) => (
+          <div key={app.id} className="flex items-center justify-between p-4 rounded-xl border border-white/[0.04] bg-white/[0.015]">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{app.icon}</span>
+              <div>
+                <div className="text-sm font-medium text-white/80">{app.name}</div>
+                <div className="text-xs text-white/30">{app.tagline}</div>
+              </div>
+              <span className="px-2 py-0.5 text-[9px] font-mono uppercase rounded-full border" style={{ color: app.status === 'live' ? '#22c55e' : app.status === 'development' ? '#f59e0b' : '#8b5cf6', borderColor: app.status === 'live' ? '#22c55e30' : app.status === 'development' ? '#f59e0b30' : '#8b5cf630' }}>
+                {app.status}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Btn small onClick={() => { setEditing(app.id); setForm({ ...app, features: app.features.join(', ') }) }}>Edit</Btn>
+              <Btn small variant="danger" onClick={() => remove(app.id)}>Delete</Btn>
+            </div>
           </div>
         ))}
       </div>

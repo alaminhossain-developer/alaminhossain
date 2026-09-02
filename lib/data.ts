@@ -353,3 +353,32 @@ export const metrics: Metric[] = [
   { label: '100+', description: 'Projects Delivered' },
   { label: '130+', description: 'Websites Managed' },
 ]
+
+// ============================================================
+// APPS — Shopify apps & tools dashboard-ready
+// ============================================================
+export interface App {
+  id: string
+  name: string
+  tagline: string
+  description: string
+  status: 'live' | 'development' | 'planned'
+  url: string
+  icon: string
+  color: string
+  features: string[]
+}
+
+export const apps: App[] = [
+  {
+    id: 'app-1',
+    name: 'AI Store Doctor',
+    tagline: 'Your Shopify store, diagnosed by AI',
+    description: 'AI-powered Shopify store audit tool that analyzes your store and provides actionable recommendations to improve performance, SEO, and conversions.',
+    status: 'development',
+    url: '',
+    icon: '🤖',
+    color: '#00d4e8',
+    features: ['AI-powered audit', 'Performance analysis', 'SEO recommendations', 'Conversion optimization'],
+  },
+]

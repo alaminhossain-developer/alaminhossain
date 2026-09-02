@@ -7,6 +7,7 @@ import Metrics from '@/components/sections/Metrics'
 import Services from '@/components/sections/Services'
 import FeaturedWork from '@/components/sections/FeaturedWork'
 import ShopifyFeatures from '@/components/sections/ShopifyFeatures'
+import Apps from '@/components/sections/Apps'
 import Technology from '@/components/sections/Technology'
 import About from '@/components/sections/About'
 import Experience from '@/components/sections/Experience'
@@ -26,6 +27,7 @@ export default function Home() {
       <Services />
       <FeaturedWork />
       <ShopifyFeatures />
+      <Apps />
       <Technology />
       <About />
       <Experience />
