@@ -23,6 +23,21 @@ const categoryLabels: Record<string, string> = {
   platforms: 'Platforms',
 }
 
+// Pre-compute positions outside component (pure math, no React)
+const ORBITAL_RADIUS = 37 // % from center for nodes
+const BORDER_RADIUS = 47 // % from center for neon border
+const NUM_SKILLS = 18 // match default skill count
+
+const positions = Array.from({ length: NUM_SKILLS }, (_, i) => {
+  const angle = (i / NUM_SKILLS) * Math.PI * 2 - Math.PI / 2
+  return {
+    x: 50 + Math.cos(angle) * ORBITAL_RADIUS,
+    y: 50 + Math.sin(angle) * ORBITAL_RADIUS,
+    bx: 50 + Math.cos(angle) * BORDER_RADIUS,
+    by: 50 + Math.sin(angle) * BORDER_RADIUS,
+  }
+})
+
 export default function Technology() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null)
@@ -33,7 +48,6 @@ export default function Technology() {
     const ctx = gsap.context(() => {
       if (!sectionRef.current) return
 
-      // Entrance animation for nodes
       const skillElements = sectionRef.current.querySelectorAll('.skill-node')
       skillElements.forEach((node, i) => {
         gsap.fromTo(
@@ -57,7 +71,6 @@ export default function Technology() {
     return () => ctx.revert()
   }, [])
 
-  // Group skills by category
   const grouped = skills.reduce(
     (acc, skill) => {
       if (!acc[skill.category]) acc[skill.category] = []
@@ -74,21 +87,11 @@ export default function Technology() {
   )
   const allSkills = [...coreSkills, ...frontendSkills, ...toolsSkills]
 
-  // Pre-compute node positions (in % relative to container)
-  const nodeRadius = 38 // % from center
-  const borderRadius = 48 // % from center — neon border position
-  const nodePositions = allSkills.map((skill, i) => {
-    const angle = (i / allSkills.length) * Math.PI * 2 - Math.PI / 2
-    return {
-      skill,
-      x: 50 + Math.cos(angle) * nodeRadius,
-      y: 50 + Math.sin(angle) * nodeRadius,
-      // Border intersection point (further out along same angle)
-      bx: 50 + Math.cos(angle) * borderRadius,
-      by: 50 + Math.sin(angle) * borderRadius,
-      angle: (angle * 180) / Math.PI,
-    }
-  })
+  // Use only as many positions as we have skills
+  const nodeData = allSkills.map((skill, i) => ({
+    skill,
+    ...positions[i % positions.length],
+  }))
 
   return (
     <section
@@ -107,55 +110,44 @@ export default function Technology() {
           TECHNOLOGY MAP
         </h2>
 
-        {/* Desktop: Orbital Map */}
-        <div
-          className="relative w-full max-w-[620px] mx-auto hidden md:block"
-          style={{ paddingBottom: '100%' }}
-        >
+        {/* Desktop: Orbital Map — forced square */}
+        <div className="relative mx-auto hidden md:block" style={{ width: 'min(620px, 80vw)', aspectRatio: '1 / 1' }}>
+
           {/* ===== NEON BORDER RING ===== */}
           <div
             className="absolute rounded-full"
             style={{
-              width: '96%',
-              height: '96%',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)',
+              inset: '2%',
               border: '1px solid rgba(0, 212, 232, 0.25)',
               boxShadow:
-                '0 0 15px rgba(0, 212, 232, 0.1), inset 0 0 15px rgba(0, 212, 232, 0.05)',
+                '0 0 20px rgba(0, 212, 232, 0.08), inset 0 0 20px rgba(0, 212, 232, 0.04)',
             }}
           />
 
           {/* ===== CONCENTRIC RINGS ===== */}
           {[
-            { size: '70%', opacity: 0.12 },
-            { size: '42%', opacity: 0.08 },
+            { inset: '15%', opacity: 0.1 },
+            { inset: '30%', opacity: 0.06 },
           ].map((ring, i) => (
             <div
               key={i}
               className="absolute rounded-full border border-white/[0.06]"
-              style={{
-                width: ring.size,
-                height: ring.size,
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)',
-                opacity: ring.opacity,
-              }}
+              style={{ inset: ring.inset, opacity: ring.opacity }}
             />
           ))}
 
-          {/* ===== ROTATING CONTAINER (nodes + lines) ===== */}
+          {/* ===== ROTATING WRAPPER ===== */}
           <div
             className="absolute inset-0"
-            style={{
-              animation: 'orbital-spin 120s linear infinite',
-            }}
+            style={{ animation: 'orbital-spin 90s linear infinite' }}
           >
-            {/* Connecting lines — center to node */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none">
-              {nodePositions.map(({ skill, x, y, bx, by }) => {
+            {/* Connecting lines */}
+            <svg
+              className="absolute inset-0 w-full h-full"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+            >
+              {nodeData.map(({ skill, x, y, bx, by }) => {
                 const color = categoryColors[skill.category] || '#ffffff'
                 const isHovered = hoveredSkill === skill.name
                 const isCore = skill.category === 'core'
@@ -163,20 +155,17 @@ export default function Technology() {
                 return (
                   <line
                     key={skill.name}
-                    className="skill-line"
-                    x1="50%"
-                    y1="50%"
-                    // When hovered, extend line to border; otherwise to node
-                    x2={isHovered ? `${bx}%` : `${x}%`}
-                    y2={isHovered ? `${by}%` : `${y}%`}
+                    x1="50"
+                    y1="50"
+                    x2={isHovered ? bx : x}
+                    y2={isHovered ? by : y}
                     stroke={
-                      isHovered
-                        ? color
-                        : `${color}${isCore ? '30' : '15'}`
+                      isHovered ? color : `${color}${isCore ? '25' : '10'}`
                     }
-                    strokeWidth={isHovered ? 1.5 : 0.5}
+                    strokeWidth={isHovered ? '0.4' : '0.15'}
                     style={{
-                      transition: 'x2 0.4s ease, y2 0.4s ease, stroke 0.3s, stroke-width 0.3s',
+                      transition:
+                        'x2 0.5s ease, y2 0.5s ease, stroke 0.3s, stroke-width 0.3s',
                     }}
                   />
                 )
@@ -184,7 +173,7 @@ export default function Technology() {
             </svg>
 
             {/* Skill nodes */}
-            {nodePositions.map(({ skill, x, y, angle }) => {
+            {nodeData.map(({ skill, x, y }) => {
               const isHovered = hoveredSkill === skill.name
               const color = categoryColors[skill.category] || '#ffffff'
               const isCore = skill.category === 'core'
@@ -201,26 +190,17 @@ export default function Technology() {
                   onMouseEnter={() => setHoveredSkill(skill.name)}
                   onMouseLeave={() => setHoveredSkill(null)}
                 >
-                  {/* Counter-rotate so text stays readable while orbital spins */}
-                  <div
-                    style={{
-                      animation: 'node-counter-spin 120s linear infinite',
-                    }}
-                  >
+                  {/* Counter-rotate to keep text horizontal */}
+                  <div style={{ animation: 'node-counter-spin 90s linear infinite' }}>
                     <div
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 ${
                         isHovered ? 'shadow-lg' : ''
                       }`}
                       style={{
-                        backgroundColor: isHovered
-                          ? `${color}20`
-                          : '#0a0e27',
+                        backgroundColor: isHovered ? `${color}20` : '#0a0e27',
                         borderColor: isHovered ? color : `${color}30`,
-                        boxShadow: isHovered
-                          ? `0 0 16px ${color}25`
-                          : 'none',
-                        // Each node has a subtle individual spin
-                        animation: `node-self-spin ${8 + (angle % 5)}s linear infinite`,
+                        boxShadow: isHovered ? `0 0 16px ${color}25` : 'none',
+                        animation: `node-self-spin ${10 + (x % 5)}s linear infinite`,
                         animationPlayState: isHovered ? 'paused' : 'running',
                       }}
                     >
@@ -237,10 +217,7 @@ export default function Technology() {
                         {skill.name}
                       </span>
                       {isHovered && skill.level && (
-                        <span
-                          className="text-[9px] font-mono"
-                          style={{ color }}
-                        >
+                        <span className="text-[9px] font-mono" style={{ color }}>
                           {skill.level}%
                         </span>
                       )}
@@ -251,7 +228,7 @@ export default function Technology() {
             })}
           </div>
 
-          {/* ===== CENTER PHOTO (above rotating container) ===== */}
+          {/* ===== CENTER PHOTO (never rotates) ===== */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30">
             <div className="w-28 h-28 md:w-36 md:h-36 rounded-full p-[2px] bg-gradient-to-br from-cyan-400/60 via-cyan-400/20 to-emerald-400/40">
               <div className="w-full h-full rounded-full overflow-hidden bg-dark-950 flex items-center justify-center">
@@ -322,7 +299,7 @@ export default function Technology() {
         </div>
       </div>
 
-      {/* CSS keyframe animations for orbital rotation */}
+      {/* CSS animations — global so they work across the component */}
       <style jsx global>{`
         @keyframes orbital-spin {
           from { transform: rotate(0deg); }
