@@ -73,10 +73,10 @@ export default function Process() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative py-16 lg:py-24 px-6 min-h-screen">
+    <section ref={containerRef} className="relative py-16 lg:py-24 px-6">
       <div className="max-w-7xl mx-auto">
         {/* Title */}
-        <div data-title className="mb-16 lg:mb-20">
+        <div data-title className="mb-10 lg:mb-14">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em]">
             HOW I WORK
           </h2>
