@@ -118,7 +118,7 @@ export default function Technology() {
         </h2>
 
         {/* Desktop: Orbital Map — forced square */}
-        <div className="relative mx-auto hidden md:block" style={{ width: 'min(620px, 80vw)', aspectRatio: '1 / 1' }}>
+        <div className="relative mx-auto hidden md:block" style={{ width: 'min(720px, 80vw)', aspectRatio: '1 / 1' }}>
 
           {/* ===== NEON BORDER RING (at node radius) ===== */}
           <div
