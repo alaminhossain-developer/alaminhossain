@@ -8,6 +8,7 @@ import Services from '@/components/sections/Services'
 import FeaturedWork from '@/components/sections/FeaturedWork'
 import ShopifyFeatures from '@/components/sections/ShopifyFeatures'
 import Apps from '@/components/sections/Apps'
+import Articles from '@/components/sections/Articles'
 import Technology from '@/components/sections/Technology'
 import About from '@/components/sections/About'
 import Experience from '@/components/sections/Experience'
@@ -33,6 +34,7 @@ export default function Home() {
       <Experience />
       <Process />
       <Performance />
+      <Articles />
       <Testimonials />
       <Contact />
       <Footer />

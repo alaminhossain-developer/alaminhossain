@@ -1,8 +1,8 @@
 'use client'
 
-import { projects as defaultProjects, services as defaultServices, testimonials as defaultTestimonials, experience as defaultExperience, skills as defaultSkills, processSteps as defaultProcessSteps, metrics as defaultMetrics, profile as defaultProfile, apps as defaultApps } from './data'
-import type { Project, Service, Testimonial, Experience, SkillItem, ProcessStep, Metric, Profile, App } from './data'
-export type { App }
+import { projects as defaultProjects, services as defaultServices, testimonials as defaultTestimonials, experience as defaultExperience, skills as defaultSkills, processSteps as defaultProcessSteps, metrics as defaultMetrics, profile as defaultProfile, apps as defaultApps, articles as defaultArticles } from './data'
+import type { Project, Service, Testimonial, Experience, SkillItem, ProcessStep, Metric, Profile, App, Article } from './data'
+export type { App, Article }
 
 // ============================================================
 // Storage keys
@@ -18,6 +18,7 @@ const KEYS = {
   shopifyFeatures: 'portfolio_shopifyFeatures',
   profile: 'portfolio_profile',
   apps: 'portfolio_apps',
+  articles: 'portfolio_articles',
 } as const
 
 // ============================================================
@@ -295,6 +296,38 @@ export function deleteApp(id: string): void {
 }
 
 // ============================================================
+// Articles
+// ============================================================
+export function getArticles(): Article[] {
+  return load(KEYS.articles, defaultArticles)
+}
+
+export function saveArticles(data: Article[]): void {
+  save(KEYS.articles, data)
+}
+
+export function addArticle(article: Omit<Article, 'id'>): Article {
+  const newArticle: Article = { ...article, id: 'article-' + generateId() }
+  const all = getArticles()
+  all.push(newArticle)
+  saveArticles(all)
+  return newArticle
+}
+
+export function updateArticle(id: string, updates: Partial<Article>): void {
+  const all = getArticles()
+  const idx = all.findIndex((a) => a.id === id)
+  if (idx !== -1) {
+    all[idx] = { ...all[idx], ...updates }
+    saveArticles(all)
+  }
+}
+
+export function deleteArticle(id: string): void {
+  saveArticles(getArticles().filter((a) => a.id !== id))
+}
+
+// ============================================================
 // Export / Import all data
 // ============================================================
 export function exportAllData(): string {
@@ -307,6 +340,7 @@ export function exportAllData(): string {
     skills: getSkills(),
     shopifyFeatures: getShopifyFeatures(),
     apps: getApps(),
+    articles: getArticles(),
     exportedAt: new Date().toISOString(),
   }
   return JSON.stringify(data, null, 2)
@@ -323,6 +357,7 @@ export function importAllData(json: string): boolean {
     if (data.profile) saveProfile(data.profile)
     if (data.shopifyFeatures) saveShopifyFeatures(data.shopifyFeatures)
     if (data.apps) saveApps(data.apps)
+    if (data.articles) saveArticles(data.articles)
     return true
   } catch {
     return false

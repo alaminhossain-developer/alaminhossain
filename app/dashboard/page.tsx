@@ -11,13 +11,14 @@ import {
   getSkills, saveSkills, addSkill, updateSkill, deleteSkill,
   getShopifyFeatures, saveShopifyFeatures, addShopifyFeature, updateShopifyFeature, deleteShopifyFeature,
   getApps, saveApps, addApp, updateApp, deleteApp,
+  getArticles, saveArticles, addArticle, updateArticle, deleteArticle,
   getProfile, saveProfile,
   exportAllData, importAllData, resetAllData,
 } from '@/lib/store'
 import type { Project, Service, Testimonial, Experience, SkillItem, Profile } from '@/lib/data'
-import type { ShopifyFeature, App } from '@/lib/store'
+import type { ShopifyFeature, App, Article } from '@/lib/store'
 
-type Tab = 'profile' | 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'apps' | 'data'
+type Tab = 'profile' | 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'apps' | 'articles' | 'data'
 
 const tabs: { key: Tab; label: string }[] = [
   { key: 'profile', label: 'Profile' },
@@ -28,6 +29,7 @@ const tabs: { key: Tab; label: string }[] = [
   { key: 'skills', label: 'Skills' },
   { key: 'shopify', label: 'Shopify Features' },
   { key: 'apps', label: 'Apps' },
+  { key: 'articles', label: 'Articles' },
   { key: 'data', label: 'Data' },
 ]
 
@@ -141,6 +143,7 @@ export default function DashboardPage() {
         {activeTab === 'skills' && <SkillsTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'shopify' && <ShopifyTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'apps' && <AppsTab key={refreshKey} onSaved={flash} onError={flashError} />}
+        {activeTab === 'articles' && <ArticlesTab key={refreshKey} onSaved={flash} onError={flashError} />}
         {activeTab === 'data' && <DataTab onRefresh={() => setRefreshKey((k) => k + 1)} />}
       </div>
     </div>
@@ -934,6 +937,110 @@ function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onErro
             <div className="flex items-center gap-2">
               <Btn small onClick={() => { setEditing(app.id); setForm({ ...app, features: app.features.join(', ') }) }}>Edit</Btn>
               <Btn small variant="danger" onClick={() => remove(app.id)}>Delete</Btn>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Articles Tab
+// ============================================================
+function ArticlesTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
+  const [items, setItems] = useState<Article[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ title: '', slug: '', excerpt: '', content: '', category: 'shopify' as Article['category'], tags: '', publishedAt: new Date().toISOString().split('T')[0], readTime: '5 min read', featured: false })
+
+  useEffect(() => { setItems(getArticles()) }, [])
+
+  const startNew = () => {
+    setEditing(null)
+    setForm({ title: '', slug: '', excerpt: '', content: '', category: 'shopify', tags: '', publishedAt: new Date().toISOString().split('T')[0], readTime: '5 min read', featured: false })
+  }
+
+  const save = () => {
+    try {
+      const data = { ...form, tags: form.tags.split(',').map((s) => s.trim()).filter(Boolean) }
+      if (editing) {
+        updateArticle(editing, data)
+      } else {
+        addArticle(data)
+      }
+      setItems(getArticles())
+      startNew()
+      setEditing(null)
+      onSaved()
+    } catch (err) {
+      onError('Save failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }
+
+  const remove = (id: string) => {
+    deleteArticle(id)
+    setItems(getArticles())
+    onSaved()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Articles</h2>
+        <Btn onClick={startNew}>+ New Article</Btn>
+      </div>
+
+      {editing !== null || form.title ? (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} />
+            <Field label="Slug (URL-friendly)" value={form.slug} onChange={(v) => setForm({ ...form, slug: v })} />
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/40 font-medium">Category</label>
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value as Article['category'] })} className="w-full px-3 py-2 rounded-lg bg-dark-900 border border-white/[0.06] text-white text-sm">
+                <option value="shopify">Shopify</option>
+                <option value="wordpress">WordPress</option>
+                <option value="app">App</option>
+                <option value="web">Web</option>
+              </select>
+            </div>
+            <Field label="Read Time" value={form.readTime} onChange={(v) => setForm({ ...form, readTime: v })} />
+            <Field label="Published Date" value={form.publishedAt} onChange={(v) => setForm({ ...form, publishedAt: v })} />
+            <Field label="Tags (comma separated)" value={form.tags} onChange={(v) => setForm({ ...form, tags: v })} />
+          </div>
+          <Field label="Excerpt" value={form.excerpt} onChange={(v) => setForm({ ...form, excerpt: v })} rows={2} />
+          <div className="space-y-1.5">
+            <label className="text-xs text-white/40 font-medium">Content (Markdown)</label>
+            <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={12} className="w-full px-3 py-2 rounded-lg bg-dark-900 border border-white/[0.06] text-white text-sm font-mono resize-y" placeholder="Write article content in markdown..." />
+          </div>
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">
+              <input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} className="rounded border-white/20" />
+              Featured on homepage
+            </label>
+          </div>
+          <div className="flex gap-3">
+            <Btn onClick={save}>{editing ? 'Update' : 'Publish'} Article</Btn>
+            <Btn variant="ghost" onClick={() => { startNew(); setEditing(null) }}>Cancel</Btn>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="space-y-3">
+        {items.map((article) => (
+          <div key={article.id} className="flex items-center justify-between p-4 rounded-xl border border-white/[0.04] bg-white/[0.015]">
+            <div className="flex items-center gap-3">
+              <div>
+                <div className="text-sm font-medium text-white/80">{article.title}</div>
+                <div className="text-xs text-white/30">{article.category} · {article.readTime} · {article.publishedAt}</div>
+              </div>
+              {article.featured && (
+                <span className="px-2 py-0.5 text-[9px] font-mono uppercase bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 rounded">Featured</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <Btn small onClick={() => { setEditing(article.id); setForm({ ...article, tags: article.tags.join(', ') }) }}>Edit</Btn>
+              <Btn small variant="danger" onClick={() => remove(article.id)}>Delete</Btn>
             </div>
           </div>
         ))}
