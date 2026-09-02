@@ -81,8 +81,8 @@ export default function Hero() {
 
   const annotations = [
     { label: 'STATUS', value: 'available for hire', color: '#4ade80' },
-    { label: 'STACK', value: 'WordPress · Shopify · Performance', color: '#00d4e8' },
-    { label: 'LATEST', value: 'lighthouse 96/100', color: '#f59e0b' },
+    { label: 'STACK', value: 'WP · Shopify · Perf', color: '#00d4e8' },
+    { label: 'BUILD', value: 'next build ✓ 1.2s', color: '#f59e0b' },
   ]
 
   return (
@@ -177,17 +177,17 @@ export default function Hero() {
                   </div>
                 </div>
 
-                {/* Photo area */}
-                <div className="relative aspect-[4/5] w-[320px] sm:w-[360px] lg:w-[400px] overflow-hidden">
+                {/* Photo area — contained inside frame with padding */}
+                <div className="relative aspect-[4/5] w-[320px] sm:w-[360px] lg:w-[400px] p-3 overflow-hidden">
                 {profile.heroPhoto ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={profile.heroPhoto}
                     alt={profile.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover rounded-xl object-top"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-500/10 via-dark-950 to-dark-900">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-500/10 via-dark-950 to-dark-900 rounded-xl">
                       <span className="text-6xl font-bold text-white/10">
                         {profile.name
                           .split(' ')
@@ -208,24 +208,26 @@ export default function Hero() {
                   />
                 </div>
 
-                {/* Terminal-style bottom bar */}
+                {/* Terminal-style bottom bar — new info, not redundant */}
                 <div className="px-5 py-3 border-t border-white/[0.06] bg-[#161b22]">
-                  <div className="flex items-center gap-2 font-mono text-[11px]">
-                    <span className="text-emerald-400">❯</span>
-                    <span className="text-white/40">
-                      echo $ROLE
-                    </span>
+                  <div className="flex items-center justify-between font-mono text-[11px]">
+                    <div className="flex items-center gap-2">
+                      <span className="text-emerald-400">❯</span>
+                      <span className="text-white/40">deploy --status</span>
+                    </div>
+                    <span className="text-emerald-400">● live</span>
                   </div>
-                  <div className="font-mono text-[11px] mt-1 ml-4">
-                    <span className="text-cyan-400/70">
-                      WordPress &amp; Shopify Developer
-                    </span>
+                  <div className="flex items-center gap-2 font-mono text-[11px] mt-1">
+                    <span className="text-white/25">$</span>
+                    <span className="text-white/40">next build</span>
+                    <span className="text-emerald-400">✓</span>
+                    <span className="text-cyan-400/60">1.2s</span>
                   </div>
                 </div>
               </div>
 
-              {/* Terminal annotations floating beside the frame */}
-              <div className="absolute -left-8 sm:-left-12 top-1/4 space-y-4">
+              {/* Terminal annotations floating far left of frame */}
+              <div className="absolute -left-20 sm:-left-28 lg:-left-36 top-[15%] space-y-3">
                 {annotations.map((ann, i) => (
                   <div
                     key={ann.label}
@@ -234,12 +236,12 @@ export default function Hero() {
                     }}
                     className="hidden sm:block"
                   >
-                    <div className="bg-[#0d1117]/80 backdrop-blur-sm border border-white/[0.06] rounded-lg px-3 py-2">
+                    <div className="bg-[#0d1117]/80 backdrop-blur-sm border border-white/[0.06] rounded-lg px-3 py-2 w-[160px]">
                       <div className="text-[9px] font-mono text-white/25 uppercase tracking-wider">
                         {ann.label}
                       </div>
                       <div
-                        className="text-[10px] font-mono mt-0.5"
+                        className="text-[10px] font-mono mt-0.5 truncate"
                         style={{ color: ann.color }}
                       >
                         {ann.value}
