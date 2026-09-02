@@ -24,8 +24,8 @@ const categoryLabels: Record<string, string> = {
 }
 
 // Pre-compute positions outside component (pure math, no React)
-const ORBITAL_RADIUS = 37 // % from center for nodes
-const BORDER_RADIUS = 47 // % from center for neon border
+const ORBITAL_RADIUS = 40 // % from center for nodes
+const BORDER_RADIUS = 40 // same as orbital — border passes through nodes
 const NUM_SKILLS = 18 // match default skill count
 
 const positions = Array.from({ length: NUM_SKILLS }, (_, i) => {
@@ -33,8 +33,6 @@ const positions = Array.from({ length: NUM_SKILLS }, (_, i) => {
   return {
     x: 50 + Math.cos(angle) * ORBITAL_RADIUS,
     y: 50 + Math.sin(angle) * ORBITAL_RADIUS,
-    bx: 50 + Math.cos(angle) * BORDER_RADIUS,
-    by: 50 + Math.sin(angle) * BORDER_RADIUS,
   }
 })
 
@@ -113,14 +111,18 @@ export default function Technology() {
         {/* Desktop: Orbital Map — forced square */}
         <div className="relative mx-auto hidden md:block" style={{ width: 'min(620px, 80vw)', aspectRatio: '1 / 1' }}>
 
-          {/* ===== NEON BORDER RING ===== */}
+          {/* ===== NEON BORDER RING (at node radius) ===== */}
           <div
             className="absolute rounded-full"
             style={{
-              inset: '2%',
-              border: '1px solid rgba(0, 212, 232, 0.25)',
+              width: `${(100 - ORBITAL_RADIUS * 2)}%`,
+              height: `${(100 - ORBITAL_RADIUS * 2)}%`,
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              border: '1.5px solid rgba(0, 212, 232, 0.3)',
               boxShadow:
-                '0 0 20px rgba(0, 212, 232, 0.08), inset 0 0 20px rgba(0, 212, 232, 0.04)',
+                '0 0 20px rgba(0, 212, 232, 0.1), inset 0 0 20px rgba(0, 212, 232, 0.05)',
             }}
           />
 
@@ -147,7 +149,7 @@ export default function Technology() {
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
             >
-              {nodeData.map(({ skill, x, y, bx, by }) => {
+              {nodeData.map(({ skill, x, y }) => {
                 const color = categoryColors[skill.category] || '#ffffff'
                 const isHovered = hoveredSkill === skill.name
                 const isCore = skill.category === 'core'
@@ -157,8 +159,8 @@ export default function Technology() {
                     key={skill.name}
                     x1="50"
                     y1="50"
-                    x2={isHovered ? bx : x}
-                    y2={isHovered ? by : y}
+                    x2={x}
+                    y2={y}
                     stroke={
                       isHovered ? color : `${color}${isCore ? '25' : '10'}`
                     }
