@@ -78,12 +78,21 @@ export default function Technology() {
     {} as Record<string, typeof skills>
   )
 
-  const coreSkills = skills.filter((s) => s.category === 'core')
-  const frontendSkills = skills.filter((s) => s.category === 'frontend')
-  const toolsSkills = skills.filter(
-    (s) => s.category === 'tools' || s.category === 'platforms'
-  )
-  const allSkills = [...coreSkills, ...frontendSkills, ...toolsSkills]
+  // Interleave categories for even distribution around the circle
+  const byCategory = {
+    core: skills.filter((s) => s.category === 'core'),
+    frontend: skills.filter((s) => s.category === 'frontend'),
+    tools: skills.filter((s) => s.category === 'tools' || s.category === 'platforms'),
+    backend: skills.filter((s) => s.category === 'backend'),
+  }
+  const allSkills: typeof skills = []
+  const maxLen = Math.max(...Object.values(byCategory).map((a) => a.length))
+  const catOrder: (keyof typeof byCategory)[] = ['core', 'frontend', 'tools', 'backend']
+  for (let i = 0; i < maxLen; i++) {
+    for (const cat of catOrder) {
+      if (byCategory[cat][i]) allSkills.push(byCategory[cat][i])
+    }
+  }
 
   // Use only as many positions as we have skills
   const nodeData = allSkills.map((skill, i) => ({
