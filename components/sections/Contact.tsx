@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Mail, Share2, Code } from 'lucide-react'
+import { getProfile } from '@/lib/store'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -12,6 +13,7 @@ export default function Contact() {
   const titleRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const profile = getProfile()
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -97,16 +99,30 @@ export default function Contact() {
       />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Title - Editorial */}
-        <div ref={titleRef} className="mb-24 lg:mb-32 max-w-4xl space-y-6">
-          <span className="text-xs font-bold text-cyan-400/80 uppercase tracking-[0.2em] block">Let's Connect</span>
-          <h2 className="text-5xl lg:text-6xl font-black leading-[1.1] tracking-[-0.02em]">
-            <div data-line>Have an idea?</div>
-            <div data-line className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
-              Let's build it.
+        {/* Title - Editorial with secondary photo */}
+        <div ref={titleRef} className="mb-20 lg:mb-28 max-w-4xl">
+          <span className="text-xs font-bold text-cyan-400/80 uppercase tracking-[0.2em] block mb-6">Let's Connect</span>
+          <div className="flex items-end gap-6">
+            {profile.photo ? (
+              <div className="hidden sm:block flex-shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={profile.photo}
+                  alt={profile.name}
+                  className="w-16 h-16 lg:w-20 lg:h-20 rounded-xl object-cover border border-white/[0.06] shadow-lg"
+                />
+              </div>
+            ) : null}
+            <div>
+              <h2 className="text-5xl lg:text-6xl font-black leading-[1.1] tracking-[-0.02em]">
+                <div data-line>Have an idea?</div>
+                <div data-line className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+                  Let's build it.
+                </div>
+              </h2>
             </div>
-          </h2>
-          <p className="text-lg text-white/50 font-light leading-relaxed max-w-2xl pt-4">
+          </div>
+          <p className="text-lg text-white/50 font-light leading-relaxed max-w-2xl mt-6">
             Whether it's a website, Shopify store, WordPress project, or performance optimization—I'm ready to help bring your vision to life.
           </p>
         </div>

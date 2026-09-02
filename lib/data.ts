@@ -255,6 +255,22 @@ export const testimonials: Testimonial[] = [
     company: 'Project Client',
     projectType: 'eCommerce Development',
   },
+  {
+    id: 'testimonial-4',
+    quote: 'Al Amin delivered our Shopify store on time with exceptional attention to detail. The checkout conversion improved by 40% after his optimizations.',
+    author: 'Sarah K.',
+    role: 'E-commerce Manager',
+    company: 'Retail Client',
+    projectType: 'Shopify Development',
+  },
+  {
+    id: 'testimonial-5',
+    quote: 'Technical SEO audit was thorough and actionable. Our organic traffic grew 60% within 3 months of implementing the recommendations.',
+    author: 'David M.',
+    role: 'Marketing Director',
+    company: 'Agency Client',
+    projectType: 'Technical SEO',
+  },
 ]
 
 // ============================================================

@@ -4,7 +4,6 @@ import Hero from '@/components/hero/Hero'
 import Navigation from '@/components/navigation/Navigation'
 import Intro from '@/components/sections/Intro'
 import Metrics from '@/components/sections/Metrics'
-import Capabilities from '@/components/sections/Capabilities'
 import Services from '@/components/sections/Services'
 import FeaturedWork from '@/components/sections/FeaturedWork'
 import ShopifyFeatures from '@/components/sections/ShopifyFeatures'
@@ -24,7 +23,6 @@ export default function Home() {
       <Hero />
       <Intro />
       <Metrics />
-      <Capabilities />
       <Services />
       <FeaturedWork />
       <ShopifyFeatures />

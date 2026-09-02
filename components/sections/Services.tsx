@@ -74,10 +74,10 @@ export default function Services() {
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white">SERVICES</h2>
       </div>
 
-      {/* Horizontal scroll track */}
+      {/* Horizontal scroll track — extra right padding to prevent edge crop */}
       <div
         ref={scrollRef}
-        className="flex flex-nowrap h-full items-center gap-6 md:gap-8 pl-6 lg:pl-12 pr-24"
+        className="flex flex-nowrap h-full items-center gap-6 md:gap-8 pl-6 lg:pl-12 pr-32 md:pr-48"
         style={{ paddingTop: '80px' }}
       >
         {services.map((service, i) => {
@@ -133,8 +133,8 @@ export default function Services() {
           )
         })}
 
-        {/* End spacer */}
-        <div className="w-12 flex-shrink-0" />
+        {/* End spacer — generous to prevent last card being cropped */}
+        <div className="w-24 flex-shrink-0" />
       </div>
     </section>
   )
