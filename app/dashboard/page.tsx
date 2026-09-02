@@ -191,13 +191,13 @@ function Btn({ children, onClick, variant = 'primary', small }: {
 function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
   const [items, setItems] = useState<Project[]>([])
   const [editing, setEditing] = useState<string | null>(null)
-  const [form, setForm] = useState({ title: '', category: '', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [] as string[] })
+  const [form, setForm] = useState({ title: '', category: '', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [] as string[], selected: false })
 
   useEffect(() => { setItems(getProjects()) }, [])
 
   const startNew = () => {
     setEditing('new')
-    setForm({ title: '', category: 'WordPress', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [] })
+    setForm({ title: '', category: 'WordPress', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [], selected: false })
   }
 
   const saveItem = () => {
@@ -253,6 +253,17 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
             <Field label="Color" value={form.color} onChange={(v) => setForm({ ...form, color: v })} type="color" />
             <Field label="Live URL" value={form.liveUrl} onChange={(v) => setForm({ ...form, liveUrl: v })} />
             <Field label="Technologies (comma-separated)" value={form.technologies} onChange={(v) => setForm({ ...form, technologies: v })} />
+          </div>
+          <div className="flex items-center gap-3">
+            <label className="text-xs text-white/40 font-medium">Featured on Homepage</label>
+            <button
+              type="button"
+              onClick={() => setForm({ ...form, selected: !form.selected })}
+              className={`relative w-10 h-5 rounded-full transition-colors ${form.selected ? 'bg-cyan-500' : 'bg-white/[0.08]'}`}
+            >
+              <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${form.selected ? 'left-5.5 translate-x-0' : 'left-0.5'}`} style={{ left: form.selected ? '22px' : '2px' }} />
+            </button>
+            <span className="text-[10px] text-white/25">{form.selected ? 'Shows on homepage (max 4)' : 'Hidden from homepage'}</span>
           </div>
           <Field label="Short Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={2} />
           <Field label="Long Description" value={form.longDescription} onChange={(v) => setForm({ ...form, longDescription: v })} rows={3} />
@@ -314,7 +325,10 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
               <div className="text-sm font-medium text-white/80 truncate">{p.title}</div>
               <div className="text-xs text-white/30">{p.category} · {p.year}</div>
             </div>
-            <Btn small onClick={() => { setEditing(p.id); setForm({ ...p, technologies: p.technologies.join(', '), screenshots: p.screenshots || [] }) }}>Edit</Btn>
+            {p.selected && (
+              <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">Featured</span>
+            )}
+            <Btn small onClick={() => { setEditing(p.id); setForm({ ...p, technologies: p.technologies.join(', '), screenshots: p.screenshots || [], selected: p.selected || false }) }}>Edit</Btn>
             {p.screenshots && p.screenshots.length > 0 && (
               <div className="flex gap-0.5">
                 {p.screenshots.slice(0, 3).map((src, idx) => (

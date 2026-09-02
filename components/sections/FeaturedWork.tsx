@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Link from 'next/link'
 import { getProjects } from '@/lib/store'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, ArrowRight } from 'lucide-react'
 import ProjectModal from './ProjectModal'
 import type { Project } from '@/lib/data'
 
@@ -19,7 +20,8 @@ function fixUrl(url: string): string {
 export default function FeaturedWork() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const panelsRef = useRef<(HTMLDivElement | null)[]>([])
-  const projects = getProjects()
+  const allProjects = getProjects()
+  const selectedProjects = allProjects.filter((p) => p.selected).slice(0, 4)
   const [modalProject, setModalProject] = useState<Project | null>(null)
 
   useEffect(() => {
@@ -87,156 +89,95 @@ export default function FeaturedWork() {
 
           {/* Projects */}
           <div className="flex flex-col gap-16 md:gap-24">
-            {projects.map((project, i) => {
+            {selectedProjects.map((project, i) => {
               const isReversed = i % 2 !== 0
-              const isLast = i === projects.length - 1
 
               return (
                 <div
                   key={project.id}
                   ref={(el) => { panelsRef.current[i] = el }}
-                  className={`${
-                    isLast ? 'space-y-8' : 'grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center'
-                  }`}
+                  className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
                 >
-                  {/* Regular projects */}
-                  {!isLast && (
-                    <>
-                      <div className={`lg:col-span-7 ${isReversed ? 'lg:order-2' : ''} project-image`}>
-                        <div className="cursor-pointer" onClick={() => setModalProject(project)}>
-                          <BrowserFrame project={project} />
-                        </div>
+                  <div className={`lg:col-span-7 ${isReversed ? 'lg:order-2' : ''} project-image`}>
+                    <div className="cursor-pointer" onClick={() => setModalProject(project)}>
+                      <BrowserFrame project={project} />
+                    </div>
+                  </div>
+
+                  <div className={`lg:col-span-5 ${isReversed ? 'lg:order-1' : ''} flex flex-col gap-6`}>
+                    <div className="project-content">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span
+                          className="px-3 py-1 text-xs font-mono rounded-full border"
+                          style={{
+                            color: project.color,
+                            borderColor: `${project.color}40`,
+                            background: `${project.color}10`,
+                          }}
+                        >
+                          {project.category}
+                        </span>
+                        <span className="text-[0.625rem] text-white/25 uppercase tracking-[0.15em] font-medium">
+                          {project.year}
+                        </span>
                       </div>
 
-                      <div className={`lg:col-span-5 ${isReversed ? 'lg:order-1' : ''} flex flex-col gap-6`}>
-                        <div className="project-content">
-                          <div className="flex items-center gap-3 mb-4">
-                            <span
-                              className="px-3 py-1 text-xs font-mono rounded-full border"
-                              style={{
-                                color: project.color,
-                                borderColor: `${project.color}40`,
-                                background: `${project.color}10`,
-                              }}
-                            >
-                              {project.category}
-                            </span>
-                            <span className="text-[0.625rem] text-white/25 uppercase tracking-[0.15em] font-medium">
-                              {project.year}
-                            </span>
-                          </div>
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-white mb-4">
+                        {project.title}
+                      </h3>
 
-                          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-white mb-4">
-                            {project.title}
-                          </h3>
+                      <p className="text-white/50 text-base leading-relaxed mb-6 max-w-[420px] font-light">
+                        {project.description}
+                      </p>
 
-                          <p className="text-white/50 text-base leading-relaxed mb-6 max-w-[420px] font-light">
-                            {project.description}
-                          </p>
-
-                          <div className="flex flex-wrap gap-2 mb-6">
-                            {project.technologies.map((tech) => (
-                              <span
-                                key={tech}
-                                className="px-2.5 py-1 text-[10px] font-mono bg-white/[0.03] border border-white/[0.04] rounded text-white/30"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="project-meta flex items-center gap-4">
-                          <button
-                            onClick={() => setModalProject(project)}
-                            className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:gap-3 transition-all duration-300"
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {project.technologies.map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2.5 py-1 text-[10px] font-mono bg-white/[0.03] border border-white/[0.04] rounded text-white/30"
                           >
-                            View Project
-                            <ArrowUpRight size={14} />
-                          </button>
-                          <a
-                            href={fixUrl(project.liveUrl)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-sm font-semibold text-white/30 hover:text-white/60 transition-all duration-300"
-                          >
-                            Live Site
-                            <ArrowUpRight size={12} />
-                          </a>
-                        </div>
+                            {tech}
+                          </span>
+                        ))}
                       </div>
-                    </>
-                  )}
+                    </div>
 
-                  {/* Last project: full-width */}
-                  {isLast && (
-                    <>
-                      <div className="project-image">
-                        <div className="cursor-pointer" onClick={() => setModalProject(project)}>
-                          <BrowserFrame project={project} fullWidth />
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col items-center text-center gap-6">
-                        <div className="project-content">
-                          <div className="flex items-center justify-center gap-3 mb-4">
-                            <span
-                              className="px-3 py-1 text-xs font-mono rounded-full border"
-                              style={{
-                                color: project.color,
-                                borderColor: `${project.color}40`,
-                                background: `${project.color}10`,
-                              }}
-                            >
-                              {project.category}
-                            </span>
-                            <span className="text-[0.625rem] text-white/25 uppercase tracking-[0.15em] font-medium">
-                              {project.year}
-                            </span>
-                          </div>
-                          <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4">
-                            {project.title}
-                          </h3>
-                          <p className="text-white/50 text-base leading-relaxed max-w-[600px] mx-auto mb-6 font-light">
-                            {project.description}
-                          </p>
-                          <div className="flex flex-wrap justify-center gap-2 mb-6">
-                            {project.technologies.map((tech) => (
-                              <span
-                                key={tech}
-                                className="px-2.5 py-1 text-[10px] font-mono bg-white/[0.03] border border-white/[0.04] rounded text-white/30"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="project-meta flex items-center justify-center gap-4">
-                          <button
-                            onClick={() => setModalProject(project)}
-                            className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:gap-3 transition-all duration-300"
-                          >
-                            View Project
-                            <ArrowUpRight size={14} />
-                          </button>
-                          <a
-                            href={fixUrl(project.liveUrl)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-sm font-semibold text-white/30 hover:text-white/60 transition-all duration-300"
-                          >
-                            Live Site
-                            <ArrowUpRight size={12} />
-                          </a>
-                        </div>
-                      </div>
-                    </>
-                  )}
+                    <div className="project-meta flex items-center gap-4">
+                      <button
+                        onClick={() => setModalProject(project)}
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:gap-3 transition-all duration-300"
+                      >
+                        View Project
+                        <ArrowUpRight size={14} />
+                      </button>
+                      <a
+                        href={fixUrl(project.liveUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-white/30 hover:text-white/60 transition-all duration-300"
+                      >
+                        Live Site
+                        <ArrowUpRight size={12} />
+                      </a>
+                    </div>
+                  </div>
                 </div>
               )
             })}
           </div>
+
+          {/* Explore More button */}
+          {allProjects.length > 4 && (
+            <div className="mt-16 md:mt-24 flex justify-center">
+              <Link
+                href="/projects"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl border border-white/[0.08] bg-white/[0.02] text-white/60 hover:text-white hover:bg-white/[0.05] hover:border-white/[0.15] transition-all duration-300"
+              >
+                <span className="text-sm font-semibold uppercase tracking-wider">Explore More Projects</span>
+                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 

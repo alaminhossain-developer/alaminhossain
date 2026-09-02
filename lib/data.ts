@@ -13,6 +13,7 @@ export interface Project {
   liveUrl: string
   color: string
   screenshots: string[]
+  selected: boolean
 }
 
 export const projects: Project[] = [
@@ -28,6 +29,7 @@ export const projects: Project[] = [
     liveUrl: '#',
     color: '#0ea5e9',
     screenshots: [],
+    selected: true,
   },
   {
     id: 'project-2',
@@ -41,6 +43,7 @@ export const projects: Project[] = [
     liveUrl: '#',
     color: '#22c55e',
     screenshots: [],
+    selected: true,
   },
   {
     id: 'project-3',
@@ -54,6 +57,7 @@ export const projects: Project[] = [
     liveUrl: '#',
     color: '#f59e0b',
     screenshots: [],
+    selected: true,
   },
   {
     id: 'project-4',
@@ -67,6 +71,7 @@ export const projects: Project[] = [
     liveUrl: '#',
     color: '#8b5cf6',
     screenshots: [],
+    selected: true,
   },
 ]
 
