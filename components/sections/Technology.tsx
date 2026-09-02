@@ -190,7 +190,7 @@ export default function Technology() {
                   onMouseEnter={() => setHoveredSkill(skill.name)}
                   onMouseLeave={() => setHoveredSkill(null)}
                 >
-                  {/* Counter-rotate to keep text horizontal */}
+                  {/* Counter-rotate to keep text always horizontal */}
                   <div style={{ animation: 'node-counter-spin 90s linear infinite' }}>
                     <div
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 ${
@@ -200,8 +200,6 @@ export default function Technology() {
                         backgroundColor: isHovered ? `${color}20` : '#0a0e27',
                         borderColor: isHovered ? color : `${color}30`,
                         boxShadow: isHovered ? `0 0 16px ${color}25` : 'none',
-                        animation: `node-self-spin ${10 + (x % 5)}s linear infinite`,
-                        animationPlayState: isHovered ? 'paused' : 'running',
                       }}
                     >
                       <span
@@ -309,10 +307,7 @@ export default function Technology() {
           from { transform: rotate(0deg); }
           to { transform: rotate(-360deg); }
         }
-        @keyframes node-self-spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
+
       `}</style>
     </section>
   )
