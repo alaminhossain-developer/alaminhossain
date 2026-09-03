@@ -360,6 +360,7 @@ export const metrics: Metric[] = [
 export interface App {
   id: string
   name: string
+  slug: string
   tagline: string
   description: string
   status: 'live' | 'development' | 'planned'
@@ -367,12 +368,14 @@ export interface App {
   icon: string
   color: string
   features: string[]
+  images: string[]
 }
 
 export const apps: App[] = [
   {
     id: 'app-1',
     name: 'AI Store Doctor',
+    slug: 'ai-store-doctor',
     tagline: 'Your Shopify store, diagnosed by AI',
     description: 'AI-powered Shopify store audit tool that analyzes your store and provides actionable recommendations to improve performance, SEO, and conversions.',
     status: 'development',
@@ -380,6 +383,7 @@ export const apps: App[] = [
     icon: '🤖',
     color: '#00d4e8',
     features: ['AI-powered audit', 'Performance analysis', 'SEO recommendations', 'Conversion optimization'],
+    images: [],
   },
 ]
 

@@ -856,13 +856,13 @@ function ShopifyTab({ onSaved }: { onSaved: () => void }) {
 function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
   const [items, setItems] = useState<App[]>([])
   const [editing, setEditing] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', tagline: '', description: '', status: 'development' as App['status'], url: '', icon: '🚀', color: '#00d4e8', features: '' })
+  const [form, setForm] = useState({ name: '', slug: '', tagline: '', description: '', status: 'development' as App['status'], url: '', icon: '🚀', color: '#00d4e8', features: '', images: [] as string[] })
 
   useEffect(() => { setItems(getApps()) }, [])
 
   const startNew = () => {
     setEditing(null)
-    setForm({ name: '', tagline: '', description: '', status: 'development', url: '', icon: '🚀', color: '#00d4e8', features: '' })
+    setForm({ name: '', slug: '', tagline: '', description: '', status: 'development', url: '', icon: '🚀', color: '#00d4e8', features: '', images: [] })
   }
 
   const save = () => {
@@ -899,6 +899,7 @@ function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onErro
         <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Field label="App Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+            <Field label="Slug (URL-friendly)" value={form.slug} onChange={(v) => setForm({ ...form, slug: v })} />
             <Field label="Tagline" value={form.tagline} onChange={(v) => setForm({ ...form, tagline: v })} />
             <Field label="URL" value={form.url} onChange={(v) => setForm({ ...form, url: v })} />
             <Field label="Icon (emoji)" value={form.icon} onChange={(v) => setForm({ ...form, icon: v })} />
@@ -914,6 +915,48 @@ function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onErro
           </div>
           <Field label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={2} />
           <Field label="Features (comma separated)" value={form.features} onChange={(v) => setForm({ ...form, features: v })} />
+
+          {/* Screenshots / Images */}
+          <div className="space-y-1.5">
+            <label className="text-xs text-white/40 font-medium">App Screenshots / Images</label>
+            <p className="text-[10px] text-white/25">Upload screenshots of your app. First image shows as the main preview. All show in the app detail page.</p>
+            {form.images.length > 0 && (
+              <p className="text-[10px] text-white/20">{form.images.length} image{form.images.length > 1 ? 's' : ''} — {getBase64Size(form.images.join(''))} total</p>
+            )}
+            <div className="flex flex-wrap gap-3 items-center">
+              {form.images.map((src, idx) => (
+                <div key={idx} className="relative group">
+                  <img src={src} alt={`Image ${idx + 1}`} className="h-16 w-28 object-cover rounded border border-white/[0.06]" />
+                  <span className="absolute top-0.5 left-1 text-[9px] bg-black/60 text-white/60 px-1 rounded">{idx + 1}</span>
+                  <span className="absolute bottom-0.5 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded">{getBase64Size(src)}</span>
+                  <button
+                    onClick={() => setForm({ ...form, images: form.images.filter((_, i) => i !== idx) })}
+                    className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[9px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >×</button>
+                </div>
+              ))}
+              <label className="flex items-center gap-2 px-4 py-3 rounded-lg border border-dashed border-white/[0.08] bg-white/[0.02] text-white/40 text-xs cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                Add Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    try {
+                      const compressed = await compressImage(file, 1200, 0.65)
+                      setForm({ ...form, images: [...form.images, compressed] })
+                    } catch (err) {
+                      alert('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                    }
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+
           <div className="flex gap-3">
             <Btn onClick={save}>{editing ? 'Update' : 'Add'} App</Btn>
             <Btn variant="ghost" onClick={() => { startNew(); setEditing(null) }}>Cancel</Btn>
@@ -935,7 +978,15 @@ function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onErro
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Btn small onClick={() => { setEditing(app.id); setForm({ ...app, features: app.features.join(', ') }) }}>Edit</Btn>
+              {app.images && app.images.length > 0 && (
+                <div className="flex gap-0.5">
+                  {app.images.slice(0, 3).map((src, idx) => (
+                    <div key={idx} className="w-6 h-4 rounded overflow-hidden border border-white/[0.06]"><img src={src} alt="" className="w-full h-full object-cover" /></div>
+                  ))}
+                  {app.images.length > 3 && <span className="text-[9px] text-white/25 self-center">+{app.images.length - 3}</span>}
+                </div>
+              )}
+              <Btn small onClick={() => { setEditing(app.id); setForm({ ...app, features: app.features.join(', '), images: app.images || [] }) }}>Edit</Btn>
               <Btn small variant="danger" onClick={() => remove(app.id)}>Delete</Btn>
             </div>
           </div>

@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getApps } from '@/lib/store'
-import { ExternalLink, ArrowUpRight } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowRight, ExternalLink, ArrowUpRight } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -51,18 +52,26 @@ export default function Apps() {
     <section ref={sectionRef} className="relative py-16 lg:py-24 px-6" id="apps">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-8 h-px bg-[#22c55e]" />
-          <span className="text-xs text-[#22c55e] uppercase tracking-[0.12em] font-medium">
-            Apps &amp; Tools
-          </span>
+        <div className="flex items-center justify-between mb-12 lg:mb-16">
+          <div>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-8 h-px bg-[#22c55e]" />
+              <span className="text-xs text-[#22c55e] uppercase tracking-[0.12em] font-medium">
+                Apps &amp; Tools
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] text-white">
+              MY APPS
+            </h2>
+          </div>
+          <Link
+            href="/apps"
+            className="hidden md:inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/[0.08] bg-white/[0.02] text-white/60 hover:text-white hover:bg-white/[0.05] hover:border-white/[0.15] transition-all duration-300 text-sm font-semibold"
+          >
+            View All
+            <ArrowRight size={14} />
+          </Link>
         </div>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-4 text-white">
-          MY APPS
-        </h2>
-        <p className="text-base text-white/40 font-light max-w-xl leading-relaxed mb-12 lg:mb-16">
-          Shopify apps and developer tools I&apos;m building to help merchants and developers.
-        </p>
 
         {/* App cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -70,82 +79,132 @@ export default function Apps() {
             const status = statusConfig[app.status]
 
             return (
-              <div
+              <Link
                 key={app.id}
-                ref={(el) => { cardsRef.current[i] = el }}
-                className="group relative p-8 rounded-2xl border border-white/[0.04] hover:border-white/[0.08] bg-white/[0.01] hover:bg-white/[0.025] transition-all duration-500"
+                href={app.slug ? `/apps/${app.slug}` : '#'}
               >
-                {/* Top row: icon + status */}
-                <div className="flex items-start justify-between mb-5">
-                  <span className="text-3xl">{app.icon}</span>
-                  <span
-                    className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-full border"
-                    style={{
-                      color: status.color,
-                      backgroundColor: status.bg,
-                      borderColor: status.border,
-                    }}
-                  >
-                    {status.label}
-                  </span>
-                </div>
-
-                {/* Name + tagline */}
-                <h3 className="text-xl font-bold text-white mb-1.5 tracking-tight">
-                  {app.name}
-                </h3>
-                <p className="text-sm text-white/40 font-light mb-4 leading-relaxed">
-                  {app.tagline}
-                </p>
-
-                {/* Description */}
-                <p className="text-[0.8125rem] text-white/35 leading-relaxed mb-5 font-light">
-                  {app.description}
-                </p>
-
-                {/* Features */}
-                {app.features.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mb-6">
-                    {app.features.map((feature) => (
-                      <span
-                        key={feature}
-                        className="px-2.5 py-1 text-[10px] font-mono bg-white/[0.03] border border-white/[0.04] rounded text-white/30"
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* CTA */}
-                {app.url ? (
-                  <a
-                    href={app.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-300"
-                    style={{ color: app.color }}
-                  >
-                    {app.status === 'live' ? 'Visit App' : 'Learn More'}
-                    <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </a>
-                ) : (
-                  <span className="inline-flex items-center gap-2 text-sm text-white/20 font-medium">
-                    <ExternalLink size={14} />
-                    Coming Soon
-                  </span>
-                )}
-
-                {/* Hover glow */}
                 <div
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                  style={{
-                    background: `linear-gradient(135deg, ${app.color}05, transparent)`,
-                  }}
-                />
-              </div>
+                  ref={(el) => { cardsRef.current[i] = el }}
+                  className="group relative p-6 rounded-2xl border border-white/[0.04] hover:border-white/[0.08] bg-white/[0.01] hover:bg-white/[0.025] transition-all duration-500 h-full flex flex-col"
+                >
+                  {/* Image preview */}
+                  {app.images && app.images.length > 0 ? (
+                    <div className="mb-4 rounded-xl overflow-hidden border border-white/[0.04] aspect-[16/10]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={app.images[0]}
+                        alt={`${app.name} screenshot`}
+                        className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex items-start justify-between mb-5">
+                      <span className="text-3xl">{app.icon}</span>
+                      <span
+                        className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-full border"
+                        style={{
+                          color: status.color,
+                          backgroundColor: status.bg,
+                          borderColor: status.border,
+                        }}
+                      >
+                        {status.label}
+                      </span>
+                    </div>
+                  )}
+
+                  {app.images && app.images.length > 0 && (
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-2xl">{app.icon}</span>
+                      <div className="flex items-center gap-2">
+                        {app.images.length > 1 && (
+                          <span className="text-[10px] text-white/25 font-mono">+{app.images.length - 1} more</span>
+                        )}
+                        <span
+                          className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider rounded-full border"
+                          style={{
+                            color: status.color,
+                            backgroundColor: status.bg,
+                            borderColor: status.border,
+                          }}
+                        >
+                          {status.label}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Name + tagline */}
+                  <h3 className="text-xl font-bold text-white mb-1.5 tracking-tight">
+                    {app.name}
+                  </h3>
+                  <p className="text-sm text-white/40 font-light mb-3 leading-relaxed">
+                    {app.tagline}
+                  </p>
+
+                  {/* Description */}
+                  <p className="text-[0.8125rem] text-white/35 leading-relaxed mb-5 font-light flex-1">
+                    {app.description}
+                  </p>
+
+                  {/* Features */}
+                  {app.features.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-5">
+                      {app.features.slice(0, 3).map((feature) => (
+                        <span
+                          key={feature}
+                          className="px-2.5 py-1 text-[10px] font-mono bg-white/[0.03] border border-white/[0.04] rounded text-white/30"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                      {app.features.length > 3 && (
+                        <span className="text-[9px] text-white/20 self-center">+{app.features.length - 3}</span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* CTA */}
+                  <div className="flex items-center justify-between pt-4 border-t border-white/[0.04]">
+                    {app.url ? (
+                      <span
+                        className="inline-flex items-center gap-2 text-sm font-semibold transition-all duration-300"
+                        style={{ color: app.color }}
+                      >
+                        {app.status === 'live' ? 'Visit App' : 'Learn More'}
+                        <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-2 text-sm text-white/20 font-medium">
+                        <ExternalLink size={14} />
+                        Coming Soon
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Hover glow */}
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{
+                      background: `linear-gradient(135deg, ${app.color}05, transparent)`,
+                    }}
+                  />
+                </div>
+              </Link>
             )
           })}
+        </div>
+
+        {/* Mobile View All */}
+        <div className="mt-8 flex justify-center md:hidden">
+          <Link
+            href="/apps"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/[0.08] bg-white/[0.02] text-white/60 hover:text-white hover:bg-white/[0.05] hover:border-white/[0.15] transition-all duration-300 text-sm font-semibold"
+          >
+            View All Apps
+            <ArrowRight size={14} />
+          </Link>
         </div>
       </div>
     </section>
