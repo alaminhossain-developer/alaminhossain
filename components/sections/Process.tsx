@@ -8,113 +8,114 @@ import { processSteps } from '@/lib/data'
 gsap.registerPlugin(ScrollTrigger)
 
 export default function Process() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const stepsRef = useRef<HTMLDivElement[]>([])
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const lineRef = useRef<HTMLDivElement>(null)
+  const stepsRef = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const title = containerRef.current?.querySelector('[data-title]')
-      if (title) {
+      // Animate the connecting line width on scroll
+      if (lineRef.current) {
         gsap.fromTo(
-          title,
-          { opacity: 0, y: 40 },
+          lineRef.current,
+          { scaleX: 0 },
           {
-            opacity: 1,
-            y: 0,
-            duration: 1,
+            scaleX: 1,
+            duration: 1.5,
             ease: 'power2.out',
             scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top 70%',
+              trigger: sectionRef.current,
+              start: 'top 65%',
             },
           }
         )
       }
 
-      const processContainer = containerRef.current?.querySelector('[data-process]')
-      if (processContainer) {
-        const totalWidth = (processContainer as HTMLElement).scrollWidth
-        const containerWidth = (containerRef.current as HTMLElement).offsetWidth
-        const scrollDistance = totalWidth - containerWidth
-
-        gsap.to(processContainer, {
-          x: -scrollDistance,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top center',
-            end: () => `+=${scrollDistance * 2}`,
-            scrub: 1.2,
-            pin: true,
-          },
-        })
-      }
-
-      stepsRef.current.forEach((step, index) => {
+      // Stagger each step in
+      stepsRef.current.forEach((step, i) => {
+        if (!step) return
         gsap.fromTo(
           step,
-          { opacity: 0, scale: 0.8 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
-            scale: 1,
-            duration: 0.6,
-            delay: index * 0.1,
-            ease: 'back.out',
+            y: 0,
+            duration: 0.7,
+            delay: 0.3 + i * 0.15,
+            ease: 'power2.out',
             scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top 60%',
+              trigger: sectionRef.current,
+              start: 'top 65%',
             },
           }
         )
       })
-    }, containerRef)
+    }, sectionRef)
 
     return () => ctx.revert()
   }, [])
 
   return (
-    <section ref={containerRef} className="relative py-16 lg:py-24 px-6">
+    <section ref={sectionRef} className="relative py-16 lg:py-24 px-6" id="process">
       <div className="max-w-7xl mx-auto">
-        {/* Title */}
-        <div data-title className="mb-10 lg:mb-14">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em]">
+        {/* Header */}
+        <div className="mb-14 lg:mb-20">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-8 h-px bg-cyan-400" />
+            <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">
+              Process
+            </span>
+          </div>
+          <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-[-0.03em] text-white">
             HOW I WORK
           </h2>
-          <p className="text-lg text-white/60 mt-4 max-w-2xl">
+          <p className="text-base lg:text-lg text-white/40 mt-4 max-w-2xl font-light">
             A systematic approach to delivering exceptional digital experiences
           </p>
         </div>
 
-        {/* Horizontal scrolling process */}
+        {/* Steps with connecting line */}
         <div className="relative">
-          <div
-            data-process
-            className="flex gap-8 lg:gap-12 pb-12 overflow-x-hidden"
-          >
-            {processSteps.map((step, index) => (
+          {/* Connecting line behind the dots */}
+          <div className="hidden lg:block absolute top-[28px] left-0 right-0 h-px">
+            <div
+              ref={lineRef}
+              className="w-full h-full bg-gradient-to-r from-cyan-400/30 via-cyan-400/15 to-cyan-400/30 origin-left"
+            />
+          </div>
+
+          {/* Steps grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
+            {processSteps.map((step, i) => (
               <div
                 key={step.number}
-                ref={(el) => {
-                  if (el) stepsRef.current[index] = el
-                }}
-                className="flex-shrink-0 w-80 space-y-4 group"
+                ref={(el) => { stepsRef.current[i] = el }}
+                className="relative group"
               >
-                <div className="glass rounded-2xl p-8 h-full border border-cyan-500/20 hover:border-cyan-500/50 hover:bg-dark-800/50 transition-all">
-                  {/* Number */}
-                  <div className="text-5xl font-bold text-cyan-400/20 group-hover:text-cyan-400/40 transition-colors mb-4">
-                    {step.number}
+                {/* Step indicator */}
+                <div className="flex items-center gap-4 mb-6">
+                  {/* Dot on the line */}
+                  <div className="relative z-10 shrink-0">
+                    <div className="w-3 h-3 rounded-full bg-cyan-400/40 border-2 border-cyan-400 group-hover:bg-cyan-400 group-hover:shadow-[0_0_12px_rgba(0,212,232,0.4)] transition-all duration-500" />
                   </div>
+                  {/* Large number */}
+                  <span className="text-5xl lg:text-6xl font-black text-white/[0.04] group-hover:text-cyan-400/10 transition-colors duration-500 leading-none select-none">
+                    {step.number}
+                  </span>
+                </div>
 
-                  {/* Title */}
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                {/* Content */}
+                <div className="pl-0 lg:pl-0">
+                  <h3 className="text-xl lg:text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-cyan-400 transition-colors duration-300">
                     {step.title}
                   </h3>
-
-                  {/* Description */}
-                  <p className="text-white/70 leading-relaxed">
+                  <p className="text-sm lg:text-base text-white/40 leading-relaxed font-light">
                     {step.description}
                   </p>
                 </div>
+
+                {/* Subtle bottom accent on hover */}
+                <div className="mt-6 h-px w-0 group-hover:w-full bg-gradient-to-r from-cyan-400/30 to-transparent transition-all duration-700" />
               </div>
             ))}
           </div>
