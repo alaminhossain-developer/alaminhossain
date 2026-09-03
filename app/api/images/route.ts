@@ -1,115 +1,87 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, readFile, mkdir } from 'fs/promises'
-import { existsSync } from 'fs'
-import path from 'path'
 import crypto from 'crypto'
 
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
-const INDEX_FILE = path.join(UPLOAD_DIR, '_index.json')
+const REPO = 'alaminhossain-developer/alaminhossain'
+const UPLOAD_DIR = 'public/uploads'
 
-async function ensureDir() {
-  if (!existsSync(UPLOAD_DIR)) {
-    await mkdir(UPLOAD_DIR, { recursive: true })
+function getHeaders() {
+  const token = process.env.GITHUB_TOKEN
+  return {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'User-Agent': 'portfolio-dashboard',
   }
 }
 
-async function getIndex(): Promise<Record<string, string>> {
+// Read _index.json from GitHub
+async function getRemoteIndex(): Promise<Record<string, string>> {
   try {
-    const data = await readFile(INDEX_FILE, 'utf-8')
-    return JSON.parse(data)
+    const res = await fetch(
+      `https://api.github.com/repos/${REPO}/contents/${UPLOAD_DIR}/_index.json`,
+      { headers: getHeaders() }
+    )
+    if (!res.ok) return {}
+    const data = await res.json()
+    const content = Buffer.from(data.content, 'base64').toString('utf-8')
+    return JSON.parse(content)
   } catch {
     return {}
   }
 }
 
-async function saveIndex(index: Record<string, string>) {
-  await writeFile(INDEX_FILE, JSON.stringify(index, null, 2))
+// Get default branch
+async function getDefaultBranch(): Promise<string> {
+  const res = await fetch(`https://api.github.com/repos/${REPO}`, {
+    headers: getHeaders(),
+  })
+  const data = await res.json()
+  return data.default_branch || 'main'
 }
 
-// Push image to GitHub via API (works on Vercel too)
-async function pushToGitHub(filename: string, buffer: Buffer, index: Record<string, string>) {
-  const token = process.env.GITHUB_TOKEN
-  const repo = process.env.GITHUB_REPO || 'alaminhossain-developer/alaminhossain'
-  
-  if (!token) {
-    console.error('GITHUB_TOKEN not set — skipping git push')
-    return
+// Create or update a file on GitHub
+async function upsertFile(
+  filepath: string,
+  content: string,
+  message: string,
+  branch: string,
+  sha?: string
+): Promise<boolean> {
+  const body: Record<string, unknown> = {
+    message,
+    content: Buffer.from(content).toString('base64'),
+    branch,
   }
+  if (sha) body.sha = sha
 
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-    'User-Agent': 'portfolio-dashboard',
-  }
-
-  try {
-    // 1. Get current commit SHA
-    const repoRes = await fetch(`https://api.github.com/repos/${repo}`, { headers })
-    const repoData = await repoRes.json()
-    const defaultBranch = repoData.default_branch || 'main'
-
-    // 2. Get the SHA of the file (or null if new)
-    let fileSha: string | undefined
-    try {
-      const fileRes = await fetch(
-        `https://api.github.com/repos/${repo}/contents/public/uploads/${filename}`,
-        { headers }
-      )
-      if (fileRes.ok) {
-        const fileData = await fileRes.json()
-        fileSha = fileData.sha
-      }
-    } catch {}
-
-    // 3. Upload image file
-    const imageRes = await fetch(
-      `https://api.github.com/repos/${repo}/contents/public/uploads/${filename}`,
-      {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({
-          message: `chore: upload image ${filename}`,
-          content: buffer.toString('base64'),
-          branch: defaultBranch,
-          ...(fileSha ? { sha: fileSha } : {}),
-        }),
-      }
-    )
-
-    if (!imageRes.ok) {
-      const err = await imageRes.text()
-      console.error('GitHub image upload failed:', err)
-      return
+  const res = await fetch(
+    `https://api.github.com/repos/${REPO}/contents/${filepath}`,
+    {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(body),
     }
+  )
 
-    // 4. Update _index.json
-    let indexSha: string | undefined
-    try {
-      const indexRes = await fetch(
-        `https://api.github.com/repos/${repo}/contents/public/uploads/_index.json`,
-        { headers }
-      )
-      if (indexRes.ok) {
-        const indexData = await indexRes.json()
-        indexSha = indexData.sha
-      }
-    } catch {}
+  if (!res.ok) {
+    const err = await res.text()
+    console.error(`GitHub upsert failed for ${filepath}:`, err)
+    return false
+  }
+  return true
+}
 
-    await fetch(
-      `https://api.github.com/repos/${repo}/contents/public/uploads/_index.json`,
-      {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({
-          message: `chore: update image index`,
-          content: Buffer.from(JSON.stringify(index, null, 2)).toString('base64'),
-          branch: defaultBranch,
-          ...(indexSha ? { sha: indexSha } : {}),
-        }),
-      }
+// Get SHA of existing file (or null)
+async function getFileSha(filepath: string, branch: string): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${REPO}/contents/${filepath}?ref=${branch}`,
+      { headers: getHeaders() }
     )
-  } catch (err) {
-    console.error('GitHub push error:', err)
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.sha || null
+  } catch {
+    return null
   }
 }
 
@@ -123,29 +95,47 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
+    const token = process.env.GITHUB_TOKEN
+    if (!token) {
+      return NextResponse.json({ error: 'GITHUB_TOKEN not configured' }, { status: 500 })
+    }
+
     const id = crypto.randomBytes(8).toString('hex')
     const ext = file.name.split('.').pop() || 'jpg'
     const filename = `${id}.${ext}`
 
     const buffer = Buffer.from(await file.arrayBuffer())
 
-    // Try saving to local filesystem (works locally)
-    try {
-      await ensureDir()
-      await writeFile(path.join(UPLOAD_DIR, filename), buffer)
-      const index = await getIndex()
-      index[id] = filename
-      await saveIndex(index)
-    } catch {}
-
-    // Always push to GitHub via API (works on Vercel too)
-    try {
-      const index = await getIndex()
-      index[id] = filename
-      await pushToGitHub(filename, buffer, index)
-    } catch (err) {
-      console.error('GitHub push failed:', err)
+    // Check file size — GitHub API limit is 1MB for content
+    if (buffer.length > 1000000) {
+      return NextResponse.json({ error: 'Image too large (max 1MB). Please compress first.' }, { status: 400 })
     }
+
+    const branch = await getDefaultBranch()
+
+    // 1. Upload image file to GitHub
+    const uploaded = await upsertFile(
+      `${UPLOAD_DIR}/${filename}`,
+      buffer.toString('base64'),
+      `chore: upload image ${filename}`,
+      branch
+    )
+
+    if (!uploaded) {
+      return NextResponse.json({ error: 'Failed to save image to GitHub' }, { status: 500 })
+    }
+
+    // 2. Update _index.json on GitHub
+    const index = await getRemoteIndex()
+    index[id] = filename
+    const indexSha = await getFileSha(`${UPLOAD_DIR}/_index.json`, branch)
+    await upsertFile(
+      `${UPLOAD_DIR}/_index.json`,
+      JSON.stringify(index, null, 2),
+      `chore: update image index for ${filename}`,
+      branch,
+      indexSha || undefined
+    )
 
     return NextResponse.json({
       id,
@@ -154,14 +144,18 @@ export async function POST(request: NextRequest) {
       size: file.size,
     })
   } catch (error) {
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+    console.error('Upload error:', error)
+    return NextResponse.json(
+      { error: 'Upload failed: ' + (error instanceof Error ? error.message : 'Unknown') },
+      { status: 500 }
+    )
   }
 }
 
 // GET /api/images — list all images
 export async function GET() {
   try {
-    const index = await getIndex()
+    const index = await getRemoteIndex()
     const images = Object.entries(index).map(([id, filename]) => ({
       id,
       url: `/uploads/${filename}`,

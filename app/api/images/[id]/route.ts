@@ -1,91 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { unlink, readFile, writeFile } from 'fs/promises'
-import { existsSync } from 'fs'
-import path from 'path'
 
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
-const INDEX_FILE = path.join(UPLOAD_DIR, '_index.json')
+const REPO = 'alaminhossain-developer/alaminhossain'
+const UPLOAD_DIR = 'public/uploads'
 
-async function getIndex(): Promise<Record<string, string>> {
+function getHeaders() {
+  const token = process.env.GITHUB_TOKEN
+  return {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'User-Agent': 'portfolio-dashboard',
+  }
+}
+
+async function getDefaultBranch(): Promise<string> {
+  const res = await fetch(`https://api.github.com/repos/${REPO}`, {
+    headers: getHeaders(),
+  })
+  const data = await res.json()
+  return data.default_branch || 'main'
+}
+
+async function getRemoteIndex(): Promise<Record<string, string>> {
   try {
-    const data = await readFile(INDEX_FILE, 'utf-8')
-    return JSON.parse(data)
+    const res = await fetch(
+      `https://api.github.com/repos/${REPO}/contents/${UPLOAD_DIR}/_index.json`,
+      { headers: getHeaders() }
+    )
+    if (!res.ok) return {}
+    const data = await res.json()
+    return JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8'))
   } catch {
     return {}
   }
 }
 
-async function saveIndex(index: Record<string, string>) {
-  await writeFile(INDEX_FILE, JSON.stringify(index, null, 2))
-}
-
-async function deleteFromGitHub(filename: string, index: Record<string, string>) {
-  const token = process.env.GITHUB_TOKEN
-  const repo = process.env.GITHUB_REPO || 'alaminhossain-developer/alaminhossain'
-  if (!token) return
-
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-    'User-Agent': 'portfolio-dashboard',
-  }
-
+async function getFileSha(filepath: string, branch: string): Promise<string | null> {
   try {
-    const repoRes = await fetch(`https://api.github.com/repos/${repo}`, { headers })
-    const repoData = await repoRes.json()
-    const defaultBranch = repoData.default_branch || 'main'
-
-    // Delete image file
-    const fileRes = await fetch(
-      `https://api.github.com/repos/${repo}/contents/public/uploads/${filename}`,
-      { headers }
+    const res = await fetch(
+      `https://api.github.com/repos/${REPO}/contents/${filepath}?ref=${branch}`,
+      { headers: getHeaders() }
     )
-    if (fileRes.ok) {
-      const fileData = await fileRes.json()
-      await fetch(
-        `https://api.github.com/repos/${repo}/contents/public/uploads/${filename}`,
-        {
-          method: 'DELETE',
-          headers,
-          body: JSON.stringify({
-            message: `chore: delete image ${filename}`,
-            sha: fileData.sha,
-            branch: defaultBranch,
-          }),
-        }
-      )
-    }
-
-    // Update index
-    let indexSha: string | undefined
-    try {
-      const indexRes = await fetch(
-        `https://api.github.com/repos/${repo}/contents/public/uploads/_index.json`,
-        { headers }
-      )
-      if (indexRes.ok) {
-        const indexData = await indexRes.json()
-        indexSha = indexData.sha
-      }
-    } catch {}
-
-    if (indexSha) {
-      await fetch(
-        `https://api.github.com/repos/${repo}/contents/public/uploads/_index.json`,
-        {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify({
-            message: `chore: update image index`,
-            content: Buffer.from(JSON.stringify(index, null, 2)).toString('base64'),
-            sha: indexSha,
-            branch: defaultBranch,
-          }),
-        }
-      )
-    }
-  } catch (err) {
-    console.error('GitHub delete error:', err)
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.sha || null
+  } catch {
+    return null
   }
 }
 
@@ -96,27 +55,52 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    const index = await getIndex()
+    const token = process.env.GITHUB_TOKEN
+    if (!token) {
+      return NextResponse.json({ error: 'GITHUB_TOKEN not configured' }, { status: 500 })
+    }
+
+    const branch = await getDefaultBranch()
+    const index = await getRemoteIndex()
     const filename = index[id]
 
     if (!filename) {
       return NextResponse.json({ error: 'Image not found' }, { status: 404 })
     }
 
-    // Try local delete
-    try {
-      const filePath = path.join(UPLOAD_DIR, filename)
-      if (existsSync(filePath)) await unlink(filePath)
-    } catch {}
+    // Delete image file from GitHub
+    const fileSha = await getFileSha(`${UPLOAD_DIR}/${filename}`, branch)
+    if (fileSha) {
+      await fetch(`https://api.github.com/repos/${REPO}/contents/${UPLOAD_DIR}/${filename}`, {
+        method: 'DELETE',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          message: `chore: delete image ${filename}`,
+          sha: fileSha,
+          branch,
+        }),
+      })
+    }
 
+    // Update index
     delete index[id]
-    try { await saveIndex(index) } catch {}
-
-    // Delete from GitHub
-    await deleteFromGitHub(filename, index)
+    const indexSha = await getFileSha(`${UPLOAD_DIR}/_index.json`, branch)
+    if (indexSha) {
+      await fetch(`https://api.github.com/repos/${REPO}/contents/${UPLOAD_DIR}/_index.json`, {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify({
+          message: `chore: update image index`,
+          content: Buffer.from(JSON.stringify(index, null, 2)).toString('base64'),
+          sha: indexSha,
+          branch,
+        }),
+      })
+    }
 
     return NextResponse.json({ success: true })
-  } catch {
+  } catch (error) {
+    console.error('Delete error:', error)
     return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
   }
 }
