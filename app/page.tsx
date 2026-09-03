@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import { autoLoadFromGitHub } from '@/lib/store'
 import Hero from '@/components/hero/Hero'
 import Intro from '@/components/sections/Intro'
 import Metrics from '@/components/sections/Metrics'
@@ -17,6 +19,7 @@ import Testimonials from '@/components/sections/Testimonials'
 import Contact from '@/components/sections/Contact'
 
 export default function Home() {
+  useEffect(() => { autoLoadFromGitHub() }, [])
   return (
     <main className="bg-dark-950 text-white min-h-screen">
       <Hero />

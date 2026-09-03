@@ -367,3 +367,65 @@ export function importAllData(json: string): boolean {
 export function resetAllData(): void {
   Object.values(KEYS).forEach((key) => localStorage.removeItem(key))
 }
+
+// ============================================================
+// Save / Load all data from GitHub (persists across browsers)
+// ============================================================
+export async function saveAllToGitHub(): Promise<boolean> {
+  try {
+    const data = {
+      profile: getProfile(),
+      projects: getProjects(),
+      services: getServices(),
+      testimonials: getTestimonials(),
+      experience: getExperience(),
+      skills: getSkills(),
+      shopifyFeatures: getShopifyFeatures(),
+      apps: getApps(),
+      articles: getArticles(),
+      savedAt: new Date().toISOString(),
+    }
+    const res = await fetch('/api/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+export async function loadAllFromGitHub(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/data')
+    if (!res.ok) return false
+    const data = await res.json()
+    if (data.profile) saveProfile(data.profile)
+    if (data.projects) saveProjects(data.projects)
+    if (data.services) saveServices(data.services)
+    if (data.testimonials) saveTestimonials(data.testimonials)
+    if (data.experience) saveExperience(data.experience)
+    if (data.skills) saveSkills(data.skills)
+    if (data.shopifyFeatures) saveShopifyFeatures(data.shopifyFeatures)
+    if (data.apps) saveApps(data.apps)
+    if (data.articles) saveArticles(data.articles)
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Auto-load from GitHub if localStorage is empty (first visit / incognito)
+let _loaded = false
+export function autoLoadFromGitHub() {
+  if (_loaded || typeof window === 'undefined') return
+  // Check if localStorage has any portfolio data
+  const hasData = Object.values(KEYS).some((key) => localStorage.getItem(key) !== null)
+  if (!hasData) {
+    _loaded = true
+    loadAllFromGitHub()
+  } else {
+    _loaded = true
+  }
+}

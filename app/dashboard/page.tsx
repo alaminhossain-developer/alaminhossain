@@ -13,7 +13,7 @@ import {
   getApps, saveApps, addApp, updateApp, deleteApp,
   getArticles, saveArticles, addArticle, updateArticle, deleteArticle,
   getProfile, saveProfile,
-  exportAllData, importAllData, resetAllData,
+  exportAllData, importAllData, resetAllData, saveAllToGitHub,
 } from '@/lib/store'
 import type { Project, Service, Testimonial, Experience, SkillItem, Profile } from '@/lib/data'
 import type { ShopifyFeature, App, Article } from '@/lib/store'
@@ -1164,6 +1164,19 @@ function ArticlesTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
 function DataTab({ onRefresh }: { onRefresh: () => void }) {
   const [importJson, setImportJson] = useState('')
   const [message, setMessage] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const handleSaveToGitHub = async () => {
+    setSaving(true)
+    const ok = await saveAllToGitHub()
+    setSaving(false)
+    if (ok) {
+      setMessage('All data saved to GitHub! Site will update in ~3-4 minutes.')
+    } else {
+      setMessage('Failed to save to GitHub.')
+    }
+    setTimeout(() => setMessage(''), 5000)
+  }
 
   const handleExport = () => {
     const json = exportAllData()
@@ -1220,6 +1233,13 @@ function DataTab({ onRefresh }: { onRefresh: () => void }) {
           {message}
         </div>
       )}
+
+      {/* Save to GitHub */}
+      <div className="p-6 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.03] space-y-4">
+        <h3 className="text-sm font-semibold text-cyan-400">Save All to GitHub</h3>
+        <p className="text-xs text-white/30">Save all portfolio data (profile, projects, services, articles, etc.) to GitHub. This makes your data visible to all visitors worldwide. Takes ~3-4 minutes to deploy.</p>
+        <Btn onClick={handleSaveToGitHub}>{saving ? 'Saving...' : 'Save All to GitHub'}</Btn>
+      </div>
 
       {/* Export */}
       <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
