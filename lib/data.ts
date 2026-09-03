@@ -397,6 +397,7 @@ export interface Article {
   publishedAt: string
   readTime: string
   featured: boolean
+  coverImage: string
 }
 
 export const articles: Article[] = [
@@ -452,6 +453,7 @@ Node.js + Express backend, React + Vite + Shopify Polaris frontend, Google Gemin
     publishedAt: '2026-08-15',
     readTime: '8 min read',
     featured: true,
+    coverImage: '',
   },
   {
     id: 'article-2',
@@ -506,6 +508,7 @@ After implementing these techniques, my clients typically see:
     publishedAt: '2026-07-20',
     readTime: '6 min read',
     featured: true,
+    coverImage: '',
   },
   {
     id: 'article-3',
@@ -551,6 +554,7 @@ After implementing these techniques, my clients typically see:
     publishedAt: '2026-06-10',
     readTime: '7 min read',
     featured: true,
+    coverImage: '',
   },
   {
     id: 'article-4',
@@ -608,6 +612,7 @@ The Shopify ecosystem has over 4.4 million merchants. Apps solve real problems a
     publishedAt: '2026-05-25',
     readTime: '9 min read',
     featured: false,
+    coverImage: '',
   },
   {
     id: 'article-5',
@@ -670,5 +675,6 @@ Use a hybrid approach:
     publishedAt: '2026-04-12',
     readTime: '5 min read',
     featured: false,
+    coverImage: '',
   },
 ]

@@ -951,13 +951,13 @@ function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onErro
 function ArticlesTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
   const [items, setItems] = useState<Article[]>([])
   const [editing, setEditing] = useState<string | null>(null)
-  const [form, setForm] = useState({ title: '', slug: '', excerpt: '', content: '', category: 'shopify' as Article['category'], tags: '', publishedAt: new Date().toISOString().split('T')[0], readTime: '5 min read', featured: false })
+  const [form, setForm] = useState({ title: '', slug: '', excerpt: '', content: '', category: 'shopify' as Article['category'], tags: '', publishedAt: new Date().toISOString().split('T')[0], readTime: '5 min read', featured: false, coverImage: '' })
 
   useEffect(() => { setItems(getArticles()) }, [])
 
   const startNew = () => {
     setEditing(null)
-    setForm({ title: '', slug: '', excerpt: '', content: '', category: 'shopify', tags: '', publishedAt: new Date().toISOString().split('T')[0], readTime: '5 min read', featured: false })
+    setForm({ title: '', slug: '', excerpt: '', content: '', category: 'shopify', tags: '', publishedAt: new Date().toISOString().split('T')[0], readTime: '5 min read', featured: false, coverImage: '' })
   }
 
   const save = () => {
@@ -1019,6 +1019,45 @@ function ArticlesTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
               Featured on homepage
             </label>
           </div>
+
+          {/* Cover Image */}
+          <div className="space-y-1.5">
+            <label className="text-xs text-white/40 font-medium">Cover Image</label>
+            <p className="text-[10px] text-white/25">Shows at the top of the article and in the articles grid. Recommended: 1200x630px.</p>
+            <div className="flex items-center gap-4">
+              {form.coverImage ? (
+                <div className="relative group">
+                  <img src={form.coverImage} alt="Cover" className="w-40 h-24 object-cover rounded-lg border border-white/[0.06]" />
+                  <button
+                    onClick={() => setForm({ ...form, coverImage: '' })}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >×</button>
+                  <span className="absolute bottom-1 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded">{getBase64Size(form.coverImage)}</span>
+                </div>
+              ) : (
+                <label className="flex items-center gap-2 px-4 py-3 rounded-lg border border-dashed border-white/[0.08] bg-white/[0.02] text-white/40 text-xs cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                  Upload Cover Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      try {
+                        const compressed = await compressImage(file, 1200, 0.65)
+                        setForm({ ...form, coverImage: compressed })
+                      } catch (err) {
+                        alert('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                      }
+                    }}
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+
           <div className="flex gap-3">
             <Btn onClick={save}>{editing ? 'Update' : 'Publish'} Article</Btn>
             <Btn variant="ghost" onClick={() => { startNew(); setEditing(null) }}>Cancel</Btn>
@@ -1039,6 +1078,9 @@ function ArticlesTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
               )}
             </div>
             <div className="flex items-center gap-2">
+              {article.coverImage && (
+                <div className="w-10 h-6 rounded overflow-hidden border border-white/[0.06]"><img src={article.coverImage} alt="" className="w-full h-full object-cover" /></div>
+              )}
               <Btn small onClick={() => { setEditing(article.id); setForm({ ...article, tags: article.tags.join(', ') }) }}>Edit</Btn>
               <Btn small variant="danger" onClick={() => remove(article.id)}>Delete</Btn>
             </div>

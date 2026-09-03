@@ -80,6 +80,18 @@ export default function ArticlesPage() {
                     </span>
                   </div>
 
+                  {article.coverImage && (
+                    <div className="mb-4 rounded-xl overflow-hidden border border-white/[0.04] aspect-[16/9]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={article.coverImage}
+                        alt={article.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+
                   <h2 className="text-xl font-bold text-white mb-3 tracking-tight leading-snug group-hover:text-cyan-400 transition-colors">
                     {article.title}
                   </h2>

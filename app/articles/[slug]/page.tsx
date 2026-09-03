@@ -201,6 +201,18 @@ export default function ArticlePage() {
           All Articles
         </Link>
 
+        {/* Cover Image */}
+        {article.coverImage && (
+          <div className="mb-8 rounded-2xl overflow-hidden border border-white/[0.06] aspect-[2/1]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={article.coverImage}
+              alt={article.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
         {/* Category + meta */}
         <div className="flex items-center gap-3 mb-6">
           <span
