@@ -86,12 +86,13 @@ export default function Services() {
   const services = getServices()
 
   return (
-    <section ref={containerRef} className="relative h-[70vh] md:h-[80vh] overflow-hidden" id="services">
-      {/* Fixed title */}
-      <div className="absolute top-0 left-0 right-0 z-10 px-6 lg:px-12 pt-6 md:pt-8 max-w-7xl">
-        <div className="flex items-center gap-4 mb-2">
+    <section ref={containerRef} className="relative h-[55vh] md:h-[60vh] overflow-hidden" id="services">
+      {/* Fixed title — centered */}
+      <div className="absolute top-0 left-0 right-0 z-10 text-center pt-6 md:pt-8">
+        <div className="flex items-center justify-center gap-4 mb-2">
           <div className="w-8 h-px bg-cyan-400" />
           <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">Services</span>
+          <div className="w-8 h-px bg-cyan-400" />
         </div>
         <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-[-0.03em] text-white">SERVICES</h2>
       </div>
@@ -99,8 +100,8 @@ export default function Services() {
       {/* Horizontal scroll track */}
       <div
         ref={scrollRef}
-        className="flex flex-nowrap h-full items-center gap-6 md:gap-8 pl-6 lg:pl-12 pr-32 md:pr-48"
-        style={{ paddingTop: '100px' }}
+        className="flex flex-nowrap h-full items-center gap-6 md:gap-8 pl-10 lg:pl-20 pr-32 md:pr-48"
+        style={{ paddingTop: '80px' }}
       >
         {services.map((service, i) => {
           const Icon = iconMap[service.icon] || Monitor
