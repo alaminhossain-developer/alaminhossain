@@ -137,6 +137,12 @@ export async function POST(request: NextRequest) {
       indexSha || undefined
     )
 
+    // Trigger Vercel redeploy so the new image becomes available
+    const deployHook = process.env.VERCEL_DEPLOY_HOOK
+    if (deployHook) {
+      fetch(deployHook, { method: 'POST' }).catch(() => {})
+    }
+
     return NextResponse.json({
       id,
       url: `/uploads/${filename}`,
