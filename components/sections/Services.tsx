@@ -77,7 +77,7 @@ export default function Services() {
   const animate = useCallback(() => {
     const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[]
     const total = cards.length
-    if (total === 0) return
+    if (total === 0 || currentRef.current.length !== total) return
 
     let stillAnimating = false
 
@@ -179,11 +179,13 @@ export default function Services() {
   }, [animate])
 
   useEffect(() => {
-    const services = getServices()
-    currentRef.current = new Array(services.length).fill(0)
-    targetRef.current = new Array(services.length).fill(0)
-
-    calculateTargets()
+    // Small delay to ensure refs are populated after render
+    const timer = setTimeout(() => {
+      const services = getServices()
+      currentRef.current = new Array(services.length).fill(0)
+      targetRef.current = new Array(services.length).fill(0)
+      calculateTargets()
+    }, 100)
 
     let scrollTick = false
     const onScroll = () => {
@@ -207,6 +209,7 @@ export default function Services() {
     window.addEventListener('resize', onResize)
 
     return () => {
+      clearTimeout(timer)
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
@@ -233,7 +236,7 @@ export default function Services() {
       </div>
 
       {/* Stacked cards wrapper */}
-      <div ref={wrapperRef} className="max-w-6xl mx-auto relative" style={{ paddingBottom: '20vh' }}>
+      <div ref={wrapperRef} className="max-w-6xl mx-auto relative overflow-visible" style={{ paddingBottom: '20vh' }}>
         {services.map((service, i) => {
           const color = accentColors[i % accentColors.length]
           const bg = cardGradients[i % cardGradients.length]
@@ -253,6 +256,7 @@ export default function Services() {
                 background: bg,
                 border: '1px solid rgba(255,255,255,0.04)',
                 zIndex: 10 + i,
+                position: 'sticky',
               }}
             >
               <div className="sc-card-inner grid grid-cols-1 md:grid-cols-2 min-h-[420px] md:min-h-[460px]">
