@@ -3,7 +3,10 @@ import { writeFile, readFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
+import { exec } from 'child_process'
+import { promisify } from 'util'
 
+const execAsync = promisify(exec)
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
 const INDEX_FILE = path.join(UPLOAD_DIR, '_index.json')
 
@@ -24,6 +27,19 @@ async function getIndex(): Promise<Record<string, string>> {
 
 async function saveIndex(index: Record<string, string>) {
   await writeFile(INDEX_FILE, JSON.stringify(index, null, 2))
+}
+
+// Auto-commit and push image to GitHub
+async function gitPush(filename: string) {
+  try {
+    const cwd = process.cwd()
+    await execAsync(`git add public/uploads/${filename}`, { cwd })
+    await execAsync(`git commit -m "chore: upload image ${filename}" --allow-empty`, { cwd })
+    await execAsync('git push origin main', { cwd })
+  } catch (err) {
+    // Git push failure is non-critical — image is still saved locally
+    console.error('Git push failed:', err)
+  }
 }
 
 // POST /api/images — upload an image
@@ -50,6 +66,9 @@ export async function POST(request: NextRequest) {
     const index = await getIndex()
     index[id] = filename
     await saveIndex(index)
+
+    // Auto-push to GitHub in background (non-blocking)
+    gitPush(filename)
 
     return NextResponse.json({
       id,

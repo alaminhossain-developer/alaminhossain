@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { unlink, readFile, writeFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
+import { exec } from 'child_process'
+import { promisify } from 'util'
 
+const execAsync = promisify(exec)
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
 const INDEX_FILE = path.join(UPLOAD_DIR, '_index.json')
 
@@ -17,6 +20,17 @@ async function getIndex(): Promise<Record<string, string>> {
 
 async function saveIndex(index: Record<string, string>) {
   await writeFile(INDEX_FILE, JSON.stringify(index, null, 2))
+}
+
+async function gitPush(filename: string) {
+  try {
+    const cwd = process.cwd()
+    await execAsync(`git add public/uploads/${filename} _index.json`, { cwd })
+    await execAsync(`git commit -m "chore: delete image ${filename}" --allow-empty`, { cwd })
+    await execAsync('git push origin main', { cwd })
+  } catch (err) {
+    console.error('Git push failed:', err)
+  }
 }
 
 // DELETE /api/images/[id] — remove an image
@@ -40,6 +54,9 @@ export async function DELETE(
 
     delete index[id]
     await saveIndex(index)
+
+    // Auto-push deletion to GitHub
+    gitPush(filename)
 
     return NextResponse.json({ success: true })
   } catch {
