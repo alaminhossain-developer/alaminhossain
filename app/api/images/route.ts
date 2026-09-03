@@ -3,10 +3,7 @@ import { writeFile, readFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
-import { exec } from 'child_process'
-import { promisify } from 'util'
 
-const execAsync = promisify(exec)
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
 const INDEX_FILE = path.join(UPLOAD_DIR, '_index.json')
 
@@ -29,23 +26,96 @@ async function saveIndex(index: Record<string, string>) {
   await writeFile(INDEX_FILE, JSON.stringify(index, null, 2))
 }
 
-// Auto-commit and push image to GitHub
-async function gitPush(filename: string) {
+// Push image to GitHub via API (works on Vercel too)
+async function pushToGitHub(filename: string, buffer: Buffer, index: Record<string, string>) {
+  const token = process.env.GITHUB_TOKEN
+  const repo = process.env.GITHUB_REPO || 'alaminhossain-developer/alaminhossain'
+  
+  if (!token) {
+    console.error('GITHUB_TOKEN not set — skipping git push')
+    return
+  }
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'User-Agent': 'portfolio-dashboard',
+  }
+
   try {
-    const cwd = process.cwd()
-    await execAsync(`git add public/uploads/${filename}`, { cwd })
-    await execAsync(`git commit -m "chore: upload image ${filename}" --allow-empty`, { cwd })
-    await execAsync('git push origin main', { cwd })
+    // 1. Get current commit SHA
+    const repoRes = await fetch(`https://api.github.com/repos/${repo}`, { headers })
+    const repoData = await repoRes.json()
+    const defaultBranch = repoData.default_branch || 'main'
+
+    // 2. Get the SHA of the file (or null if new)
+    let fileSha: string | undefined
+    try {
+      const fileRes = await fetch(
+        `https://api.github.com/repos/${repo}/contents/public/uploads/${filename}`,
+        { headers }
+      )
+      if (fileRes.ok) {
+        const fileData = await fileRes.json()
+        fileSha = fileData.sha
+      }
+    } catch {}
+
+    // 3. Upload image file
+    const imageRes = await fetch(
+      `https://api.github.com/repos/${repo}/contents/public/uploads/${filename}`,
+      {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          message: `chore: upload image ${filename}`,
+          content: buffer.toString('base64'),
+          branch: defaultBranch,
+          ...(fileSha ? { sha: fileSha } : {}),
+        }),
+      }
+    )
+
+    if (!imageRes.ok) {
+      const err = await imageRes.text()
+      console.error('GitHub image upload failed:', err)
+      return
+    }
+
+    // 4. Update _index.json
+    let indexSha: string | undefined
+    try {
+      const indexRes = await fetch(
+        `https://api.github.com/repos/${repo}/contents/public/uploads/_index.json`,
+        { headers }
+      )
+      if (indexRes.ok) {
+        const indexData = await indexRes.json()
+        indexSha = indexData.sha
+      }
+    } catch {}
+
+    await fetch(
+      `https://api.github.com/repos/${repo}/contents/public/uploads/_index.json`,
+      {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          message: `chore: update image index`,
+          content: Buffer.from(JSON.stringify(index, null, 2)).toString('base64'),
+          branch: defaultBranch,
+          ...(indexSha ? { sha: indexSha } : {}),
+        }),
+      }
+    )
   } catch (err) {
-    // Git push failure is non-critical — image is still saved locally
-    console.error('Git push failed:', err)
+    console.error('GitHub push error:', err)
   }
 }
 
 // POST /api/images — upload an image
 export async function POST(request: NextRequest) {
   try {
-    await ensureDir()
     const formData = await request.formData()
     const file = formData.get('file') as File | null
 
@@ -53,22 +123,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    // Generate unique ID
     const id = crypto.randomBytes(8).toString('hex')
     const ext = file.name.split('.').pop() || 'jpg'
     const filename = `${id}.${ext}`
 
-    // Convert to buffer and save
     const buffer = Buffer.from(await file.arrayBuffer())
-    await writeFile(path.join(UPLOAD_DIR, filename), buffer)
 
-    // Update index
-    const index = await getIndex()
-    index[id] = filename
-    await saveIndex(index)
+    // Try saving to local filesystem (works locally)
+    try {
+      await ensureDir()
+      await writeFile(path.join(UPLOAD_DIR, filename), buffer)
+      const index = await getIndex()
+      index[id] = filename
+      await saveIndex(index)
+    } catch {}
 
-    // Auto-push to GitHub in background (non-blocking)
-    gitPush(filename)
+    // Always push to GitHub via API (works on Vercel too)
+    try {
+      const index = await getIndex()
+      index[id] = filename
+      await pushToGitHub(filename, buffer, index)
+    } catch (err) {
+      console.error('GitHub push failed:', err)
+    }
 
     return NextResponse.json({
       id,
