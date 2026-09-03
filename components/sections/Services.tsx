@@ -106,7 +106,7 @@ export default function Services() {
       inner.style.opacity = String(1 - fadeEased)
       inner.style.transform = `translateY(${-16 * fadeEased}px) scale(${1 - eased * 0.014})`
 
-      // Strip reveal
+      // Strip reveal — all cards including first
       const stripT = Math.min(Math.max((p - 0.18) / 0.82, 0), 1)
       const stripEased = stripT * stripT * stripT * (stripT * (stripT * 6 - 15) + 10)
       strip.style.opacity = String(stripEased)
@@ -138,7 +138,8 @@ export default function Services() {
     })
 
     for (let i = 0; i < total; i++) {
-      if (i >= total - 1) {
+      // Last card never collapses
+      if (i === total - 1) {
         targetRef.current[i] = 0
         continue
       }
@@ -377,11 +378,11 @@ export default function Services() {
 
               {/* Strip — revealed when card is stacked */}
               <div
-                className="sc-card-strip absolute top-0 left-0 right-0 z-20 h-[50px] flex items-center px-8 gap-4 cursor-pointer"
+                className="sc-card-strip absolute top-0 left-0 right-0 z-20 h-[56px] flex items-center px-6 md:px-8 gap-4 cursor-pointer"
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
+                  background: 'rgba(10,14,39,0.85)',
                   backdropFilter: 'blur(20px)',
-                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  borderBottom: '1px solid rgba(255,255,255,0.08)',
                   opacity: 0,
                   transform: 'translateY(-110%)',
                 }}
