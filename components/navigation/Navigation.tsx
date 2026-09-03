@@ -86,13 +86,7 @@ export default function Navigation() {
             <span className="text-white/50 tracking-wide">Available</span>
           </div>
 
-          {/* Dashboard link */}
-          <Link
-            href="/dashboard"
-            className="hidden md:inline-flex items-center px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.02] text-xs text-white/40 hover:text-white/70 hover:bg-white/[0.05] transition-all duration-300"
-          >
-            Dashboard
-          </Link>
+
 
           {/* Mobile Menu Button */}
           <button
@@ -129,13 +123,7 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/dashboard"
-              onClick={() => setIsOpen(false)}
-              className="mt-2 text-sm text-white/30 hover:text-white/60 transition-colors"
-            >
-              Dashboard
-            </Link>
+
             <div className="mt-4 flex items-center gap-2 text-sm font-light">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
               <span className="text-white/50">Available for work</span>
