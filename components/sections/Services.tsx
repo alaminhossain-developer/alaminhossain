@@ -130,7 +130,7 @@ export default function Services() {
 
     const stripH = vw <= 540 ? 46 : 50
     const stripGap = 4
-    const baseTop = vw <= 540 ? 60 : vw <= 900 ? 64 : 68
+    const baseTop = vw <= 540 ? 70 : vw <= 900 ? 74 : 78
 
     // Set sticky tops
     cards.forEach((card, i) => {
@@ -388,8 +388,8 @@ export default function Services() {
                 }}
               >
                 <span
-                  className="text-sm font-semibold whitespace-nowrap"
-                  style={{ color, fontFamily: 'serif', fontStyle: 'italic' }}
+                  className="text-sm font-bold whitespace-nowrap tracking-wide"
+                  style={{ color: color || '#ffffff' }}
                 >
                   {service.title}
                 </span>
