@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { compressImage, getBase64Size } from '@/lib/image-utils'
+import { compressImage, uploadImage, getBase64Size } from '@/lib/image-utils'
 import { useRouter } from 'next/navigation'
 import {
   getProjects, saveProjects, addProject, updateProject, deleteProject,
@@ -259,10 +259,16 @@ function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onE
                         const file = e.target.files?.[0]
                         if (!file) return
                         try {
-                          const compressed = await compressImage(file, 800, 0.75)
-                          setForm({ ...form, [key]: compressed })
+                          const url = await uploadImage(file, 800, 0.75)
+                          setForm({ ...form, [key]: url })
                         } catch (err) {
-                          onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                          // Fallback to base64 if API unavailable
+                          try {
+                            const compressed = await compressImage(file, 800, 0.75)
+                            setForm({ ...form, [key]: compressed })
+                          } catch (err2) {
+                            onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                          }
                         }
                       }}
                     />
@@ -390,11 +396,16 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
                     const file = e.target.files?.[0]
                     if (!file) return
                     try {
-                      const compressed = await compressImage(file, 1200, 0.65)
-                      const size = getBase64Size(compressed)
-                      setForm({ ...form, screenshots: [...form.screenshots, compressed] })
+                      const url = await uploadImage(file, 1200, 0.65)
+                      setForm({ ...form, screenshots: [...form.screenshots, url] })
                     } catch (err) {
-                      alert('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                      // Fallback to base64 if API unavailable
+                      try {
+                        const compressed = await compressImage(file, 1200, 0.65)
+                        setForm({ ...form, screenshots: [...form.screenshots, compressed] })
+                      } catch (err2) {
+                        alert('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                      }
                     }
                   }}
                 />
@@ -946,10 +957,15 @@ function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onErro
                     const file = e.target.files?.[0]
                     if (!file) return
                     try {
-                      const compressed = await compressImage(file, 1200, 0.65)
-                      setForm({ ...form, images: [...form.images, compressed] })
+                      const url = await uploadImage(file, 1200, 0.65)
+                      setForm({ ...form, images: [...form.images, url] })
                     } catch (err) {
-                      alert('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                      try {
+                        const compressed = await compressImage(file, 1200, 0.65)
+                        setForm({ ...form, images: [...form.images, compressed] })
+                      } catch (err2) {
+                        alert('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                      }
                     }
                   }}
                 />
@@ -1097,8 +1113,8 @@ function ArticlesTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
                       const file = e.target.files?.[0]
                       if (!file) return
                       try {
-                        const compressed = await compressImage(file, 1200, 0.65)
-                        setForm({ ...form, coverImage: compressed })
+                        const url = await uploadImage(file, 1200, 0.65)
+                        setForm({ ...form, coverImage: url })
                       } catch (err) {
                         alert('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
                       }

@@ -45,9 +45,11 @@ export function compressImage(
 }
 
 /**
- * Get human-readable file size from base64 string.
+ * Get human-readable file size from base64 string or URL path.
  */
 export function getBase64Size(base64: string): string {
+  // If it's a URL path, show path length as rough estimate
+  if (!base64.startsWith('data:')) return `~${Math.round(base64.length / 1024)} KB (URL)`
   const bytes = Math.round((base64.length * 3) / 4)
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
@@ -71,4 +73,53 @@ export function wouldExceedQuota(additionalBase64: string[]): boolean {
   } catch {
     return true
   }
+}
+
+/**
+ * Upload an image to the server via API.
+ * Returns the URL path (e.g. /uploads/abc123.jpg).
+ * Falls back to base64 if API is unavailable.
+ */
+export async function uploadImage(
+  file: File,
+  maxWidth = 1200,
+  quality = 0.7
+): Promise<string> {
+  // Compress client-side first
+  const compressed = await compressImage(file, maxWidth, quality)
+
+  // Convert data URL to Blob
+  const res = await fetch(compressed)
+  const blob = await res.blob()
+
+  // Upload to API
+  const formData = new FormData()
+  formData.append('file', blob, file.name || 'image.jpg')
+
+  const uploadRes = await fetch('/api/images', {
+    method: 'POST',
+    body: formData,
+  })
+
+  if (!uploadRes.ok) {
+    throw new Error('Upload failed: ' + uploadRes.statusText)
+  }
+
+  const data = await uploadRes.json()
+  return data.url as string
+}
+
+/**
+ * Upload multiple images to the server via API.
+ * Returns array of URL paths.
+ */
+export async function uploadImages(
+  files: File[],
+  maxWidth = 1200,
+  quality = 0.7
+): Promise<string[]> {
+  const results = await Promise.all(
+    files.map((file) => uploadImage(file, maxWidth, quality))
+  )
+  return results
 }
