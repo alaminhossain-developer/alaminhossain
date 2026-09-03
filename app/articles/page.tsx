@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { getArticles } from '@/lib/store'
-import { ArrowRight, Clock, ArrowLeft } from 'lucide-react'
+import { ArrowRight, Clock } from 'lucide-react'
 
 const categoryColors: Record<string, string> = {
   shopify: '#22c55e',
@@ -31,16 +31,7 @@ export default function ArticlesPage() {
 
   return (
     <main className="bg-dark-950 text-white min-h-screen">
-      <div className="max-w-5xl mx-auto px-6 py-20">
-        {/* Back link */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition-colors mb-12"
-        >
-          <ArrowLeft size={14} />
-          Back to Home
-        </Link>
-
+      <div className="max-w-5xl mx-auto px-6 pt-32 pb-20">
         {/* Header */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-4">
           Articles

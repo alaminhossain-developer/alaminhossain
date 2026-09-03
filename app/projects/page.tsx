@@ -4,8 +4,7 @@ import { useState } from 'react'
 import { getProjects } from '@/lib/store'
 import ProjectModal from '@/components/sections/ProjectModal'
 import type { Project } from '@/lib/data'
-import { ArrowUpRight, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
 
 function fixUrl(url: string): string {
   if (!url || url === '#') return '#'
@@ -21,14 +20,7 @@ export default function ProjectsPage() {
     <main className="bg-[#0a0e27] text-white min-h-screen">
       {/* Header */}
       <div className="border-b border-white/[0.04]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-xs text-white/30 hover:text-white/60 transition-colors mb-6"
-          >
-            <ArrowLeft size={14} />
-            Back to Home
-          </Link>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-32 pb-8">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-8 h-px bg-cyan-400" />
             <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">All Projects</span>

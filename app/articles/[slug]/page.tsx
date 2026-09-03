@@ -191,7 +191,7 @@ export default function ArticlePage() {
 
   return (
     <main className="bg-dark-950 text-white min-h-screen">
-      <article className="max-w-3xl mx-auto px-6 py-20">
+      <article className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         {/* Back link */}
         <Link
           href="/articles"
