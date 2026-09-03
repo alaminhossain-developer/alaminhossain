@@ -1,17 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const navItems = [
-  { label: 'Work', href: '#work' },
-  { label: 'Services', href: '#services' },
-  { label: 'About', href: '#about' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Contact', href: '#contact' },
-]
+const sectionIds = ['work', 'services', 'about', 'experience', 'contact']
 
 const pageItems = [
   { label: 'Projects', href: '/projects' },
@@ -22,6 +17,14 @@ const pageItems = [
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname()
+  const isHome = pathname === '/'
+
+  // On homepage: anchor only (#work). On other pages: go to homepage section (/#work)
+  const navItems = useMemo(() => sectionIds.map((id) => ({
+    label: id.charAt(0).toUpperCase() + id.slice(1),
+    href: isHome ? `#${id}` : `/#${id}`,
+  })), [isHome])
 
   useEffect(() => {
     const handleScroll = () => {
