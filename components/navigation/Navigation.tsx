@@ -13,6 +13,12 @@ const navItems = [
   { label: 'Contact', href: '#contact' },
 ]
 
+const pageItems = [
+  { label: 'Projects', href: '/projects' },
+  { label: 'Apps', href: '/apps' },
+  { label: 'Articles', href: '/articles' },
+]
+
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -47,7 +53,7 @@ export default function Navigation() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-12">
+          <div className="hidden md:flex items-center gap-8">
             {navItems.map((item) => (
               <a
                 key={item.href}
@@ -58,6 +64,17 @@ export default function Navigation() {
                 <span className="absolute bottom-0 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300" />
               </a>
             ))}
+            <div className="w-px h-4 bg-white/10" />
+            {pageItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm font-medium text-white/60 hover:text-cyan-400 transition-colors duration-300 relative group"
+              >
+                {item.label}
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-cyan-400 group-hover:w-full transition-all duration-300" />
+              </Link>
+            ))}
           </div>
 
           {/* Availability Status */}
@@ -65,6 +82,14 @@ export default function Navigation() {
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
             <span className="text-white/50 tracking-wide">Available</span>
           </div>
+
+          {/* Dashboard link */}
+          <Link
+            href="/dashboard"
+            className="hidden md:inline-flex items-center px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.02] text-xs text-white/40 hover:text-white/70 hover:bg-white/[0.05] transition-all duration-300"
+          >
+            Dashboard
+          </Link>
 
           {/* Mobile Menu Button */}
           <button
@@ -79,7 +104,7 @@ export default function Navigation() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="fixed inset-0 z-30 bg-dark-950/95 backdrop-blur-sm pt-24 md:hidden">
-          <div className="flex flex-col items-center gap-10 p-6">
+          <div className="flex flex-col items-center gap-8 p-6">
             {navItems.map((item) => (
               <a
                 key={item.href}
@@ -90,7 +115,25 @@ export default function Navigation() {
                 {item.label}
               </a>
             ))}
-            <div className="mt-12 flex items-center gap-2 text-sm font-light">
+            <div className="w-12 h-px bg-white/10 my-2" />
+            {pageItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className="text-lg font-semibold text-cyan-400/70 hover:text-cyan-400 transition-colors duration-300"
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Link
+              href="/dashboard"
+              onClick={() => setIsOpen(false)}
+              className="mt-2 text-sm text-white/30 hover:text-white/60 transition-colors"
+            >
+              Dashboard
+            </Link>
+            <div className="mt-4 flex items-center gap-2 text-sm font-light">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
               <span className="text-white/50">Available for work</span>
             </div>
