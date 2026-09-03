@@ -130,7 +130,7 @@ export default function Services() {
 
     const stripH = vw <= 540 ? 46 : 50
     const stripGap = 4
-    const baseTop = vw <= 540 ? 10 : vw <= 900 ? 14 : 18
+    const baseTop = vw <= 540 ? 60 : vw <= 900 ? 64 : 68
 
     // Set sticky tops
     cards.forEach((card, i) => {
