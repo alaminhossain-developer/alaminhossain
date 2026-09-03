@@ -237,7 +237,7 @@ export default function Services() {
       </div>
 
       {/* Stacked cards wrapper */}
-      <div ref={wrapperRef} className="max-w-6xl mx-auto relative overflow-visible" style={{ paddingBottom: '20vh' }}>
+      <div ref={wrapperRef} className="max-w-6xl mx-auto relative overflow-visible" style={{ paddingBottom: '2vh' }}>
         {services.map((service, i) => {
           const color = accentColors[i % accentColors.length]
           const bg = cardGradients[i % cardGradients.length]
