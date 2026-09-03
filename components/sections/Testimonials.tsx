@@ -9,37 +9,51 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Testimonials() {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const itemsRef = useRef<(HTMLDivElement | null)[]>([])
+  const trackRef = useRef<HTMLDivElement>(null)
   const testimonials = getTestimonials()
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      itemsRef.current.forEach((item) => {
-        if (!item) return
+  // Duplicate for seamless infinite loop
+  const items = [...testimonials, ...testimonials]
 
-        gsap.fromTo(
-          item,
-          { y: 40, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: item,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-          }
-        )
+  useEffect(() => {
+    const track = trackRef.current
+    const section = sectionRef.current
+    if (!track || !section || testimonials.length === 0) return
+
+    // Calculate how far to translate (half the track since we duplicated)
+    const ctx = gsap.context(() => {
+      const totalWidth = track.scrollWidth / 2
+
+      const anim = gsap.to(track, {
+        x: -totalWidth,
+        duration: testimonials.length * 5,
+        ease: 'none',
+        repeat: -1,
+      })
+
+      // Pause on hover
+      track.addEventListener('mouseenter', () => anim.pause())
+      track.addEventListener('mouseleave', () => anim.resume())
+
+      // Slow down on scroll trigger
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top bottom',
+        end: 'bottom top',
+        onUpdate: (self) => {
+          const speed = 1 + self.progress * 0.5
+          anim.timeScale(speed)
+        },
       })
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [testimonials.length])
+
+  if (testimonials.length === 0) return null
 
   return (
-    <section ref={sectionRef} className="relative py-16 lg:py-24">
+    <section ref={sectionRef} className="relative py-16 lg:py-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section header */}
         <div className="flex items-center gap-4 mb-6">
@@ -49,14 +63,23 @@ export default function Testimonials() {
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-10 md:mb-14 text-white">
           WHAT THEY SAY
         </h2>
+      </div>
 
-        {/* Testimonials grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-          {testimonials.map((testimonial, i) => (
+      {/* Carousel track */}
+      <div className="relative">
+        {/* Fade edges */}
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#0a0e27] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#0a0e27] to-transparent z-10 pointer-events-none" />
+
+        <div
+          ref={trackRef}
+          className="flex gap-6 px-6 will-change-transform"
+          style={{ width: 'max-content' }}
+        >
+          {items.map((testimonial, i) => (
             <div
-              key={testimonial.id}
-              ref={(el) => { itemsRef.current[i] = el }}
-              className="group relative bg-white/[0.015] border border-white/[0.04] rounded-xl p-8 md:p-10 hover:border-white/[0.08] transition-all duration-500"
+              key={`${testimonial.id}-${i}`}
+              className="group relative bg-white/[0.015] border border-white/[0.04] rounded-xl p-8 hover:border-white/[0.08] transition-all duration-500 shrink-0 w-[380px] md:w-[420px]"
             >
               {/* Quote mark */}
               <div className="text-4xl md:text-5xl font-serif text-cyan-400 opacity-20 leading-none mb-4">
@@ -64,7 +87,7 @@ export default function Testimonials() {
               </div>
 
               {/* Quote */}
-              <blockquote className="text-white/80 text-lg md:text-xl leading-relaxed font-medium mb-8">
+              <blockquote className="text-white/80 text-base md:text-lg leading-relaxed font-medium mb-8 min-h-[80px]">
                 {testimonial.quote}
               </blockquote>
 
