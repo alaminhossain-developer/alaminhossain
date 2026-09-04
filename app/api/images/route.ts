@@ -39,6 +39,7 @@ async function getDefaultBranch(): Promise<string> {
 }
 
 // Create or update a file on GitHub
+// content = RAW text (not pre-encoded). This function does the base64 encoding.
 async function upsertFile(
   filepath: string,
   content: string,
@@ -48,7 +49,40 @@ async function upsertFile(
 ): Promise<boolean> {
   const body: Record<string, unknown> = {
     message,
-    content: Buffer.from(content).toString('base64'),
+    content: Buffer.from(content, 'utf-8').toString('base64'),
+    branch,
+  }
+  if (sha) body.sha = sha
+
+  const res = await fetch(
+    `https://api.github.com/repos/${REPO}/contents/${filepath}`,
+    {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(body),
+    }
+  )
+
+  if (!res.ok) {
+    const err = await res.text()
+    console.error(`GitHub upsert failed for ${filepath}:`, err)
+    return false
+  }
+  return true
+}
+
+// Upload binary file to GitHub
+// buffer = raw binary data. This function does the base64 encoding.
+async function upsertBinaryFile(
+  filepath: string,
+  buffer: Buffer,
+  message: string,
+  branch: string,
+  sha?: string
+): Promise<boolean> {
+  const body: Record<string, unknown> = {
+    message,
+    content: buffer.toString('base64'),
     branch,
   }
   if (sha) body.sha = sha
@@ -113,10 +147,10 @@ export async function POST(request: NextRequest) {
 
     const branch = await getDefaultBranch()
 
-    // 1. Upload image file to GitHub
-    const uploaded = await upsertFile(
+    // 1. Upload image file to GitHub (use binary upload, NOT text)
+    const uploaded = await upsertBinaryFile(
       `${UPLOAD_DIR}/${filename}`,
-      buffer.toString('base64'),
+      buffer,
       `chore: upload image ${filename}`,
       branch
     )
@@ -125,7 +159,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to save image to GitHub' }, { status: 500 })
     }
 
-    // 2. Update _index.json on GitHub
+    // 2. Update _index.json on GitHub (use text upload)
     const index = await getRemoteIndex()
     index[id] = filename
     const indexSha = await getFileSha(`${UPLOAD_DIR}/_index.json`, branch)
