@@ -207,6 +207,7 @@ function Btn({ children, onClick, variant = 'primary', small }: {
     danger: 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border-red-500/20',
     ghost: 'bg-white/[0.04] text-white/50 hover:bg-white/[0.08] border-white/[0.06]',
   }
+
   return (
     <button
       onClick={onClick}
@@ -216,6 +217,89 @@ function Btn({ children, onClick, variant = 'primary', small }: {
     </button>
   )
 }
+
+function PhotoUpload({ label, desc, value, onChange, onError }: {
+  label: string
+  desc: string
+  value: string
+  onChange: (url: string) => void
+  onError: (msg: string) => void
+}) {
+  const [imgError, setImgError] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => { setImgError(false) }, [value])
+
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs text-white/40 font-medium">{label}</label>
+      <p className="text-[10px] text-white/25">{desc}</p>
+      <div className="flex items-center gap-3">
+        {value ? (
+          <div className="relative group">
+            {imgError ? (
+              <div className="w-24 h-24 rounded-xl border border-dashed border-cyan-500/30 bg-cyan-500/[0.05] flex flex-col items-center justify-center gap-1">
+                <svg className="w-5 h-5 text-cyan-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <span className="text-[9px] text-cyan-400/40">Not deployed yet</span>
+                <span className="text-[8px] text-white/20">Wait 2-3 min</span>
+              </div>
+            ) : (
+              <img
+                src={value}
+                alt={label}
+                className="w-24 h-24 object-cover rounded-xl border border-white/[0.06]"
+                onError={() => setImgError(true)}
+              />
+            )}
+            <button
+              onClick={() => onChange('')}
+              className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+            >×</button>
+            <span className="absolute bottom-1 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded z-10">{getBase64Size(value)}</span>
+          </div>
+        ) : (
+          <label className="flex items-center gap-2 px-4 py-3 rounded-lg border border-dashed border-white/[0.08] bg-white/[0.02] text-white/40 text-xs cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors w-full">
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                Upload
+              </>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                setLoading(true)
+                try {
+                  const url = await uploadImage(file, 800, 0.75)
+                  onChange(url)
+                } catch (err) {
+                  try {
+                    const compressed = await compressImage(file, 800, 0.75)
+                    onChange(compressed)
+                  } catch (err2) {
+                    onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
+                  }
+                } finally {
+                  setLoading(false)
+                }
+              }}
+            />
+          </label>
+        )}
+      </div>
+    </div>
+  )
+}
+
 
 // ============================================================
 // Profile Tab
@@ -267,60 +351,14 @@ function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onE
             { key: 'aboutPhoto' as const, label: 'About Photo', desc: 'Bio section right column' },
             { key: 'techPhoto' as const, label: 'Technology Photo', desc: 'Center of tech orbital map' },
           ]).map(({ key, label, desc }) => (
-            <div key={key} className="space-y-1.5">
-              <label className="text-xs text-white/40 font-medium">{label}</label>
-              <p className="text-[10px] text-white/25">{desc}</p>
-              <div className="flex items-center gap-3">
-                {form[key] ? (
-                  <div className="relative group">
-                    <img 
-                      src={form[key]} 
-                      alt={label} 
-                      className="w-20 h-20 object-cover rounded-xl border border-white/[0.06]" 
-                      onError={(e) => { 
-                        const img = e.target as HTMLImageElement
-                        img.style.display = 'none'
-                        const placeholder = document.createElement('div')
-                        placeholder.className = 'w-20 h-20 rounded-xl border border-dashed border-white/20 bg-white/[0.04] flex items-center justify-center'
-                        placeholder.innerHTML = '<span class="text-[10px] text-white/30 text-center px-1">Image not<br/>available</span>'
-                        img.parentElement?.appendChild(placeholder)
-                      }} 
-                    />
-                    <button
-                      onClick={() => setForm({ ...form, [key]: '' })}
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >×</button>
-                    <span className="absolute bottom-1 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded">{getBase64Size(form[key])}</span>
-                  </div>
-                ) : (
-                  <label className="flex items-center gap-2 px-4 py-3 rounded-lg border border-dashed border-white/[0.08] bg-white/[0.02] text-white/40 text-xs cursor-pointer hover:bg-white/[0.06] hover:border-white/[0.12] transition-colors w-full">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                    Upload
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0]
-                        if (!file) return
-                        try {
-                          const url = await uploadImage(file, 800, 0.75)
-                          setForm({ ...form, [key]: url })
-                        } catch (err) {
-                          // Fallback to base64 if API unavailable
-                          try {
-                            const compressed = await compressImage(file, 800, 0.75)
-                            setForm({ ...form, [key]: compressed })
-                          } catch (err2) {
-                            onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
-                          }
-                        }
-                      }}
-                    />
-                  </label>
-                )}
-              </div>
-            </div>
+            <PhotoUpload
+              key={key}
+              label={label}
+              desc={desc}
+              value={form[key]}
+              onChange={(url) => setForm({ ...form, [key]: url })}
+              onError={onError}
+            />
           ))}
         </div>
       </div>
