@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   getProfile,
   getProjects,
@@ -43,26 +43,30 @@ function readAll(): PortfolioData {
 
 /**
  * Returns all portfolio data and automatically re-reads when
- * autoLoadFromGitHub() finishes loading from the API.
+ * GitHub data loads. GitHub is the source of truth.
  */
 export function usePortfolio(): PortfolioData {
   const [data, setData] = useState<PortfolioData>(readAll)
 
-  useEffect(() => {
-    // Re-read after GitHub data may have loaded (500ms + 2s safety net)
-    const t1 = setTimeout(() => setData(readAll()), 500)
-    const t2 = setTimeout(() => setData(readAll()), 2000)
+  const refresh = useCallback(() => setData(readAll()), [])
 
-    // Also listen for the explicit event from loadAllFromGitHub()
-    const handler = () => setData(readAll())
-    window.addEventListener('portfolio-data-loaded', handler)
+  useEffect(() => {
+    // Poll at increasing intervals to catch the GitHub load
+    const timers = [
+      setTimeout(refresh, 300),
+      setTimeout(refresh, 800),
+      setTimeout(refresh, 1500),
+      setTimeout(refresh, 3000),
+    ]
+
+    // Listen for the explicit event from loadAllFromGitHub()
+    window.addEventListener('portfolio-data-loaded', refresh)
 
     return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      window.removeEventListener('portfolio-data-loaded', handler)
+      timers.forEach(clearTimeout)
+      window.removeEventListener('portfolio-data-loaded', refresh)
     }
-  }, [])
+  }, [refresh])
 
   return data
 }

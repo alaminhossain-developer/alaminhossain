@@ -420,16 +420,10 @@ export async function loadAllFromGitHub(): Promise<boolean> {
   }
 }
 
-// Auto-load from GitHub if localStorage is empty (first visit / incognito)
+// Auto-load from GitHub on every page visit — GitHub is the source of truth.
 let _loaded = false
 export function autoLoadFromGitHub() {
   if (_loaded || typeof window === 'undefined') return
-  // Check if localStorage has any portfolio data
-  const hasData = Object.values(KEYS).some((key) => localStorage.getItem(key) !== null)
-  if (!hasData) {
-    _loaded = true
-    loadAllFromGitHub()
-  } else {
-    _loaded = true
-  }
+  _loaded = true
+  loadAllFromGitHub()
 }
