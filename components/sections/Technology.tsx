@@ -40,7 +40,13 @@ export default function Technology() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null)
   const skills = getSkills()
-  const profile = getProfile()
+  const [profile, setProfile] = useState(() => getProfile())
+
+  useEffect(() => {
+    const t = setTimeout(() => setProfile(getProfile()), 500)
+    const t2 = setTimeout(() => setProfile(getProfile()), 2000)
+    return () => { clearTimeout(t); clearTimeout(t2) }
+  }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {

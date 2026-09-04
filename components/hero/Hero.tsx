@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { createMouseParallax } from '@/lib/animations'
 import { getProfile } from '@/lib/store'
@@ -11,7 +11,14 @@ export default function Hero() {
   const frameRef = useRef<HTMLDivElement>(null)
   const glowRef = useRef<HTMLDivElement>(null)
   const annotationsRef = useRef<HTMLDivElement[]>([])
-  const profile = getProfile()
+  const [profile, setProfile] = useState(() => getProfile())
+
+  useEffect(() => {
+    // Re-read after autoLoadFromGitHub may have populated localStorage
+    const t = setTimeout(() => setProfile(getProfile()), 500)
+    const t2 = setTimeout(() => setProfile(getProfile()), 2000)
+    return () => { clearTimeout(t); clearTimeout(t2) }
+  }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {

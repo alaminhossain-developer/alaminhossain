@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { getProfile, getSkills } from '@/lib/store'
@@ -27,7 +27,13 @@ export default function About() {
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const pillsRef = useRef<HTMLDivElement>(null)
-  const profile = getProfile()
+  const [profile, setProfile] = useState(() => getProfile())
+
+  useEffect(() => {
+    const t = setTimeout(() => setProfile(getProfile()), 500)
+    const t2 = setTimeout(() => setProfile(getProfile()), 2000)
+    return () => { clearTimeout(t); clearTimeout(t2) }
+  }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
