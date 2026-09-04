@@ -71,6 +71,26 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Cache uploaded images
+      {
+        source: '/uploads/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000, stale-while-revalidate=86400',
+          },
+        ],
+      },
+      // Cache API data (short TTL)
+      {
+        source: '/api/data',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=300, stale-while-revalidate=600',
+          },
+        ],
+      },
       // Cache static assets
       {
         source: '/fonts/:path*',

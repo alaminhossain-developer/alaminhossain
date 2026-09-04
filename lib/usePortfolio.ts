@@ -42,8 +42,7 @@ function readAll(): PortfolioData {
 }
 
 /**
- * Returns all portfolio data and automatically re-reads when
- * GitHub data loads. GitHub is the source of truth.
+ * Returns all portfolio data. Re-reads only when GitHub data loads (event-based, no polling).
  */
 export function usePortfolio(): PortfolioData {
   const [data, setData] = useState<PortfolioData>(readAll)
@@ -51,19 +50,14 @@ export function usePortfolio(): PortfolioData {
   const refresh = useCallback(() => setData(readAll()), [])
 
   useEffect(() => {
-    // Poll at increasing intervals to catch the GitHub load
-    const timers = [
-      setTimeout(refresh, 300),
-      setTimeout(refresh, 800),
-      setTimeout(refresh, 1500),
-      setTimeout(refresh, 3000),
-    ]
+    // One quick check after 1s for fast GitHub loads
+    const t = setTimeout(refresh, 1000)
 
-    // Listen for the explicit event from loadAllFromGitHub()
+    // Listen for the event from loadAllFromGitHub()
     window.addEventListener('portfolio-data-loaded', refresh)
 
     return () => {
-      timers.forEach(clearTimeout)
+      clearTimeout(t)
       window.removeEventListener('portfolio-data-loaded', refresh)
     }
   }, [refresh])

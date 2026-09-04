@@ -1,42 +1,46 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { autoLoadFromGitHub } from '@/lib/store'
 import Hero from '@/components/hero/Hero'
-import Intro from '@/components/sections/Intro'
-import Metrics from '@/components/sections/Metrics'
-import Services from '@/components/sections/Services'
-import FeaturedWork from '@/components/sections/FeaturedWork'
-import ShopifyFeatures from '@/components/sections/ShopifyFeatures'
-import Apps from '@/components/sections/Apps'
-import Articles from '@/components/sections/Articles'
-import Technology from '@/components/sections/Technology'
-import About from '@/components/sections/About'
-import Experience from '@/components/sections/Experience'
-import Process from '@/components/sections/Process'
-import Performance from '@/components/sections/Performance'
-import Testimonials from '@/components/sections/Testimonials'
-import Contact from '@/components/sections/Contact'
+
+// Lazy-load below-fold sections to reduce initial bundle
+const Intro = lazy(() => import('@/components/sections/Intro'))
+const Metrics = lazy(() => import('@/components/sections/Metrics'))
+const Services = lazy(() => import('@/components/sections/Services'))
+const FeaturedWork = lazy(() => import('@/components/sections/FeaturedWork'))
+const ShopifyFeatures = lazy(() => import('@/components/sections/ShopifyFeatures'))
+const Apps = lazy(() => import('@/components/sections/Apps'))
+const Articles = lazy(() => import('@/components/sections/Articles'))
+const Technology = lazy(() => import('@/components/sections/Technology'))
+const About = lazy(() => import('@/components/sections/About'))
+const Experience = lazy(() => import('@/components/sections/Experience'))
+const Process = lazy(() => import('@/components/sections/Process'))
+const Performance = lazy(() => import('@/components/sections/Performance'))
+const Testimonials = lazy(() => import('@/components/sections/Testimonials'))
+const Contact = lazy(() => import('@/components/sections/Contact'))
 
 export default function Home() {
   useEffect(() => { autoLoadFromGitHub() }, [])
   return (
     <main className="bg-dark-950 text-white min-h-screen">
       <Hero />
-      <Intro />
-      <Metrics />
-      <Services />
-      <FeaturedWork />
-      <ShopifyFeatures />
-      <Apps />
-      <Technology />
-      <About />
-      <Experience />
-      <Process />
-      <Performance />
-      <Articles />
-      <Testimonials />
-      <Contact />
+      <Suspense fallback={null}>
+        <Intro />
+        <Metrics />
+        <Services />
+        <FeaturedWork />
+        <ShopifyFeatures />
+        <Apps />
+        <Technology />
+        <About />
+        <Experience />
+        <Process />
+        <Performance />
+        <Articles />
+        <Testimonials />
+        <Contact />
+      </Suspense>
     </main>
   )
 }
