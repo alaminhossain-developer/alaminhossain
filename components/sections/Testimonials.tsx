@@ -3,14 +3,14 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getTestimonials } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function Testimonials() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
-  const testimonials = getTestimonials()
+  const { testimonials } = usePortfolio()
 
   // Duplicate for seamless infinite loop
   const items = [...testimonials, ...testimonials]

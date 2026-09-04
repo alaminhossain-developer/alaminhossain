@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getSkills, getProfile } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -39,14 +39,7 @@ const positions = Array.from({ length: NUM_SKILLS }, (_, i) => {
 export default function Technology() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null)
-  const skills = getSkills()
-  const [profile, setProfile] = useState(() => getProfile())
-
-  useEffect(() => {
-    const t = setTimeout(() => setProfile(getProfile()), 500)
-    const t2 = setTimeout(() => setProfile(getProfile()), 2000)
-    return () => { clearTimeout(t); clearTimeout(t2) }
-  }, [])
+  const { skills, profile } = usePortfolio()
 
   useEffect(() => {
     const ctx = gsap.context(() => {

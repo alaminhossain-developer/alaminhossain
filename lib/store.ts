@@ -410,6 +410,10 @@ export async function loadAllFromGitHub(): Promise<boolean> {
     if (data.shopifyFeatures) saveShopifyFeatures(data.shopifyFeatures)
     if (data.apps) saveApps(data.apps)
     if (data.articles) saveArticles(data.articles)
+    // Notify all React components that data has been loaded
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('portfolio-data-loaded'))
+    }
     return true
   } catch {
     return false

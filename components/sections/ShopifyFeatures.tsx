@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getShopifyFeatures } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import {
   Palette,
   CreditCard,
@@ -27,7 +27,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
 export default function ShopifyFeatures() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
-  const features = getShopifyFeatures()
+  const { shopifyFeatures: features } = usePortfolio()
 
   useEffect(() => {
     const ctx = gsap.context(() => {

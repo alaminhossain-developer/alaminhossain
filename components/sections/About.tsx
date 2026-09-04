@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getProfile, getSkills } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import { Share2, Code } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -27,13 +27,7 @@ export default function About() {
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const pillsRef = useRef<HTMLDivElement>(null)
-  const [profile, setProfile] = useState(() => getProfile())
-
-  useEffect(() => {
-    const t = setTimeout(() => setProfile(getProfile()), 500)
-    const t2 = setTimeout(() => setProfile(getProfile()), 2000)
-    return () => { clearTimeout(t); clearTimeout(t2) }
-  }, [])
+  const { profile } = usePortfolio()
 
   useEffect(() => {
     const ctx = gsap.context(() => {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react'
 import { getServices } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 
 const accentColors = [
   '#00d4e8',
@@ -217,7 +218,7 @@ export default function Services() {
     }
   }, [calculateTargets])
 
-  const services = getServices()
+  const { services } = usePortfolio()
 
   return (
     <section ref={sectionRef} className="relative px-6" id="services">

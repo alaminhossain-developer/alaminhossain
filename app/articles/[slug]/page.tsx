@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { getArticles } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import { ArrowLeft, Clock } from 'lucide-react'
 
 const categoryColors: Record<string, string> = {
@@ -22,7 +22,7 @@ const categoryLabels: Record<string, string> = {
 export default function ArticlePage() {
   const params = useParams()
   const slug = params.slug as string
-  const articles = getArticles()
+  const { articles } = usePortfolio()
   const article = articles.find((a) => a.slug === slug)
 
   if (!article) {

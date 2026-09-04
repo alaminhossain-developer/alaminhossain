@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getApps } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import Link from 'next/link'
 import { ArrowRight, ExternalLink, ArrowUpRight } from 'lucide-react'
 
@@ -18,7 +18,7 @@ const statusConfig = {
 export default function Apps() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
-  const apps = getApps()
+  const { apps } = usePortfolio()
 
   useEffect(() => {
     const ctx = gsap.context(() => {

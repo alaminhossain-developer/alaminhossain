@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { getApps } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import { ArrowUpRight, ArrowLeft } from 'lucide-react'
 
 const statusConfig = {
@@ -11,7 +11,7 @@ const statusConfig = {
 }
 
 export default function AppsPage() {
-  const apps = getApps()
+  const { apps } = usePortfolio()
 
   return (
     <main className="bg-[#0a0e27] text-white min-h-screen">

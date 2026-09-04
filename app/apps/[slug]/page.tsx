@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { getApps } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import { ArrowLeft, ArrowRight, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react'
 
 const statusConfig = {
@@ -15,7 +15,7 @@ const statusConfig = {
 export default function AppDetailPage() {
   const params = useParams()
   const slug = params.slug as string
-  const apps = getApps()
+  const { apps } = usePortfolio()
   const app = apps.find((a) => a.slug === slug)
   const [activeImage, setActiveImage] = useState(0)
 

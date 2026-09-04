@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { getProjects } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import ProjectModal from '@/components/sections/ProjectModal'
 import type { Project } from '@/lib/data'
 import { ArrowUpRight } from 'lucide-react'
@@ -13,7 +13,7 @@ function fixUrl(url: string): string {
 }
 
 export default function ProjectsPage() {
-  const projects = getProjects()
+  const { projects } = usePortfolio()
   const [modalProject, setModalProject] = useState<Project | null>(null)
 
   return (

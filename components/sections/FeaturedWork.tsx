@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Link from 'next/link'
-import { getProjects } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import { ArrowUpRight, ArrowRight } from 'lucide-react'
 import ProjectModal from './ProjectModal'
 import type { Project } from '@/lib/data'
@@ -20,7 +20,7 @@ function fixUrl(url: string): string {
 export default function FeaturedWork() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const panelsRef = useRef<(HTMLDivElement | null)[]>([])
-  const allProjects = getProjects()
+  const { projects: allProjects } = usePortfolio()
   const selectedProjects = allProjects.filter((p) => p.selected).slice(0, 4)
   const [modalProject, setModalProject] = useState<Project | null>(null)
 

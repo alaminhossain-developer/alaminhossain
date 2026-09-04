@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getExperience } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -11,7 +11,7 @@ export default function Experience() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const lineRef = useRef<HTMLDivElement>(null)
   const itemsRef = useRef<(HTMLDivElement | null)[]>([])
-  const experience = getExperience()
+  const { experience } = usePortfolio()
 
   useEffect(() => {
     const ctx = gsap.context(() => {

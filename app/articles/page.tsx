@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { getArticles } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import { ArrowRight, Clock } from 'lucide-react'
 
 const categoryColors: Record<string, string> = {
@@ -21,7 +21,7 @@ const categoryLabels: Record<string, string> = {
 
 export default function ArticlesPage() {
   const [filter, setFilter] = useState<string>('all')
-  const allArticles = getArticles()
+  const { articles: allArticles } = usePortfolio()
 
   const filtered = filter === 'all'
     ? allArticles

@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getSkills } from '@/lib/store'
-const skillStrings = getSkills().map((s) => s.name)
+import { usePortfolio } from '@/lib/usePortfolio'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,6 +12,8 @@ export default function Skills() {
   const centerRef = useRef<HTMLDivElement>(null)
   const skillsRef = useRef<HTMLDivElement[]>([])
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null)
+  const { skills } = usePortfolio()
+  const skillStrings = skills.map((s) => s.name)
 
   useEffect(() => {
     const ctx = gsap.context(() => {

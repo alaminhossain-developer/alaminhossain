@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { getArticles } from '@/lib/store'
+import { usePortfolio } from '@/lib/usePortfolio'
 import Link from 'next/link'
 import { ArrowRight, Clock } from 'lucide-react'
 
@@ -26,7 +26,8 @@ const categoryLabels: Record<string, string> = {
 export default function Articles() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
-  const articles = getArticles().slice(0, 3)
+  const { articles: allArticles } = usePortfolio()
+  const articles = allArticles.slice(0, 3)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
