@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Md. Al Amin Hossain — WordPress & Shopify Developer",
   description: "WordPress & Shopify developer specializing in high-performance web experiences.",
+  other: {
+    'theme-color': '#0a0e27',
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

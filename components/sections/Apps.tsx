@@ -94,6 +94,9 @@ export default function Apps() {
                       <img
                         src={app.images[0]}
                         alt={`${app.name} screenshot`}
+                        width={640}
+                        height={400}
+                        decoding="async"
                         className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"
                       />

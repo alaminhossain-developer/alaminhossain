@@ -91,6 +91,8 @@ export default function Navigation() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isOpen}
             className="md:hidden text-white/70 hover:text-cyan-400 transition-colors duration-300"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -100,7 +102,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="fixed inset-0 z-30 bg-dark-950/95 backdrop-blur-sm pt-24 md:hidden">
+        <div className="fixed inset-0 z-30 bg-dark-950/95 backdrop-blur-sm pt-24 md:hidden" role="dialog" aria-label="Mobile navigation">
           <div className="flex flex-col items-center gap-8 p-6">
             {navItems.map((item) => (
               <a

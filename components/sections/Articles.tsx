@@ -114,6 +114,9 @@ export default function Articles() {
                       <img
                         src={article.coverImage}
                         alt={article.title}
+                        width={640}
+                        height={360}
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"
                       />

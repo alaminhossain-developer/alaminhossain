@@ -222,6 +222,9 @@ function BrowserFrame({
           <img
             src={project.screenshots[0]}
             alt={`${project.liveUrl} screenshot`}
+            width={800}
+            height={450}
+            decoding="async"
             className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
             loading="lazy"
           />
