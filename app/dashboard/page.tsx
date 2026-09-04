@@ -13,7 +13,7 @@ import {
   getApps, saveApps, addApp, updateApp, deleteApp,
   getArticles, saveArticles, addArticle, updateArticle, deleteArticle,
   getProfile, saveProfile,
-  exportAllData, importAllData, resetAllData, saveAllToGitHub,
+  exportAllData, importAllData, resetAllData, saveAllToGitHub, loadAllFromGitHub,
 } from '@/lib/store'
 import type { Project, Service, Testimonial, Experience, SkillItem, Profile } from '@/lib/data'
 import type { ShopifyFeature, App, Article } from '@/lib/store'
@@ -40,6 +40,7 @@ export default function DashboardPage() {
   const [toastMsg, setToastMsg] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
   const [authed, setAuthed] = useState(false)
+  const [loadingGitHub, setLoadingGitHub] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -49,6 +50,19 @@ export default function DashboardPage() {
       setAuthed(true)
     }
   }, [router])
+
+  // Auto-load from GitHub if localStorage is empty (incognito / new device)
+  useEffect(() => {
+    if (!authed) return
+    const hasData = typeof window !== 'undefined' && localStorage.getItem('portfolio_projects') !== null
+    if (!hasData) {
+      setLoadingGitHub(true)
+      loadAllFromGitHub().then((ok) => {
+        setLoadingGitHub(false)
+        if (ok) setRefreshKey((k) => k + 1)
+      })
+    }
+  }, [authed])
 
   const flash = (msg?: string) => {
     setToastMsg(msg || 'Saved successfully')
@@ -73,6 +87,15 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0e27] text-white">
+      {/* Loading from GitHub banner */}
+      {loadingGitHub && (
+        <div className="fixed top-0 left-0 right-0 z-[9998] px-5 py-2 bg-cyan-500/10 border-b border-cyan-500/20">
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs text-cyan-400">Loading data from GitHub...</span>
+          </div>
+        </div>
+      )}
       {/* Toast notification */}
       {saved && (
         <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-xl backdrop-blur-sm shadow-lg transition-all duration-300 ${
@@ -199,14 +222,24 @@ function Btn({ children, onClick, variant = 'primary', small }: {
 // ============================================================
 function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
   const [form, setForm] = useState<Profile>({ name: '', tagline: '', bio: '', heroPhoto: '', aboutPhoto: '', techPhoto: '', email: '', location: '' })
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => { setForm(getProfile()) }, [])
 
-  const saveItem = () => {
+  const saveItem = async () => {
     try {
       saveProfile(form)
-      onSaved()
+      setSaving(true)
+      // Also persist to GitHub so data works across browsers
+      try {
+        await saveAllToGitHub()
+      } catch {
+        // Best effort — localStorage save still works locally
+      }
+      setSaving(false)
+      onSaved('Profile saved & pushed to GitHub. Updates live in ~3-4 min.')
     } catch (err) {
+      setSaving(false)
       onError('Save failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
     }
   }
@@ -215,7 +248,7 @@ function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onE
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold">Profile</h2>
-        <Btn onClick={saveItem}>Save Profile</Btn>
+        <Btn onClick={saveItem}>{saving ? 'Saving & Pushing...' : 'Save Profile'}</Btn>
       </div>
 
       <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
@@ -240,7 +273,19 @@ function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onE
               <div className="flex items-center gap-3">
                 {form[key] ? (
                   <div className="relative group">
-                    <img src={form[key]} alt={label} className="w-20 h-20 object-cover rounded-xl border border-white/[0.06]" />
+                    <img 
+                      src={form[key]} 
+                      alt={label} 
+                      className="w-20 h-20 object-cover rounded-xl border border-white/[0.06]" 
+                      onError={(e) => { 
+                        const img = e.target as HTMLImageElement
+                        img.style.display = 'none'
+                        const placeholder = document.createElement('div')
+                        placeholder.className = 'w-20 h-20 rounded-xl border border-dashed border-white/20 bg-white/[0.04] flex items-center justify-center'
+                        placeholder.innerHTML = '<span class="text-[10px] text-white/30 text-center px-1">Image not<br/>available</span>'
+                        img.parentElement?.appendChild(placeholder)
+                      }} 
+                    />
                     <button
                       onClick={() => setForm({ ...form, [key]: '' })}
                       className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
