@@ -53,7 +53,7 @@ export default function Navigation() {
             className="flex items-center hover:opacity-80 transition-opacity duration-300"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Al Amin Hossain" className="h-8 w-auto" />
+            <img src="/logo.png" alt="Al Amin Hossain" className="h-10 w-auto" />
           </Link>
 
           {/* Desktop Menu */}
