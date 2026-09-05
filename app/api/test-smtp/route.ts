@@ -12,7 +12,7 @@ export async function GET() {
     const resend = new Resend(apiKey)
 
     await resend.emails.send({
-      from: 'alaminhossain.me <onboarding@resend.dev>',
+      from: 'alaminhossain.me <contact@portfolio.alaminhossain.me>',
       to: ['contact@alaminhossain.me', 'developeralamin17@gmail.com'],
       subject: '✅ Test email from alaminhossain.me',
       html: '<h2 style="color: #00d4e8;">Email is working!</h2><p>Your contact form is now configured correctly.</p>',
