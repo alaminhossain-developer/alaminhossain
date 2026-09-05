@@ -53,7 +53,7 @@ function FAQItem({ question, answer, isOpen, onToggle }: {
     <div className="border-b border-cyan-500/10">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-5 text-left group"
+        className="w-full flex items-center justify-between py-3.5 text-left group"
         aria-expanded={isOpen}
       >
         <span className={`text-base font-medium transition-colors ${isOpen ? 'text-cyan-400' : 'text-white/80 group-hover:text-white'}`}>
@@ -68,7 +68,7 @@ function FAQItem({ question, answer, isOpen, onToggle }: {
         style={{ height: `${height}px`, opacity: isOpen ? 1 : 0 }}
         className="overflow-hidden transition-all duration-300 ease-in-out"
       >
-        <p className="pb-5 text-sm text-white/50 leading-relaxed pr-8">
+        <p className="pb-4 text-sm text-white/50 leading-relaxed pr-8">
           {answer}
         </p>
       </div>
@@ -125,14 +125,14 @@ export default function FAQ() {
         }}
       />
 
-      <section ref={containerRef} className="relative py-16 lg:py-24 px-6" id="faq">
+      <section ref={containerRef} className="relative py-10 lg:py-14 px-6" id="faq">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
-          <div data-faq-item className="mb-12">
-            <span className="text-xs font-bold text-cyan-400/80 uppercase tracking-[0.2em] block mb-4">
+          <div data-faq-item className="mb-6">
+            <span className="text-xs font-bold text-cyan-400/80 uppercase tracking-[0.2em] block mb-2">
               FAQ
             </span>
-            <h2 className="text-3xl lg:text-4xl font-black tracking-[-0.02em] text-white">
+            <h2 className="text-xl lg:text-2xl font-bold tracking-[-0.02em] text-white">
               Frequently Asked Questions
             </h2>
           </div>
