@@ -10,32 +10,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name, email, and message are required' }, { status: 400 })
     }
 
-    // Gmail SMTP via Nodemailer
-    // Requires: GMAIL_USER + GMAIL_APP_PASSWORD in Vercel env vars
-    const gmailUser = process.env.GMAIL_USER
-    const gmailPass = process.env.GMAIL_APP_PASSWORD
+    // Custom domain SMTP — mail.alaminhossain.me
+    const smtpHost = process.env.SMTP_HOST || 'mail.alaminhossain.me'
+    const smtpPort = Number(process.env.SMTP_PORT) || 465
+    const smtpUser = process.env.SMTP_USER || 'contact@alaminhossain.me'
+    const smtpPass = process.env.SMTP_PASS
 
-    if (!gmailUser || !gmailPass) {
+    if (!smtpPass) {
       console.log('📧 Contact form (no SMTP configured):', { name, email, phone, message })
       return NextResponse.json({
         success: true,
-        message: 'Message received! (Set GMAIL_USER and GMAIL_APP_PASSWORD in Vercel to enable email delivery)',
+        message: 'Message received! (Set SMTP_PASS in Vercel to enable email delivery)',
       })
     }
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: smtpHost,
+      port: smtpPort,
+      secure: true, // SSL on port 465
       auth: {
-        user: gmailUser,
-        pass: gmailPass,
+        user: smtpUser,
+        pass: smtpPass,
       },
     })
 
-    // Email to yourself
+    // Send email to yourself
     await transporter.sendMail({
-      from: `"alaminhossain.me" <${gmailUser}>`,
-      to: 'contact@alaminhossain.me',
-      replyTo: email,
+      from: `"alaminhossain.me" <${smtpUser}>`,
+      to: smtpUser, // contact@alaminhossain.me
+      replyTo: email, // so you can reply directly to the sender
       subject: `New message from ${name} — alaminhossain.me`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0a0e27; color: #fff; border-radius: 12px;">
