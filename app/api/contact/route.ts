@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
 
     const resend = new Resend(apiKey)
 
-    await resend.emails.send({
-      from: 'alaminhossain.me <contact@portfolio.alaminhossain.me>',
+    const { error } = await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: ['contact@alaminhossain.me', 'developeralamin17@gmail.com'],
       replyTo: email,
       subject: `New message from ${name} — alaminhossain.me`,
@@ -56,9 +56,14 @@ export async function POST(request: NextRequest) {
       text: `New message from ${name}\nEmail: ${email}${phone ? `\nPhone: ${phone}` : ''}\n\nMessage:\n${message}`,
     })
 
+    if (error) {
+      console.error('Resend error:', error)
+      return NextResponse.json({ error: error.message || 'Email send failed' }, { status: 500 })
+    }
+
     return NextResponse.json({ success: true, message: 'Message sent successfully!' })
-  } catch (error) {
-    console.error('Contact form error:', error)
+  } catch (err) {
+    console.error('Contact form error:', err)
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
   }
 }
