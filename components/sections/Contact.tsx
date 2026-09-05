@@ -12,6 +12,7 @@ export default function Contact() {
   const titleRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -69,14 +70,38 @@ export default function Contact() {
     return () => ctx.revert()
   }, [])
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setFormStatus('loading')
-    // Simulate form submission
-    setTimeout(() => {
-      setFormStatus('success')
-      setTimeout(() => setFormStatus('idle'), 3000)
-    }, 1000)
+
+    const form = e.currentTarget
+    const formData = new FormData(form)
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.get('name'),
+          email: formData.get('email'),
+          phone: formData.get('phone'),
+          message: formData.get('message'),
+        }),
+      })
+
+      if (res.ok) {
+        setFormStatus('success')
+        form.reset()
+        setMessage('')
+        setTimeout(() => setFormStatus('idle'), 4000)
+      } else {
+        setFormStatus('error')
+        setTimeout(() => setFormStatus('idle'), 4000)
+      }
+    } catch {
+      setFormStatus('error')
+      setTimeout(() => setFormStatus('idle'), 4000)
+    }
   }
 
   return (
@@ -180,68 +205,102 @@ export default function Contact() {
           </div>
 
           {/* Right - Contact form */}
-          <div className="glass rounded-2xl p-8 lg:p-12 border border-cyan-500/20 h-fit">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-3">
-                <label htmlFor="name" className="text-sm font-semibold text-white/80">
-                  Your Name
+          <div className="rounded-2xl p-8 lg:p-10 border border-white/10 bg-white/[0.03] h-fit">
+            <h3 className="text-2xl font-bold text-white mb-2">Send a message</h3>
+            <p className="text-sm text-white/40 mb-8">A concise project brief or role summary is enough. I&apos;ll review and reply.</p>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Name + Email row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium text-white/70">
+                    Name <span className="text-emerald-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30 focus:outline-none focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/20 transition-all"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium text-white/70">
+                    Email <span className="text-emerald-400">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30 focus:outline-none focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/20 transition-all"
+                    placeholder="you@example.com"
+                  />
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div className="space-y-2">
+                <label htmlFor="phone" className="text-sm font-medium text-white/70">
+                  Phone
                 </label>
                 <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  className="w-full px-4 py-3 rounded-lg bg-dark-900 border border-cyan-500/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400/50 transition-colors"
-                  placeholder="Enter your name"
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30 focus:outline-none focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/20 transition-all"
+                  placeholder="Optional"
                 />
               </div>
 
-              <div className="space-y-3">
-                <label htmlFor="email" className="text-sm font-semibold text-white/80">
-                  Email Address
+              {/* Message */}
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-sm font-medium text-white/70">
+                  Message <span className="text-emerald-400">*</span>
                 </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  className="w-full px-4 py-3 rounded-lg bg-dark-900 border border-cyan-500/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400/50 transition-colors"
-                  placeholder="Enter your email"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <label htmlFor="message" className="text-sm font-semibold text-white/80">
-                  Tell Me About Your Project
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows={4}
-                  className="w-full px-4 py-3 rounded-lg bg-dark-900 border border-cyan-500/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400/50 transition-colors resize-none"
-                  placeholder="Describe your project or inquiry..."
-                />
+                <div className="relative">
+                  <textarea
+                    id="message"
+                    name="message"
+                    required
+                    rows={5}
+                    maxLength={5000}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-white text-sm placeholder-white/30 focus:outline-none focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/20 transition-all resize-none pr-16"
+                    placeholder="Tell me about the project, role, or problem you want solved."
+                  />
+                  <span className="absolute bottom-3 right-4 text-xs text-white/25">
+                    {message.length}/5000
+                  </span>
+                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={formStatus === 'loading'}
-                className="w-full px-6 py-3 bg-cyan-500 text-dark-950 font-semibold rounded-lg hover:bg-cyan-400 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-emerald-500 text-white font-semibold rounded-xl hover:bg-emerald-400 disabled:opacity-50 transition-all flex items-center justify-center gap-2 text-sm"
               >
                 {formStatus === 'loading' && (
-                  <span className="w-4 h-4 rounded-full border-2 border-transparent border-t-dark-950 animate-spin" />
+                  <span className="w-4 h-4 rounded-full border-2 border-transparent border-t-white animate-spin" />
                 )}
                 {formStatus === 'success'
-                  ? 'Message Sent!'
+                  ? '✓ Message Sent!'
                   : formStatus === 'loading'
                     ? 'Sending...'
-                    : 'Send Message'}
+                    : 'Send message'}
               </button>
 
               {formStatus === 'success' && (
                 <p className="text-sm text-emerald-400 text-center">
-                  Thanks for reaching out! I'll get back to you soon.
+                  Thanks for reaching out! I&apos;ll get back to you soon.
+                </p>
+              )}
+
+              {formStatus === 'error' && (
+                <p className="text-sm text-red-400 text-center">
+                  Something went wrong. Please try again or email me directly.
                 </p>
               )}
             </form>
