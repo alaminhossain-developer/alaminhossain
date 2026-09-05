@@ -353,6 +353,13 @@ export interface Profile {
   techPhoto: string
   email: string
   location: string
+  github: string
+  linkedin: string
+  twitter: string
+  facebook: string
+  instagram: string
+  upwork: string
+  fiverr: string
 }
 
 export const profile: Profile = {
@@ -364,6 +371,13 @@ export const profile: Profile = {
   techPhoto: '',
   email: '',
   location: '',
+  github: '',
+  linkedin: '',
+  twitter: '',
+  facebook: '',
+  instagram: '',
+  upwork: '',
+  fiverr: '',
 }
 
 // ============================================================

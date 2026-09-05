@@ -123,11 +123,6 @@ export default function Footer() {
                   Download Resume
                 </a>
               </li>
-              <li>
-                <a href="#" className="text-sm text-white/50 hover:text-cyan-400 transition-colors">
-                  Request CV
-                </a>
-              </li>
             </ul>
           </div>
 

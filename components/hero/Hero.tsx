@@ -133,7 +133,7 @@ export default function Hero() {
               </p>
             </div>
 
-            <div data-animate className="flex gap-4 pt-4">
+            <div data-animate className="flex flex-wrap gap-4 pt-4">
               <a href="#work" className="btn-primary group inline-flex items-center">
                 <span>Explore Work</span>
                 <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">
@@ -142,6 +142,17 @@ export default function Hero() {
               </a>
               <a href="#contact" className="btn-secondary">
                 Get In Touch
+              </a>
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary group inline-flex items-center"
+              >
+                <span>Download Resume</span>
+                <span className="inline-block ml-2 group-hover:translate-y-0.5 transition-transform">
+                  ↓
+                </span>
               </a>
             </div>
           </div>

@@ -176,21 +176,22 @@ export default function DashboardPage() {
 // ============================================================
 // Shared form components
 // ============================================================
-function Field({ label, value, onChange, type = 'text', rows }: {
+function Field({ label, value, onChange, type = 'text', rows, placeholder }: {
   label: string
   value: string
   onChange: (v: string) => void
   type?: string
   rows?: number
+  placeholder?: string
 }) {
   const base = 'w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-white/80 text-sm font-light focus:outline-none focus:border-cyan-400/40 transition-colors placeholder-white/20'
   return (
     <div className="space-y-1.5">
       <label className="text-xs text-white/40 font-medium">{label}</label>
       {rows ? (
-        <textarea rows={rows} value={value} onChange={(e) => onChange(e.target.value)} className={`${base} resize-none`} />
+        <textarea rows={rows} value={value} onChange={(e) => onChange(e.target.value)} className={`${base} resize-none`} placeholder={placeholder} />
       ) : (
-        <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className={base} />
+        <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className={base} placeholder={placeholder} />
       )}
     </div>
   )
@@ -305,7 +306,7 @@ function PhotoUpload({ label, desc, value, onChange, onError }: {
 // Profile Tab
 // ============================================================
 function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
-  const [form, setForm] = useState<Profile>({ name: '', tagline: '', bio: '', heroPhoto: '', aboutPhoto: '', techPhoto: '', email: '', location: '' })
+  const [form, setForm] = useState<Profile>({ name: '', tagline: '', bio: '', heroPhoto: '', aboutPhoto: '', techPhoto: '', email: '', location: '', github: '', linkedin: '', twitter: '', facebook: '', instagram: '', upwork: '', fiverr: '' })
   const [saving, setSaving] = useState(false)
 
   useEffect(() => { setForm(getProfile()) }, [])
@@ -343,6 +344,21 @@ function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onE
           <Field label="Location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} />
         </div>
         <Field label="Bio" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} rows={3} />
+
+        {/* Social Media URLs */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-white/60">Social Media URLs</h3>
+          <p className="text-[10px] text-white/25">Paste full URLs. Leave blank to hide from the site.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="GitHub" value={form.github} onChange={(v) => setForm({ ...form, github: v })} placeholder="https://github.com/username" />
+            <Field label="LinkedIn" value={form.linkedin} onChange={(v) => setForm({ ...form, linkedin: v })} placeholder="https://linkedin.com/in/username" />
+            <Field label="X (Twitter)" value={form.twitter} onChange={(v) => setForm({ ...form, twitter: v })} placeholder="https://x.com/username" />
+            <Field label="Facebook" value={form.facebook} onChange={(v) => setForm({ ...form, facebook: v })} placeholder="https://facebook.com/username" />
+            <Field label="Instagram" value={form.instagram} onChange={(v) => setForm({ ...form, instagram: v })} placeholder="https://instagram.com/username" />
+            <Field label="Upwork" value={form.upwork} onChange={(v) => setForm({ ...form, upwork: v })} placeholder="https://upwork.com/freelancers/username" />
+            <Field label="Fiverr" value={form.fiverr} onChange={(v) => setForm({ ...form, fiverr: v })} placeholder="https://fiverr.com/username" />
+          </div>
+        </div>
 
         {/* Photo uploads — one per section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

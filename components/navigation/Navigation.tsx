@@ -80,10 +80,20 @@ export default function Navigation() {
             ))}
           </div>
 
-          {/* Availability Status */}
-          <div className="hidden md:flex items-center gap-2 text-xs font-light">
-            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
-            <span className="text-white/50 tracking-wide">Available</span>
+          {/* Availability Status + Resume */}
+          <div className="hidden md:flex items-center gap-3">
+            <div className="flex items-center gap-2 text-xs font-light">
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+              <span className="text-white/50 tracking-wide">Available</span>
+            </div>
+            <a
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-cyan-400 border border-cyan-400/30 rounded-full px-3 py-1.5 hover:bg-cyan-400/10 transition-all duration-300"
+            >
+              Resume ↓
+            </a>
           </div>
 
 
