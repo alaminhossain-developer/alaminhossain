@@ -50,9 +50,10 @@ export default function Navigation() {
           {/* Logo */}
           <Link
             href="/"
-            className="text-base font-black tracking-[-0.02em] text-white hover:text-cyan-400 transition-colors duration-300"
+            className="flex items-center hover:opacity-80 transition-opacity duration-300"
           >
-            AM
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Al Amin Hossain" className="h-8 w-auto" />
           </Link>
 
           {/* Desktop Menu */}

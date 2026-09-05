@@ -47,8 +47,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12 pb-12 border-b border-cyan-500/10">
           {/* Brand section */}
           <div data-footer-item className="space-y-4">
-            <Link href="/" className="text-xl font-bold tracking-tight text-white">
-              AL AMIN
+            <Link href="/" className="inline-block">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Al Amin Hossain" className="h-8 w-auto" />
             </Link>
             <p className="text-sm text-white/60">
               WordPress & Shopify Developer
