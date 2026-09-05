@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const resend = new Resend(apiKey)
 
     const { error } = await resend.emails.send({
-      from: 'Md. Al Amin Hossain <contact@portfolio.alaminhossain.me>',
+      from: 'Md. Al Amin Hossain <contact@portfulio.alaminhossain.me>',
       to: ['contact@alaminhossain.me', 'developeralamin17@gmail.com'],
       replyTo: email,
       subject: `New message from ${name} — alaminhossain.me`,
