@@ -14,7 +14,7 @@ const faqData = [
   },
   {
     question: 'What kind of developer is Md. Al Amin Hossain?',
-    answer: 'Md. Al Amin Hossain is a full-stack web developer with deep expertise in WordPress and Shopify ecosystems. He builds custom WordPress themes, develops Shopify stores with Liquid templating, creates custom Shopify apps, and optimizes website performance for speed and SEO. His work spans from small business websites to large-scale e-commerce platforms.',
+    answer: 'Md. Al Amin Hossain (also spelled AlAmin Hossain, Al Amin Hossen, or Alamin Developer) is a Bangladeshi full stack web developer specializing in WordPress, Shopify, and web performance optimization. He has delivered 100+ projects including custom WordPress themes, Shopify stores with Liquid templating, Shopify custom apps like AI Store Doctor, WooCommerce stores, and SEO-optimized business websites. He also builds modern web applications using React, Next.js, and Node.js.',
   },
   {
     question: 'What technologies does Md. Al Amin Hossain use?',
