@@ -81,7 +81,7 @@ export default function Navigation() {
           </div>
 
           {/* Availability Status + Resume */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-2 text-xs font-light">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
               <span className="text-white/50 tracking-wide">Available</span>
@@ -90,9 +90,10 @@ export default function Navigation() {
               href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-medium text-cyan-400 border border-cyan-400/30 rounded-full px-3 py-1.5 hover:bg-cyan-400/10 transition-all duration-300"
+              className="text-xs font-medium text-white/40 hover:text-cyan-400 transition-colors duration-300 flex items-center gap-1"
             >
-              Resume ↓
+              Resume
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
             </a>
           </div>
 

@@ -134,25 +134,27 @@ export default function Hero() {
             </div>
 
             <div data-animate className="flex flex-wrap gap-4 pt-4">
-              <a href="#work" className="btn-primary group inline-flex items-center">
+              <a
+                href="#work"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-dark-950 text-sm font-semibold rounded-full hover:bg-cyan-400 transition-all duration-300 group"
+              >
                 <span>Explore Work</span>
-                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">
-                  →
-                </span>
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
               </a>
-              <a href="#contact" className="btn-secondary">
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white/80 text-sm font-medium rounded-full hover:border-cyan-400/50 hover:text-cyan-400 transition-all duration-300"
+              >
                 Get In Touch
               </a>
               <a
                 href="/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-secondary group inline-flex items-center"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white/80 text-sm font-medium rounded-full hover:border-cyan-400/50 hover:text-cyan-400 transition-all duration-300 group"
               >
                 <span>Download Resume</span>
-                <span className="inline-block ml-2 group-hover:translate-y-0.5 transition-transform">
-                  ↓
-                </span>
+                <span className="group-hover:translate-y-0.5 transition-transform">↓</span>
               </a>
             </div>
           </div>
