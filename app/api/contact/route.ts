@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,35 +10,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Name, email, and message are required' }, { status: 400 })
     }
 
-    // Custom domain SMTP — mail.alaminhossain.me
-    const smtpHost = process.env.SMTP_HOST || 'mail.alaminhossain.me'
-    const smtpPort = Number(process.env.SMTP_PORT) || 465
-    const smtpUser = process.env.SMTP_USER || 'contact@alaminhossain.me'
-    const smtpPass = process.env.SMTP_PASS
+    const apiKey = process.env.RESEND_API_KEY
 
-    if (!smtpPass) {
-      console.log('📧 Contact form (no SMTP configured):', { name, email, phone, message })
+    if (!apiKey) {
+      console.log('📧 Contact form (no API key):', { name, email, phone, message })
       return NextResponse.json({
         success: true,
-        message: 'Message received! (Set SMTP_PASS in Vercel to enable email delivery)',
+        message: 'Message received! (Set RESEND_API_KEY in Vercel to enable email delivery)',
       })
     }
 
-    const transporter = nodemailer.createTransport({
-      host: smtpHost,
-      port: smtpPort,
-      secure: true, // SSL on port 465
-      auth: {
-        user: smtpUser,
-        pass: smtpPass,
-      },
-    })
+    const resend = new Resend(apiKey)
 
-    // Send email to yourself
-    await transporter.sendMail({
-      from: `"alaminhossain.me" <${smtpUser}>`,
-      to: smtpUser, // contact@alaminhossain.me
-      replyTo: email, // so you can reply directly to the sender
+    await resend.emails.send({
+      from: 'alaminhossain.me <onboarding@resend.dev>',
+      to: ['contact@alaminhossain.me', 'developeralamin17@gmail.com'],
+      replyTo: email,
       subject: `New message from ${name} — alaminhossain.me`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0a0e27; color: #fff; border-radius: 12px;">
