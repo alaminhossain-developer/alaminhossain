@@ -18,6 +18,7 @@ const Experience = lazy(() => import('@/components/sections/Experience'))
 const Process = lazy(() => import('@/components/sections/Process'))
 const Performance = lazy(() => import('@/components/sections/Performance'))
 const Testimonials = lazy(() => import('@/components/sections/Testimonials'))
+const FAQ = lazy(() => import('@/components/sections/FAQ'))
 const Contact = lazy(() => import('@/components/sections/Contact'))
 
 export default function Home() {
@@ -40,6 +41,7 @@ export default function Home() {
         <Articles />
         <Testimonials />
         <Contact />
+        <FAQ />
       </Suspense>
     </main>
   )
