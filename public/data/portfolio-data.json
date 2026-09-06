@@ -34,7 +34,8 @@
       "liveUrl": "#",
       "color": "#0ea5e9",
       "screenshots": [],
-      "selected": true
+      "selected": true,
+      "order": 1
     },
     {
       "id": "project-2",
@@ -54,7 +55,8 @@
       "liveUrl": "#",
       "color": "#22c55e",
       "screenshots": [],
-      "selected": true
+      "selected": true,
+      "order": 2
     },
     {
       "id": "project-3",
@@ -74,7 +76,8 @@
       "liveUrl": "#",
       "color": "#f59e0b",
       "screenshots": [],
-      "selected": true
+      "selected": true,
+      "order": 3
     },
     {
       "id": "project-4",
@@ -94,7 +97,8 @@
       "liveUrl": "#",
       "color": "#8b5cf6",
       "screenshots": [],
-      "selected": false
+      "selected": false,
+      "order": 4
     },
     {
       "title": "ggg",
