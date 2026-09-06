@@ -236,6 +236,13 @@ function Btn({ children, onClick, variant = 'primary', small }: {
   )
 }
 
+// Image preview cache — stores base64 for immediate display after upload
+const imagePreviewCache: Record<string, string> = {}
+
+function getCachedPreview(url: string): string | null {
+  return imagePreviewCache[url] || null
+}
+
 function PhotoUpload({ label, desc, value, onChange, onError }: {
   label: string
   desc: string
@@ -243,10 +250,19 @@ function PhotoUpload({ label, desc, value, onChange, onError }: {
   onChange: (url: string) => void
   onError: (msg: string) => void
 }) {
-  const [imgError, setImgError] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [previewSrc, setPreviewSrc] = useState('')
 
-  useEffect(() => { setImgError(false) }, [value])
+  // Resolve preview source: cache first, then URL
+  useEffect(() => {
+    if (!value) { setPreviewSrc(''); return }
+    const cached = getCachedPreview(value)
+    if (cached) {
+      setPreviewSrc(cached)
+    } else {
+      setPreviewSrc(value)
+    }
+  }, [value])
 
   return (
     <div className="space-y-1.5">
@@ -255,22 +271,25 @@ function PhotoUpload({ label, desc, value, onChange, onError }: {
       <div className="flex items-center gap-3">
         {value ? (
           <div className="relative group">
-            {imgError ? (
-              <div className="w-24 h-24 rounded-xl border border-dashed border-cyan-500/30 bg-cyan-500/[0.05] flex flex-col items-center justify-center gap-1">
-                <svg className="w-5 h-5 text-cyan-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                <span className="text-[9px] text-cyan-400/40">Not deployed yet</span>
-                <span className="text-[8px] text-white/20">Wait 2-3 min</span>
-              </div>
-            ) : (
+            {previewSrc ? (
               <img
-                src={value}
+                src={previewSrc}
                 alt={label}
                 className="w-24 h-24 object-cover rounded-xl border border-white/[0.06]"
-                onError={() => setImgError(true)}
+                onError={() => {
+                  // If URL fails, try cache again or show placeholder
+                  const cached = getCachedPreview(value)
+                  if (cached) setPreviewSrc(cached)
+                }}
               />
+            ) : (
+              <div className="w-24 h-24 rounded-xl border border-dashed border-cyan-500/30 bg-cyan-500/[0.05] flex flex-col items-center justify-center gap-1">
+                <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                <span className="text-[9px] text-cyan-400/40">Uploading...</span>
+              </div>
             )}
             <button
-              onClick={() => onChange('')}
+              onClick={() => { onChange(''); setPreviewSrc('') }}
               className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
             >×</button>
             <span className="absolute bottom-1 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded z-10">{getBase64Size(value)}</span>
@@ -297,15 +316,16 @@ function PhotoUpload({ label, desc, value, onChange, onError }: {
                 if (!file) return
                 setLoading(true)
                 try {
+                  // Compress first for immediate preview
+                  const compressed = await compressImage(file, 800, 0.75)
+                  // Upload to GitHub
                   const url = await uploadImage(file, 800, 0.75)
+                  // Cache the base64 for immediate display
+                  imagePreviewCache[url] = compressed
+                  setPreviewSrc(compressed)
                   onChange(url)
                 } catch (err) {
-                  try {
-                    const compressed = await compressImage(file, 800, 0.75)
-                    onChange(compressed)
-                  } catch (err2) {
-                    onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
-                  }
+                  onError('Failed to process image: ' + (err instanceof Error ? err.message : 'Unknown error'))
                 } finally {
                   setLoading(false)
                 }
@@ -493,7 +513,15 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
             <div className="flex flex-wrap gap-3 items-center">
               {form.screenshots.map((src, idx) => (
                 <div key={idx} className="relative group">
-                  <img src={src} alt={`Screenshot ${idx + 1}`} className="h-16 w-28 object-cover rounded border border-white/[0.06]" />
+                  <img
+                    src={getCachedPreview(src) || src}
+                    alt={`Screenshot ${idx + 1}`}
+                    className="h-16 w-28 object-cover rounded border border-white/[0.06]"
+                    onError={(e) => {
+                      const cached = getCachedPreview(src)
+                      if (cached) (e.target as HTMLImageElement).src = cached
+                    }}
+                  />
                   <span className="absolute top-0.5 left-1 text-[9px] bg-black/60 text-white/60 px-1 rounded">{idx + 1}</span>
                   <span className="absolute bottom-0.5 left-1 text-[8px] bg-black/60 text-white/40 px-1 rounded">{getBase64Size(src)}</span>
                   <button
@@ -513,10 +541,14 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
                     const file = e.target.files?.[0]
                     if (!file) return
                     try {
+                      // Compress first for immediate preview
+                      const compressed = await compressImage(file, 1200, 0.65)
+                      // Upload to GitHub
                       const url = await uploadImage(file, 1200, 0.65)
+                      // Cache for preview
+                      imagePreviewCache[url] = compressed
                       setForm({ ...form, screenshots: [...form.screenshots, url] })
                     } catch (err) {
-                      // Fallback to base64 if API unavailable
                       try {
                         const compressed = await compressImage(file, 1200, 0.65)
                         setForm({ ...form, screenshots: [...form.screenshots, compressed] })
