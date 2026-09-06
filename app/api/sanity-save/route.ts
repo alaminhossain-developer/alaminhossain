@@ -9,8 +9,8 @@ const writeClient = client.withConfig({
 
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json()
-    const { type, id, data: itemData, action } = data
+    const body = await req.json()
+    const { action, itemData } = body
 
     if (action === 'save-all') {
       // Save all portfolio data at once
@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
         { key: 'testimonials', type: 'testimonial' },
         { key: 'experience', type: 'experience' },
         { key: 'shopifyFeatures', type: 'shopifyFeature' },
+        { key: 'wpFeatures', type: 'wordpressFeature' },  // store sends wpFeatures
         { key: 'wordpressFeatures', type: 'wordpressFeature' },
         { key: 'caseStudies', type: 'caseStudy' },
         { key: 'apps', type: 'app' },
