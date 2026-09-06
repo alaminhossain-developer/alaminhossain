@@ -95,7 +95,7 @@ import { forwardRef } from 'react'
 
 const CaseStudyCard = forwardRef<HTMLDivElement, {
   study: {
-    id: string
+    id?: string
     title: string
     client: string
     category: string

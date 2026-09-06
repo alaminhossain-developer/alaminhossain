@@ -42,7 +42,7 @@ export default function AppsPage() {
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
           {apps.map((app) => {
-            const status = statusConfig[app.status]
+            const status = statusConfig[app.status as keyof typeof statusConfig] || statusConfig.development
             return (
               <Link
                 key={app.id}

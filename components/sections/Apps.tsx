@@ -76,7 +76,7 @@ export default function Apps() {
         {/* App cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {apps.map((app, i) => {
-            const status = statusConfig[app.status]
+            const status = statusConfig[app.status as keyof typeof statusConfig] || statusConfig.development
 
             return (
               <Link

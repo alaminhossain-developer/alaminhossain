@@ -111,7 +111,7 @@ export default function About() {
             {/* Bio paragraphs */}
             <div className="space-y-4 text-[0.95rem] text-white/60 leading-relaxed font-light">
               <p>
-                I&apos;m <span className="text-white/90 font-medium">{profile.name || 'Md. Al Amin Hossain'}</span>, a WordPress &amp; Shopify developer and web performance specialist from Bangladesh. For the last 5+ years, I&apos;ve been building websites, landing pages, dashboards, eCommerce stores, Shopify custom apps, and full-stack web applications for clients and real business needs.
+                I&apos;m <span className="text-white/90 font-medium">{profile?.name || 'Md. Al Amin Hossain'}</span>, a WordPress &amp; Shopify developer and web performance specialist from Bangladesh. For the last 5+ years, I&apos;ve been building websites, landing pages, dashboards, eCommerce stores, Shopify custom apps, and full-stack web applications for clients and real business needs.
               </p>
               <p>
                 As a developer, I mainly work with WordPress, PHP, Shopify Liquid, WooCommerce, JavaScript, React, Next.js, and modern frontend tools. My focus is always simple: create products that look professional, feel smooth to use, load fast, and are easy to maintain as they grow.
@@ -140,12 +140,12 @@ export default function About() {
 
           {/* Right — Photo (2 cols) */}
           <div className="lg:col-span-2 flex justify-center lg:justify-end">
-            {profile.aboutPhoto ? (
+            {profile?.aboutPhoto ? (
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={profile.aboutPhoto}
-                  alt={profile.name}
+                  alt={profile.name || ''}
                   className="w-full max-w-[340px] rounded-2xl object-cover border border-white/[0.06] shadow-2xl"
                 />
                 {/* Subtle accent line at bottom */}
@@ -154,7 +154,7 @@ export default function About() {
             ) : (
               <div className="w-full max-w-[340px] aspect-[4/5] rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-center">
                 <span className="text-5xl font-bold text-white/10">
-                  {profile.name
+                  {(profile?.name || '')
                     .split(' ')
                     .map((n) => n[0])
                     .join('')

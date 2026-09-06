@@ -99,7 +99,7 @@ export default function FeaturedWork() {
                   className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"
                 >
                   <div className={`lg:col-span-7 ${isReversed ? 'lg:order-2' : ''} project-image`}>
-                    <div className="cursor-pointer" onClick={() => setModalProject(project)}>
+                    <div className="cursor-pointer" onClick={() => setModalProject(project as any)}>
                       <BrowserFrame project={project} />
                     </div>
                   </div>
@@ -144,7 +144,7 @@ export default function FeaturedWork() {
 
                     <div className="project-meta flex items-center gap-4">
                       <button
-                        onClick={() => setModalProject(project)}
+                        onClick={() => setModalProject(project as any)}
                         className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:gap-3 transition-all duration-300"
                       >
                         View Project

@@ -126,10 +126,10 @@ export default function Hero() {
 
             <div data-animate className="space-y-4 pt-2">
               <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">
-                {profile.name || 'MD. AL AMIN HOSSAIN'}
+                {profile?.name || 'MD. AL AMIN HOSSAIN'}
               </h2>
               <p className="text-base lg:text-lg text-white/60 font-light leading-relaxed max-w-lg">
-                {profile.bio || 'WordPress specialist. Shopify expert. Performance obsessed.'}
+                {profile?.bio || 'WordPress specialist. Shopify expert. Performance obsessed.'}
               </p>
             </div>
 
@@ -192,11 +192,11 @@ export default function Hero() {
 
                 {/* Photo area — contained inside frame with padding */}
                 <div className="relative aspect-[4/5] w-[320px] sm:w-[360px] lg:w-[400px] p-3 overflow-hidden">
-                {profile.heroPhoto ? (
+                {profile?.heroPhoto ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={profile.heroPhoto}
-                    alt={profile.name}
+                    alt={profile.name || ''}
                     width={400}
                     height={500}
                     fetchPriority="high"
@@ -206,7 +206,7 @@ export default function Hero() {
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-500/10 via-dark-950 to-dark-900 rounded-xl">
                       <span className="text-6xl font-bold text-white/10">
-                        {profile.name
+                        {(profile?.name || '')
                           .split(' ')
                           .map((n) => n[0])
                           .join('')

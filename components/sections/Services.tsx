@@ -243,11 +243,11 @@ export default function Services() {
           const color = accentColors[i % accentColors.length]
           const bg = cardGradients[i % cardGradients.length]
           const visGrad = visualGradients[i % visualGradients.length]
-          const stats = serviceStats[service.id] || [
+          const stats = serviceStats[service.id || ''] || [
             { label: 'Projects', value: '100+' },
             { label: 'Satisfaction', value: '98%' },
           ]
-          const icon = serviceIcons[service.id] || '✦'
+          const icon = serviceIcons[service.id || ''] || '✦'
 
           return (
             <div

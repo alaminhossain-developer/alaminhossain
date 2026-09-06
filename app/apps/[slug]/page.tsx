@@ -46,7 +46,7 @@ export default function AppDetailPage() {
     )
   }
 
-  const status = statusConfig[app.status]
+  const status = statusConfig[app.status as keyof typeof statusConfig] || statusConfig.development
 
   return (
     <main className="bg-[#0a0e27] text-white min-h-screen">

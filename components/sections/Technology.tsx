@@ -240,11 +240,11 @@ export default function Technology() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30">
             <div className="w-36 h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 rounded-full p-[2px] bg-gradient-to-br from-cyan-400/60 via-cyan-400/20 to-emerald-400/40">
               <div className="w-full h-full rounded-full overflow-hidden bg-dark-950 flex items-center justify-center">
-                {profile.techPhoto ? (
+                {profile?.techPhoto ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={profile.techPhoto}
-                    alt={profile.name}
+                    alt={profile.name || ''}
                     className="w-full h-full object-cover rounded-full"
                   />
                 ) : (

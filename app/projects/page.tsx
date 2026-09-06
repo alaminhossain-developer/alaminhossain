@@ -41,7 +41,7 @@ export default function ProjectsPage() {
             <div
               key={project.id}
               className="group cursor-pointer"
-              onClick={() => setModalProject(project)}
+              onClick={() => setModalProject(project as any)}
             >
               {/* Browser Frame */}
               <div className="relative rounded-xl overflow-hidden border border-white/[0.04] bg-white/[0.015] aspect-[16/10] mb-5">
@@ -131,7 +131,7 @@ export default function ProjectsPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <button
-                    onClick={(e) => { e.stopPropagation(); setModalProject(project) }}
+                    onClick={(e) => { e.stopPropagation(); setModalProject(project as any) }}
                     className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:gap-3 transition-all duration-300"
                   >
                     View Project
