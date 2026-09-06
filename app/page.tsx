@@ -34,13 +34,13 @@ export default function Home() {
         <Services />
         <FeaturedWork />
         <WordPressFeatures />
-        <CaseStudies />
         <ShopifyFeatures />
         <Apps />
         <Technology />
         <About />
         <Experience />
         <Process />
+        <CaseStudies />
         <Performance />
         <Articles />
         <Testimonials />
