@@ -68,11 +68,22 @@ export default function DashboardPage() {
     }
   }, [authed])
 
-  const flash = (msg?: string) => {
-    setToastMsg(msg || 'Saved successfully')
-    setToastType('success')
+  // Auto-save to GitHub after every local save
+  const autoSaveToGitHub = useCallback(async (msg?: string) => {
+    try {
+      await saveAllToGitHub()
+      setToastMsg(msg || 'Saved & pushed to GitHub. Live in ~3 min.')
+      setToastType('success')
+    } catch {
+      setToastMsg(msg || 'Saved locally (GitHub push failed)')
+      setToastType('success')
+    }
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
+  }, [])
+
+  const flash = (msg?: string) => {
+    autoSaveToGitHub(msg || 'Saved & pushing to GitHub...')
   }
 
   const flashError = (msg: string) => {
