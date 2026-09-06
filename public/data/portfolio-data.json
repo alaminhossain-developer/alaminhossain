@@ -96,7 +96,9 @@
       "image": "/images/projects/project-4.jpg",
       "liveUrl": "#",
       "color": "#8b5cf6",
-      "screenshots": [],
+      "screenshots": [
+        "/uploads/253a2d69b4aa503a.png"
+      ],
       "selected": false,
       "order": 4
     },
@@ -657,5 +659,5 @@
       "id": "cs-mtpi35zeste66o"
     }
   ],
-  "savedAt": "2026-09-06T08:35:02.502Z"
+  "savedAt": "2026-09-06T08:37:13.057Z"
 }
