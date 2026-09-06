@@ -1,3 +1,663 @@
 {
-  "test": true
+  "profile": {
+    "name": "Md. Al Amin Hossain",
+    "tagline": "WordPress & Shopify Developer",
+    "bio": "I craft high-performance digital experiences. WordPress specialist. Shopify expert. Performance obsessed.",
+    "heroPhoto": "/uploads/440d3599f818ca7f.png",
+    "aboutPhoto": "/uploads/9d5063537165ed72.png",
+    "techPhoto": "/uploads/d72ccd56b80d1e0a.png",
+    "email": "",
+    "location": "",
+    "github": "https://github.com/alaminhossain-developer",
+    "linkedin": "https://www.linkedin.com/in/alaminhossain-shopify/",
+    "twitter": "https://x.com/al_Hossain1",
+    "facebook": "https://www.facebook.com/alamin.wp.shopify",
+    "instagram": "https://www.instagram.com/alamin.wp.shopify/"
+  },
+  "projects": [
+    {
+      "id": "project-1",
+      "title": "Premium WordPress Development",
+      "category": "WordPress",
+      "year": "2025",
+      "description": "Custom WordPress theme development with advanced performance optimization",
+      "longDescription": "A comprehensive WordPress solution featuring custom theme development, advanced page builder integration, and extensive performance optimization for high-traffic websites.",
+      "technologies": [
+        "WordPress",
+        "PHP",
+        "JavaScript",
+        "CSS",
+        "Elementor",
+        "WooCommerce"
+      ],
+      "image": "/images/projects/project-1.jpg",
+      "liveUrl": "#",
+      "color": "#0ea5e9",
+      "screenshots": [],
+      "selected": true,
+      "order": 1
+    },
+    {
+      "id": "project-2",
+      "title": "Shopify Store Optimization",
+      "category": "Shopify",
+      "year": "2024",
+      "description": "Complete Shopify store redesign with custom Liquid development and performance enhancement",
+      "longDescription": "End-to-end Shopify optimization project including custom theme development, Liquid templating, and comprehensive performance tuning.",
+      "technologies": [
+        "Shopify",
+        "Liquid",
+        "JavaScript",
+        "CSS",
+        "App Integration"
+      ],
+      "image": "/images/projects/project-2.jpg",
+      "liveUrl": "#",
+      "color": "#22c55e",
+      "screenshots": [],
+      "selected": true,
+      "order": 2
+    },
+    {
+      "id": "project-3",
+      "title": "Web Performance Audit & Optimization",
+      "category": "Performance",
+      "year": "2024",
+      "description": "Comprehensive performance optimization for enterprise website improving Core Web Vitals",
+      "longDescription": "Full-scale performance audit and optimization project targeting Core Web Vitals and overall user experience improvements.",
+      "technologies": [
+        "Core Web Vitals",
+        "Image Optimization",
+        "Code Splitting",
+        "Caching",
+        "CDN"
+      ],
+      "image": "/images/projects/project-3.jpg",
+      "liveUrl": "#",
+      "color": "#f59e0b",
+      "screenshots": [],
+      "selected": true,
+      "order": 3
+    },
+    {
+      "id": "project-4",
+      "title": "Custom Interactive Web Experience",
+      "category": "Custom",
+      "year": "2024",
+      "description": "Advanced JavaScript application with interactive UI and real-time data synchronization",
+      "longDescription": "Custom web application featuring complex interactive UI components and real-time data updates.",
+      "technologies": [
+        "React",
+        "Next.js",
+        "JavaScript",
+        "WebSocket",
+        "API Integration"
+      ],
+      "image": "/images/projects/project-4.jpg",
+      "liveUrl": "#",
+      "color": "#8b5cf6",
+      "screenshots": [
+        "/uploads/7fa90ff24daf8f1c.png"
+      ],
+      "selected": false,
+      "order": 4
+    },
+    {
+      "title": "ggg",
+      "category": "WordPress",
+      "year": "2025",
+      "description": "ygugyugygy",
+      "longDescription": "ygufytft",
+      "technologies": [],
+      "liveUrl": "#",
+      "color": "#0ea5e9",
+      "image": "",
+      "screenshots": [
+        "/uploads/93663abe2d68c646.png"
+      ],
+      "selected": false,
+      "order": 5,
+      "id": "project-mtpi5q6lq7fodo"
+    }
+  ],
+  "services": [
+    {
+      "id": "service-1",
+      "number": "01",
+      "title": "WordPress Development",
+      "description": "Custom themes, plugins, and enterprise solutions built on WordPress.",
+      "icon": "Monitor",
+      "features": [
+        "Custom Theme Development",
+        "Plugin Development",
+        "Elementor & Page Builders",
+        "ACF & Custom Fields"
+      ]
+    },
+    {
+      "id": "service-2",
+      "number": "02",
+      "title": "Shopify Development",
+      "description": "Custom storefronts and Liquid themes optimized for conversion.",
+      "icon": "ShoppingBag",
+      "features": [
+        "Custom Theme Development",
+        "Liquid Customization",
+        "Custom Sections",
+        "Checkout Optimization"
+      ]
+    },
+    {
+      "id": "service-3",
+      "number": "03",
+      "title": "Web Performance",
+      "description": "Core Web Vitals improvements and speed optimization for WordPress.",
+      "icon": "Zap",
+      "features": [
+        "Core Web Vitals Audits",
+        "Speed Optimization",
+        "Image Optimization",
+        "Caching Strategies"
+      ]
+    },
+    {
+      "id": "service-4",
+      "number": "04",
+      "title": "Custom Web Experiences",
+      "description": "Interactive features and custom frontend functionality.",
+      "icon": "Code",
+      "features": [
+        "Interactive UI Components",
+        "API Integrations",
+        "Data Visualization",
+        "Animation Systems"
+      ]
+    },
+    {
+      "id": "service-5",
+      "number": "05",
+      "title": "Technical SEO",
+      "description": "Search engine optimization through technical improvements.",
+      "icon": "Search",
+      "features": [
+        "Technical Audits",
+        "Schema Markup",
+        "Site Architecture",
+        "Mobile Optimization"
+      ]
+    },
+    {
+      "id": "service-6",
+      "number": "06",
+      "title": "Website Maintenance",
+      "description": "Ongoing support, updates, and optimization for WordPress sites.",
+      "icon": "Settings",
+      "features": [
+        "Regular Updates",
+        "Security Monitoring",
+        "Backup Management",
+        "Performance Monitoring"
+      ]
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "testimonial-1",
+      "quote": "Exceptional WordPress expertise. Al Amin delivered a high-performance solution that exceeded our expectations.",
+      "author": "GAOTek Team",
+      "role": "Technology Company",
+      "company": "GAOTek Inc.",
+      "projectType": "Corporate Website"
+    },
+    {
+      "id": "testimonial-2",
+      "quote": "Great communication, clean development, and reliable delivery. Highly recommended for WordPress and Shopify projects.",
+      "author": "Client",
+      "role": "Business Owner",
+      "company": "Project Client",
+      "projectType": "WordPress Development"
+    },
+    {
+      "id": "testimonial-3",
+      "quote": "The performance improvements were remarkable. Our site was transformed.",
+      "author": "Client",
+      "role": "Operations Manager",
+      "company": "Project Client",
+      "projectType": "eCommerce Development"
+    },
+    {
+      "id": "testimonial-4",
+      "quote": "Al Amin delivered our Shopify store on time with exceptional attention to detail. The checkout conversion improved by 40% after his optimizations.",
+      "author": "Sarah K.",
+      "role": "E-commerce Manager",
+      "company": "Retail Client",
+      "projectType": "Shopify Development"
+    },
+    {
+      "id": "testimonial-5",
+      "quote": "Technical SEO audit was thorough and actionable. Our organic traffic grew 60% within 3 months of implementing the recommendations.",
+      "author": "David M.",
+      "role": "Marketing Director",
+      "company": "Agency Client",
+      "projectType": "Technical SEO"
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-1",
+      "role": "Web Developer Staff",
+      "company": "GAOTek Inc.",
+      "period": "May 2025 – Present",
+      "description": "Lead development of WordPress and Shopify solutions with focus on performance optimization and technical excellence.",
+      "technologies": [
+        "WordPress",
+        "Shopify",
+        "PHP",
+        "JavaScript",
+        "Performance"
+      ],
+      "current": true,
+      "highlights": [
+        "WordPress & Shopify website development and management",
+        "Web performance optimization and Core Web Vitals improvement",
+        "Technical SEO implementation and monitoring",
+        "Team and intern management for web projects",
+        "Custom theme and plugin development"
+      ]
+    },
+    {
+      "id": "exp-2",
+      "role": "Senior WordPress Developer",
+      "company": "Previous Company",
+      "period": "Year – Year",
+      "description": "[Add your previous role details here]",
+      "technologies": [
+        "WordPress",
+        "PHP",
+        "JavaScript"
+      ],
+      "current": false,
+      "highlights": [
+        "Custom WordPress theme development",
+        "WooCommerce store setup and optimization",
+        "Client project management"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "name": "WordPress",
+      "category": "core",
+      "level": 95
+    },
+    {
+      "name": "Shopify",
+      "category": "core",
+      "level": 90
+    },
+    {
+      "name": "WooCommerce",
+      "category": "core",
+      "level": 88
+    },
+    {
+      "name": "JavaScript",
+      "category": "frontend",
+      "level": 88
+    },
+    {
+      "name": "HTML",
+      "category": "frontend",
+      "level": 95
+    },
+    {
+      "name": "CSS",
+      "category": "frontend",
+      "level": 93
+    },
+    {
+      "name": "Liquid",
+      "category": "frontend",
+      "level": 88
+    },
+    {
+      "name": "React",
+      "category": "frontend",
+      "level": 82
+    },
+    {
+      "name": "Next.js",
+      "category": "frontend",
+      "level": 80
+    },
+    {
+      "name": "TypeScript",
+      "category": "frontend",
+      "level": 75
+    },
+    {
+      "name": "Tailwind CSS",
+      "category": "frontend",
+      "level": 90
+    },
+    {
+      "name": "PHP",
+      "category": "backend",
+      "level": 85
+    },
+    {
+      "name": "Elementor",
+      "category": "tools",
+      "level": 90
+    },
+    {
+      "name": "ACF",
+      "category": "tools",
+      "level": 88
+    },
+    {
+      "name": "Git",
+      "category": "tools",
+      "level": 85
+    },
+    {
+      "name": "Figma",
+      "category": "tools",
+      "level": 80
+    },
+    {
+      "name": "Google Analytics",
+      "category": "tools",
+      "level": 82
+    },
+    {
+      "name": "Technical SEO",
+      "category": "tools",
+      "level": 85
+    }
+  ],
+  "shopifyFeatures": [
+    {
+      "id": "sf-1",
+      "title": "Custom Liquid Themes",
+      "description": "Fully customized Shopify themes built from scratch with Liquid templating for unique brand experiences.",
+      "icon": "Palette",
+      "color": "#22c55e"
+    },
+    {
+      "id": "sf-2",
+      "title": "Checkout Optimization",
+      "description": "Streamlined checkout flows that reduce cart abandonment and increase conversion rates.",
+      "icon": "CreditCard",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "sf-3",
+      "title": "App Integrations",
+      "description": "Custom Shopify app development and third-party integrations for enhanced store functionality.",
+      "icon": "Plug",
+      "color": "#a855f7"
+    },
+    {
+      "id": "sf-4",
+      "title": "Performance Tuning",
+      "description": "Speed optimization for Shopify stores including image optimization and script management.",
+      "icon": "Zap",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "sf-5",
+      "title": "SEO & Analytics",
+      "description": "Technical SEO implementation and analytics setup for data-driven growth.",
+      "icon": "BarChart3",
+      "color": "#00e5c8"
+    },
+    {
+      "id": "sf-6",
+      "title": "Theme Migration",
+      "description": "Seamless migration from older themes to modern, performant Shopify Online Store 2.0.",
+      "icon": "RefreshCw",
+      "color": "#ec4899"
+    }
+  ],
+  "apps": [
+    {
+      "id": "app-1",
+      "name": "AI Store Doctor",
+      "slug": "ai-store-doctor",
+      "tagline": "Your Shopify store, diagnosed by AI",
+      "description": "AI-powered Shopify store audit tool that analyzes your store and provides actionable recommendations to improve performance, SEO, and conversions.",
+      "status": "development",
+      "url": "",
+      "icon": "🤖",
+      "color": "#00d4e8",
+      "features": [
+        "AI-powered audit",
+        "Performance analysis",
+        "SEO recommendations",
+        "Conversion optimization"
+      ],
+      "images": []
+    }
+  ],
+  "articles": [
+    {
+      "id": "article-1",
+      "title": "AI Store Doctor — Complete Feature Overview",
+      "slug": "ai-store-doctor-overview",
+      "excerpt": "Your Shopify store, diagnosed by AI. Smart scanning, health scores, AI-powered fixes, and one-click apply — everything you need to optimize your store.",
+      "content": "## How It Works (Step by Step)\n\n1. **Install** → Shopify admin → Click \"AI Store Doctor\"\n2. **Scan** → Fetches ALL products from your store via Shopify API\n3. **Analyze** → Checks each product for issues across 5 categories\n4. **Score** → Gives health score 0-100 + category breakdown\n5. **Fix** → Click \"Fix with AI\" → Gemini generates optimized text → Apply to store\n\n## Core Features (Free Plan)\n\n| Feature | How It Works |\n|---------|-------------|\n| Smart Store Scanning | Fetches products via Shopify REST API, checks titles, descriptions, images, SEO, tags, vendor, product type |\n| Health Score (0-100) | Weighted score across 5 categories — higher = healthier store |\n| AI-Powered Fixes | Gemini AI generates optimized product descriptions, SEO meta descriptions, titles, keywords |\n| One-Click Apply | Click \"Apply Change\" → writes directly to Shopify via REST API |\n| Bulk Fix | Fix all products with the same issue type at once |\n| Re-Scan | Click \"Re-Scan\" anytime to re-analyze products after making fixes |\n| Scan History | Tracks health score over time — see if your fixes improved things |\n\n## 5 Health Score Categories\n\n- **Product Content (30%)** — Missing description, short/weak description, plain text only, duplicate content\n- **SEO (20%)** — Missing meta description, short/long meta description\n- **Images (25%)** — No images, only one image, missing alt text\n- **Product Data (15%)** — Missing product type, vendor, tags, key fields\n- **Keywords & SEO (10%)** — Generic titles, unoptimized titles, missing searchable attributes\n\n## AI Fix Flow\n\nUser clicks \"Fix with AI\" → Frontend sends issue type + product data to API → Gemini AI generates optimized text → Modal shows BEFORE vs AFTER comparison → User clicks \"Apply Change\" → Shopify REST API updates the product\n\n## Billing & Pricing\n\n- **Free** — $0/mo: 100 products, 20 AI requests, 10 fixes\n- **Starter** — $9/mo: 500 products, scheduled scans, email reports\n- **Growth** — $19/mo: 2,000 products, competitor benchmarking\n- **Pro** — $39/mo: 5,000 products, priority support\n\n## Tech Stack\n\nNode.js + Express backend, React + Vite + Shopify Polaris frontend, Google Gemini AI, Shopify REST Admin API, Railway hosting.",
+      "category": "app",
+      "tags": [
+        "Shopify App",
+        "AI",
+        "Store Audit",
+        "Gemini"
+      ],
+      "publishedAt": "2026-08-15",
+      "readTime": "8 min read",
+      "featured": true,
+      "coverImage": "/uploads/4de7d970b438b810.png"
+    },
+    {
+      "id": "article-2",
+      "title": "How to Optimize Your Shopify Store for Maximum Speed",
+      "slug": "shopify-store-speed-optimization",
+      "excerpt": "Speed directly impacts your conversion rate. Learn the exact techniques I use to make Shopify stores load in under 2 seconds.",
+      "content": "## Why Speed Matters\n\nEvery second of load time reduces conversions by 7%. A 3-second delay can lose 53% of mobile visitors.\n\n## 1. Image Optimization\n\n- Use WebP format (Shopify supports it natively)\n- Implement lazy loading for below-fold images\n- Compress images before upload — aim for under 200KB each\n- Use Shopify's built-in image URL parameters for responsive sizing\n\n## 2. Minimize JavaScript\n\n- Remove unused apps and their scripts\n- Defer non-critical JavaScript\n- Use Shopify's Asset API to audit what's loaded\n- Replace heavy apps with lightweight custom solutions\n\n## 3. Leverage Browser Caching\n\n- Set proper cache headers via CDN\n- Use Shopify's built-in CDN for all assets\n- Implement service workers for repeat visits\n\n## 4. Optimize Liquid Code\n\n- Avoid N+1 queries in Liquid templates\n- Use {% cache %} blocks for expensive renders\n- Paginate collections properly\n- Minimize the use of external HTTP requests\n\n## 5. Core Web Vitals\n\n- **LCP** — Keep under 2.5s by optimizing hero images\n- **FID** — Reduce JavaScript execution time\n- **CLS** — Set explicit dimensions for all images and embeds\n\n## Results\n\nAfter implementing these techniques, my clients typically see:\n- 40-60% improvement in Lighthouse scores\n- 2-3x faster page load times\n- 15-25% increase in mobile conversions",
+      "category": "shopify",
+      "tags": [
+        "Shopify",
+        "Performance",
+        "Core Web Vitals",
+        "Speed"
+      ],
+      "publishedAt": "2026-07-20",
+      "readTime": "6 min read",
+      "featured": true,
+      "coverImage": ""
+    },
+    {
+      "id": "article-3",
+      "title": "WordPress Performance Optimization: The Complete Guide",
+      "slug": "wordpress-performance-optimization-guide",
+      "excerpt": "From caching strategies to database optimization — everything I do to make WordPress sites blazing fast.",
+      "content": "## Server-Level Optimization\n\n- Choose quality hosting (Cloudways, Kinsta, or WP Engine)\n- Enable server-side caching (Varnish, Redis, or OPcache)\n- Use PHP 8.1+ for significant performance gains\n- Implement CDN for global content delivery\n\n## WordPress-Specific Optimizations\n\n- **Caching Plugin** — WP Rocket or LiteSpeed Cache\n- **Image Optimization** — ShortPixel or Imagify\n- **Database Cleanup** — Remove post revisions, transients, spam\n- **Lazy Loading** — Native WordPress lazy loading or plugin\n\n## Theme & Plugin Audit\n\n- Remove unused plugins (each adds HTTP requests)\n- Choose lightweight themes (GeneratePress, Kadence, or custom)\n- Minimize CSS and JavaScript files\n- Use async/defer for non-critical scripts\n\n## Database Optimization\n\n- Clean up post revisions (limit to 3-5)\n- Remove spam comments and trashed items\n- Optimize database tables regularly\n- Use object caching for complex queries\n\n## Measuring Results\n\n- Run PageSpeed Insights before and after\n- Monitor Core Web Vitals in Search Console\n- Use GTmetrix for detailed waterfall analysis\n- Track real user metrics with analytics",
+      "category": "wordpress",
+      "tags": [
+        "WordPress",
+        "Performance",
+        "Caching",
+        "Speed"
+      ],
+      "publishedAt": "2026-06-10",
+      "readTime": "7 min read",
+      "featured": true,
+      "coverImage": ""
+    },
+    {
+      "id": "article-4",
+      "title": "Building a Shopify App: From Idea to App Store",
+      "slug": "building-shopify-app-guide",
+      "excerpt": "Everything I learned building AI Store Doctor — the tech stack, OAuth flow, and what it takes to ship a real Shopify app.",
+      "content": "## Why Build a Shopify App?\n\nThe Shopify ecosystem has over 4.4 million merchants. Apps solve real problems and can generate recurring revenue.\n\n## Planning Your App\n\n1. Identify a real pain point (talk to merchants)\n2. Research existing solutions (find gaps)\n3. Define your MVP — ship the smallest useful thing\n4. Choose your pricing model (freemium works best)\n\n## Tech Stack\n\n- **Backend**: Node.js + Express (ESM)\n- **Frontend**: React + Vite + Shopify Polaris\n- **AI**: Google Gemini for content generation\n- **Hosting**: Railway (Docker containers)\n- **Auth**: Shopify App SDK (OAuth)\n\n## The OAuth Flow\n\n1. Merchant installs your app from App Store\n2. Shopify redirects to your callback URL with auth code\n3. Exchange code for access token\n4. Store token and start making API calls\n\n## Key APIs\n\n- **REST Admin API** — Product management, orders, inventory\n- **GraphQL API** — More efficient for complex queries\n- **App Bridge** — Embedded app experience\n- **Polaris** — Shopify's design system\n\n## Common Pitfalls\n\n- Rate limiting (REST API has limits)\n- Session storage (don't lose access tokens)\n- Webhook handling (verify HMAC signatures)\n- App review process (follow Shopify guidelines)\n\n## Launching\n\n- Submit to Shopify App Store\n- Prepare listing with screenshots and description\n- Set up support channels\n- Monitor reviews and iterate",
+      "category": "shopify",
+      "tags": [
+        "Shopify",
+        "App Development",
+        "Node.js",
+        "OAuth"
+      ],
+      "publishedAt": "2026-05-25",
+      "readTime": "9 min read",
+      "featured": false,
+      "coverImage": ""
+    },
+    {
+      "id": "article-5",
+      "title": "WordPress Theme Development: Custom vs Page Builder",
+      "slug": "wordpress-theme-development-comparison",
+      "excerpt": "When to build custom themes, when to use Elementor, and how to get the best of both worlds.",
+      "content": "## Custom Theme Development\n\n**Pros:**\n- Complete control over code quality\n- Better performance (no bloat)\n- Easier to maintain long-term\n- Better SEO (cleaner markup)\n\n**Cons:**\n- Higher upfront cost\n- Longer development time\n- Requires developer for changes\n\n## Page Builder Approach (Elementor)\n\n**Pros:**\n- Visual editing for clients\n- Faster initial setup\n- Lots of pre-built templates\n- Client can make changes themselves\n\n**Cons:**\n- Code bloat (extra CSS/JS)\n- Performance overhead\n- Vendor lock-in\n- Harder to migrate later\n\n## My Recommendation\n\nUse a hybrid approach:\n\n1. Build a lightweight custom theme as the foundation\n2. Use Elementor for content pages only\n3. Keep critical templates custom (header, footer, loops)\n4. Use ACF for structured data\n5. Optimize everything — lazy load, cache, minify\n\n## Best Practices\n\n- Start with Underscores or Sage as a base\n- Use ACF for custom fields (not page builder fields)\n- Implement proper WordPress hooks and filters\n- Follow WordPress coding standards\n- Test with Theme Check plugin\n\n## When to Go Fully Custom\n\n- High-traffic sites where performance is critical\n- Complex applications with custom post types\n- WooCommerce stores with custom functionality\n- Sites needing specific accessibility standards",
+      "category": "wordpress",
+      "tags": [
+        "WordPress",
+        "Theme Development",
+        "Elementor",
+        "ACF"
+      ],
+      "publishedAt": "2026-04-12",
+      "readTime": "5 min read",
+      "featured": false,
+      "coverImage": ""
+    }
+  ],
+  "wpFeatures": [
+    {
+      "id": "wpf-1",
+      "title": "Custom Theme Development",
+      "description": "Pixel-perfect WordPress themes built from scratch with clean, maintainable code and modern CSS practices.",
+      "icon": "Palette",
+      "color": "#3b82f6",
+      "order": 1
+    },
+    {
+      "id": "wpf-2",
+      "title": "Plugin Development",
+      "description": "Custom WordPress plugins tailored to your business logic, extending functionality beyond off-the-shelf solutions.",
+      "icon": "Puzzle",
+      "color": "#8b5cf6",
+      "order": 2
+    },
+    {
+      "id": "wpf-3",
+      "title": "WooCommerce Solutions",
+      "description": "Full eCommerce setup with custom product pages, checkout optimization, and payment gateway integrations.",
+      "icon": "ShoppingCart",
+      "color": "#22c55e",
+      "order": 3
+    },
+    {
+      "id": "wpf-4",
+      "title": "Performance Optimization",
+      "description": "Core Web Vitals optimization, caching strategies, CDN setup, and image optimization for blazing-fast load times.",
+      "icon": "Zap",
+      "color": "#f59e0b",
+      "order": 4
+    },
+    {
+      "id": "wpf-5",
+      "title": "Technical SEO",
+      "description": "Schema markup, site architecture, XML sitemaps, and technical audits to maximize search visibility.",
+      "icon": "Search",
+      "color": "#06b6d4",
+      "order": 5
+    },
+    {
+      "id": "wpf-6",
+      "title": "Ongoing Maintenance",
+      "description": "Regular updates, security monitoring, backups, and performance checks to keep your site running smoothly.",
+      "icon": "Shield",
+      "color": "#ef4444",
+      "order": 6
+    }
+  ],
+  "caseStudies": [
+    {
+      "id": "cs-1",
+      "title": "GAOTek Corporate Platform",
+      "client": "GAOTek Inc.",
+      "category": "WordPress",
+      "description": "Enterprise WordPress infrastructure across 10+ corporate domains with 30% LCP improvement and full GA4/GTM analytics integration.",
+      "results": [
+        "30% faster LCP",
+        "10+ domains managed",
+        "99.9% uptime"
+      ],
+      "bannerImage": "",
+      "technologies": [
+        "WordPress",
+        "CDN",
+        "GA4",
+        "GTM",
+        "Technical SEO"
+      ],
+      "order": 1
+    },
+    {
+      "id": "cs-2",
+      "title": "Shopify Store Conversion Boost",
+      "client": "eCommerce Client",
+      "category": "Shopify",
+      "description": "Complete Shopify store redesign with custom Liquid sections, checkout optimization, and 40% conversion rate improvement.",
+      "results": [
+        "40% conversion boost",
+        "90+ PageSpeed score",
+        "Reduced bounce rate"
+      ],
+      "bannerImage": "",
+      "technologies": [
+        "Shopify",
+        "Liquid",
+        "JavaScript",
+        "CSS"
+      ],
+      "order": 2
+    },
+    {
+      "id": "cs-3",
+      "title": "WooCommerce Performance Overhaul",
+      "client": "Retail Client",
+      "category": "WordPress",
+      "description": "Full WooCommerce optimization project transforming a slow store into a high-performance eCommerce platform.",
+      "results": [
+        "3x faster page loads",
+        "25% revenue increase",
+        "95+ PageSpeed score"
+      ],
+      "bannerImage": "",
+      "technologies": [
+        "WordPress",
+        "WooCommerce",
+        "Redis",
+        "CDN",
+        "PHP 8"
+      ],
+      "order": 3
+    },
+    {
+      "title": "testt",
+      "client": "bhgh",
+      "category": "WordPress",
+      "description": "mbhjhgj",
+      "results": [],
+      "technologies": [
+        "jkjkh"
+      ],
+      "bannerImage": "/uploads/93895865379eb715.png",
+      "order": 4,
+      "id": "cs-mtpi35zeste66o"
+    }
+  ],
+  "savedAt": "2026-09-06T08:54:21.858Z"
 }
