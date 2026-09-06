@@ -7,7 +7,12 @@
     "aboutPhoto": "/uploads/9d5063537165ed72.png",
     "techPhoto": "/uploads/d72ccd56b80d1e0a.png",
     "email": "",
-    "location": ""
+    "location": "",
+    "github": "https://github.com/alaminhossain-developer",
+    "linkedin": "https://www.linkedin.com/in/alaminhossain-shopify/",
+    "twitter": "https://x.com/al_Hossain1",
+    "facebook": "https://www.facebook.com/alamin.wp.shopify",
+    "instagram": "https://www.instagram.com/alamin.wp.shopify/"
   },
   "projects": [
     {
@@ -536,5 +541,5 @@
       "coverImage": ""
     }
   ],
-  "savedAt": "2026-09-04T16:52:19.611Z"
+  "savedAt": "2026-09-06T07:01:27.546Z"
 }
