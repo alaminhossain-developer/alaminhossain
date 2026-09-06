@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import LayoutShell from "@/components/layout/LayoutShell";
+import { getPortfolioData } from "@/lib/sanity/getPortfolioData";
+import PortfolioProvider from "@/components/layout/PortfolioProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,14 +23,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const data = await getPortfolioData()
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <LayoutShell>{children}</LayoutShell>
+        <PortfolioProvider data={data}>
+          <LayoutShell>{children}</LayoutShell>
+        </PortfolioProvider>
       </body>
     </html>
   );
