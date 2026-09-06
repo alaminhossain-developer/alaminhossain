@@ -11,8 +11,10 @@ import {
   getShopifyFeatures,
   getApps,
   getArticles,
+  getWordPressFeatures,
+  getCaseStudies,
 } from './store'
-import type { Profile, Project, Service, Testimonial, Experience, SkillItem } from './data'
+import type { Profile, Project, Service, Testimonial, Experience, SkillItem, WordPressFeature, CaseStudy } from './data'
 import type { ShopifyFeature, App, Article } from './store'
 
 export interface PortfolioData {
@@ -25,6 +27,8 @@ export interface PortfolioData {
   shopifyFeatures: ShopifyFeature[]
   apps: App[]
   articles: Article[]
+  wordpressFeatures: WordPressFeature[]
+  caseStudies: CaseStudy[]
 }
 
 function readAll(): PortfolioData {
@@ -38,6 +42,8 @@ function readAll(): PortfolioData {
     shopifyFeatures: getShopifyFeatures(),
     apps: getApps(),
     articles: getArticles(),
+    wordpressFeatures: getWordPressFeatures(),
+    caseStudies: getCaseStudies(),
   }
 }
 

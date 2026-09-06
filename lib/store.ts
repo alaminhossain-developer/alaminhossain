@@ -1,7 +1,7 @@
 'use client'
 
-import { projects as defaultProjects, services as defaultServices, testimonials as defaultTestimonials, experience as defaultExperience, skills as defaultSkills, processSteps as defaultProcessSteps, metrics as defaultMetrics, profile as defaultProfile, apps as defaultApps, articles as defaultArticles } from './data'
-import type { Project, Service, Testimonial, Experience, SkillItem, ProcessStep, Metric, Profile, App, Article } from './data'
+import { projects as defaultProjects, services as defaultServices, testimonials as defaultTestimonials, experience as defaultExperience, skills as defaultSkills, processSteps as defaultProcessSteps, metrics as defaultMetrics, profile as defaultProfile, apps as defaultApps, articles as defaultArticles, wordpressFeatures as defaultWpFeatures, caseStudies as defaultCaseStudies } from './data'
+import type { Project, Service, Testimonial, Experience, SkillItem, ProcessStep, Metric, Profile, App, Article, WordPressFeature, CaseStudy } from './data'
 export type { App, Article }
 
 // ============================================================
@@ -19,6 +19,8 @@ const KEYS = {
   profile: 'portfolio_profile',
   apps: 'portfolio_apps',
   articles: 'portfolio_articles',
+  wpFeatures: 'portfolio_wpFeatures',
+  caseStudies: 'portfolio_caseStudies',
 } as const
 
 // ============================================================
@@ -328,6 +330,70 @@ export function deleteArticle(id: string): void {
 }
 
 // ============================================================
+// WordPress Features
+// ============================================================
+export function getWordPressFeatures(): WordPressFeature[] {
+  return load(KEYS.wpFeatures, defaultWpFeatures)
+}
+
+export function saveWordPressFeatures(data: WordPressFeature[]): void {
+  save(KEYS.wpFeatures, data)
+}
+
+export function addWordPressFeature(feature: Omit<WordPressFeature, 'id'>): WordPressFeature {
+  const newFeature: WordPressFeature = { ...feature, id: 'wpf-' + generateId() }
+  const all = getWordPressFeatures()
+  all.push(newFeature)
+  saveWordPressFeatures(all)
+  return newFeature
+}
+
+export function updateWordPressFeature(id: string, updates: Partial<WordPressFeature>): void {
+  const all = getWordPressFeatures()
+  const idx = all.findIndex((f) => f.id === id)
+  if (idx !== -1) {
+    all[idx] = { ...all[idx], ...updates }
+    saveWordPressFeatures(all)
+  }
+}
+
+export function deleteWordPressFeature(id: string): void {
+  saveWordPressFeatures(getWordPressFeatures().filter((f) => f.id !== id))
+}
+
+// ============================================================
+// Case Studies
+// ============================================================
+export function getCaseStudies(): CaseStudy[] {
+  return load(KEYS.caseStudies, defaultCaseStudies)
+}
+
+export function saveCaseStudies(data: CaseStudy[]): void {
+  save(KEYS.caseStudies, data)
+}
+
+export function addCaseStudy(study: Omit<CaseStudy, 'id'>): CaseStudy {
+  const newStudy: CaseStudy = { ...study, id: 'cs-' + generateId() }
+  const all = getCaseStudies()
+  all.push(newStudy)
+  saveCaseStudies(all)
+  return newStudy
+}
+
+export function updateCaseStudy(id: string, updates: Partial<CaseStudy>): void {
+  const all = getCaseStudies()
+  const idx = all.findIndex((s) => s.id === id)
+  if (idx !== -1) {
+    all[idx] = { ...all[idx], ...updates }
+    saveCaseStudies(all)
+  }
+}
+
+export function deleteCaseStudy(id: string): void {
+  saveCaseStudies(getCaseStudies().filter((s) => s.id !== id))
+}
+
+// ============================================================
 // Export / Import all data
 // ============================================================
 export function exportAllData(): string {
@@ -341,6 +407,8 @@ export function exportAllData(): string {
     shopifyFeatures: getShopifyFeatures(),
     apps: getApps(),
     articles: getArticles(),
+    wpFeatures: getWordPressFeatures(),
+    caseStudies: getCaseStudies(),
     exportedAt: new Date().toISOString(),
   }
   return JSON.stringify(data, null, 2)
@@ -358,6 +426,8 @@ export function importAllData(json: string): boolean {
     if (data.shopifyFeatures) saveShopifyFeatures(data.shopifyFeatures)
     if (data.apps) saveApps(data.apps)
     if (data.articles) saveArticles(data.articles)
+    if (data.wpFeatures) saveWordPressFeatures(data.wpFeatures)
+    if (data.caseStudies) saveCaseStudies(data.caseStudies)
     return true
   } catch {
     return false
@@ -383,6 +453,8 @@ export async function saveAllToGitHub(): Promise<boolean> {
       shopifyFeatures: getShopifyFeatures(),
       apps: getApps(),
       articles: getArticles(),
+      wpFeatures: getWordPressFeatures(),
+      caseStudies: getCaseStudies(),
       savedAt: new Date().toISOString(),
     }
     const res = await fetch('/api/data', {
@@ -410,6 +482,8 @@ export async function loadAllFromGitHub(): Promise<boolean> {
     if (data.shopifyFeatures) saveShopifyFeatures(data.shopifyFeatures)
     if (data.apps) saveApps(data.apps)
     if (data.articles) saveArticles(data.articles)
+    if (data.wpFeatures) saveWordPressFeatures(data.wpFeatures)
+    if (data.caseStudies) saveCaseStudies(data.caseStudies)
     // Notify all React components that data has been loaded
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('portfolio-data-loaded'))

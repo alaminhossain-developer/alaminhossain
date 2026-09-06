@@ -10,6 +10,8 @@ const Metrics = lazy(() => import('@/components/sections/Metrics'))
 const Services = lazy(() => import('@/components/sections/Services'))
 const FeaturedWork = lazy(() => import('@/components/sections/FeaturedWork'))
 const ShopifyFeatures = lazy(() => import('@/components/sections/ShopifyFeatures'))
+const WordPressFeatures = lazy(() => import('@/components/sections/WordPressFeatures'))
+const CaseStudies = lazy(() => import('@/components/sections/CaseStudies'))
 const Apps = lazy(() => import('@/components/sections/Apps'))
 const Articles = lazy(() => import('@/components/sections/Articles'))
 const Technology = lazy(() => import('@/components/sections/Technology'))
@@ -31,6 +33,8 @@ export default function Home() {
         <Metrics />
         <Services />
         <FeaturedWork />
+        <WordPressFeatures />
+        <CaseStudies />
         <ShopifyFeatures />
         <Apps />
         <Technology />

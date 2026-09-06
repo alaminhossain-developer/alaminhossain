@@ -21,7 +21,7 @@ export default function FeaturedWork() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const panelsRef = useRef<(HTMLDivElement | null)[]>([])
   const { projects: allProjects } = usePortfolio()
-  const selectedProjects = allProjects.filter((p) => p.selected).slice(0, 4)
+  const selectedProjects = allProjects.filter((p) => p.selected).sort((a, b) => (a.order || 99) - (b.order || 99)).slice(0, 4)
   const [modalProject, setModalProject] = useState<Project | null>(null)
 
   useEffect(() => {

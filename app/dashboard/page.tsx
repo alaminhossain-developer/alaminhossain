@@ -10,15 +10,17 @@ import {
   getExperience, saveExperience, addExperience, updateExperience, deleteExperience,
   getSkills, saveSkills, addSkill, updateSkill, deleteSkill,
   getShopifyFeatures, saveShopifyFeatures, addShopifyFeature, updateShopifyFeature, deleteShopifyFeature,
+  getWordPressFeatures, saveWordPressFeatures, addWordPressFeature, updateWordPressFeature, deleteWordPressFeature,
+  getCaseStudies, saveCaseStudies, addCaseStudy, updateCaseStudy, deleteCaseStudy,
   getApps, saveApps, addApp, updateApp, deleteApp,
   getArticles, saveArticles, addArticle, updateArticle, deleteArticle,
   getProfile, saveProfile,
   exportAllData, importAllData, resetAllData, saveAllToGitHub, loadAllFromGitHub,
 } from '@/lib/store'
-import type { Project, Service, Testimonial, Experience, SkillItem, Profile } from '@/lib/data'
+import type { Project, Service, Testimonial, Experience, SkillItem, Profile, WordPressFeature, CaseStudy } from '@/lib/data'
 import type { ShopifyFeature, App, Article } from '@/lib/store'
 
-type Tab = 'profile' | 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'apps' | 'articles' | 'data'
+type Tab = 'profile' | 'projects' | 'testimonials' | 'services' | 'experience' | 'skills' | 'shopify' | 'wpFeatures' | 'caseStudies' | 'apps' | 'articles' | 'data'
 
 const tabs: { key: Tab; label: string }[] = [
   { key: 'profile', label: 'Profile' },
@@ -28,6 +30,8 @@ const tabs: { key: Tab; label: string }[] = [
   { key: 'experience', label: 'Experience' },
   { key: 'skills', label: 'Skills' },
   { key: 'shopify', label: 'Shopify Features' },
+  { key: 'wpFeatures', label: 'WordPress Features' },
+  { key: 'caseStudies', label: 'Case Studies' },
   { key: 'apps', label: 'Apps' },
   { key: 'articles', label: 'Articles' },
   { key: 'data', label: 'Data' },
@@ -165,6 +169,8 @@ export default function DashboardPage() {
         {activeTab === 'experience' && <ExperienceTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'skills' && <SkillsTab key={refreshKey} onSaved={flash} />}
         {activeTab === 'shopify' && <ShopifyTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'wpFeatures' && <WordPressFeaturesTab key={refreshKey} onSaved={flash} />}
+        {activeTab === 'caseStudies' && <CaseStudiesTab key={refreshKey} onSaved={flash} onError={flashError} />}
         {activeTab === 'apps' && <AppsTab key={refreshKey} onSaved={flash} onError={flashError} />}
         {activeTab === 'articles' && <ArticlesTab key={refreshKey} onSaved={flash} onError={flashError} />}
         {activeTab === 'data' && <DataTab onRefresh={() => setRefreshKey((k) => k + 1)} />}
@@ -388,13 +394,13 @@ function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onE
 function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onError: (msg: string) => void }) {
   const [items, setItems] = useState<Project[]>([])
   const [editing, setEditing] = useState<string | null>(null)
-  const [form, setForm] = useState({ title: '', category: '', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [] as string[], selected: false })
+  const [form, setForm] = useState({ title: '', category: '', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [] as string[], selected: false, order: 99 })
 
   useEffect(() => { setItems(getProjects()) }, [])
 
   const startNew = () => {
     setEditing('new')
-    setForm({ title: '', category: 'WordPress', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [], selected: false })
+    setForm({ title: '', category: 'WordPress', year: '2025', description: '', longDescription: '', technologies: '', liveUrl: '#', color: '#0ea5e9', image: '', screenshots: [], selected: false, order: items.length + 1 })
   }
 
   const saveItem = () => {
@@ -450,6 +456,7 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
             <Field label="Color" value={form.color} onChange={(v) => setForm({ ...form, color: v })} type="color" />
             <Field label="Live URL" value={form.liveUrl} onChange={(v) => setForm({ ...form, liveUrl: v })} />
             <Field label="Technologies (comma-separated)" value={form.technologies} onChange={(v) => setForm({ ...form, technologies: v })} />
+            <Field label="Display Order" value={String(form.order)} onChange={(v) => setForm({ ...form, order: parseInt(v) || 99 })} type="number" />
           </div>
           <div className="flex items-center gap-3">
             <label className="text-xs text-white/40 font-medium">Featured on Homepage</label>
@@ -522,6 +529,7 @@ function ProjectsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
       <div className="space-y-3">
         {items.map((p) => (
           <div key={p.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+            <div className="text-[10px] text-white/15 w-5 text-center">#{p.order || '-'}</div>
             <div className="w-2 h-8 rounded-full" style={{ background: p.color }} />
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-white/80 truncate">{p.title}</div>
@@ -953,6 +961,183 @@ function ShopifyTab({ onSaved }: { onSaved: () => void }) {
             </div>
             <Btn small onClick={() => { setEditing(f.id); setForm({ ...f }) }}>Edit</Btn>
             <Btn small variant="danger" onClick={() => remove(f.id)}>Delete</Btn>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// WordPress Features Tab
+// ============================================================
+function WordPressFeaturesTab({ onSaved }: { onSaved: () => void }) {
+  const [items, setItems] = useState<WordPressFeature[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ title: '', description: '', icon: 'Zap', color: '#3b82f6', order: 1 })
+
+  useEffect(() => { setItems(getWordPressFeatures()) }, [])
+
+  const startNew = () => {
+    setEditing('new')
+    setForm({ title: '', description: '', icon: 'Zap', color: '#3b82f6', order: items.length + 1 })
+  }
+
+  const saveItem = () => {
+    let updated: WordPressFeature[]
+    if (editing === 'new') {
+      const f = addWordPressFeature(form)
+      updated = [...items, f]
+    } else if (editing) {
+      updateWordPressFeature(editing, form)
+      updated = items.map((f) => f.id === editing ? { ...f, ...form } : f)
+    } else {
+      return
+    }
+    setItems(updated)
+    setEditing(null)
+    saveWordPressFeatures(updated)
+    onSaved()
+  }
+
+  const remove = (id: string) => {
+    deleteWordPressFeature(id)
+    const updated = items.filter((f) => f.id !== id)
+    setItems(updated)
+    saveWordPressFeatures(updated)
+    onSaved()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">WordPress Features ({items.length})</h2>
+        <Btn onClick={startNew}>+ Add Feature</Btn>
+      </div>
+
+      {editing && (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} />
+            <Field label="Icon (Lucide name)" value={form.icon} onChange={(v) => setForm({ ...form, icon: v })} />
+            <Field label="Color" value={form.color} onChange={(v) => setForm({ ...form, color: v })} type="color" />
+            <Field label="Order" value={String(form.order)} onChange={(v) => setForm({ ...form, order: parseInt(v) || 99 })} type="number" />
+          </div>
+          <Field label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} />
+          <div className="flex gap-3">
+            <Btn onClick={saveItem}>Save</Btn>
+            <Btn onClick={() => setEditing(null)} variant="ghost">Cancel</Btn>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {items.sort((a, b) => (a.order || 99) - (b.order || 99)).map((f) => (
+          <div key={f.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+            <div className="text-xs text-white/20 w-6 text-center">#{f.order}</div>
+            <div className="w-3 h-8 rounded-full" style={{ background: f.color }} />
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-white/80">{f.title}</div>
+              <div className="text-xs text-white/30 line-clamp-1">{f.description}</div>
+            </div>
+            <Btn small onClick={() => { setEditing(f.id); setForm({ ...f }) }}>Edit</Btn>
+            <Btn small variant="danger" onClick={() => remove(f.id)}>Delete</Btn>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================
+// Case Studies Tab
+// ============================================================
+function CaseStudiesTab({ onSaved, onError }: { onSaved: () => void; onError: (msg: string) => void }) {
+  const [items, setItems] = useState<CaseStudy[]>([])
+  const [editing, setEditing] = useState<string | null>(null)
+  const [form, setForm] = useState({ title: '', client: '', category: 'WordPress', description: '', results: '', technologies: '', bannerImage: '', order: 1 })
+
+  useEffect(() => { setItems(getCaseStudies()) }, [])
+
+  const startNew = () => {
+    setEditing('new')
+    setForm({ title: '', client: '', category: 'WordPress', description: '', results: '', technologies: '', bannerImage: '', order: items.length + 1 })
+  }
+
+  const saveItem = () => {
+    const data = {
+      ...form,
+      results: form.results.split('\n').map((r) => r.trim()).filter(Boolean),
+      technologies: form.technologies.split(',').map((t) => t.trim()).filter(Boolean),
+    }
+    let updated: CaseStudy[]
+    if (editing === 'new') {
+      const cs = addCaseStudy(data)
+      updated = [...items, cs]
+    } else if (editing) {
+      updateCaseStudy(editing, data)
+      updated = items.map((cs) => cs.id === editing ? { ...cs, ...data } : cs)
+    } else {
+      return
+    }
+    setItems(updated)
+    setEditing(null)
+    saveCaseStudies(updated)
+    onSaved()
+  }
+
+  const remove = (id: string) => {
+    deleteCaseStudy(id)
+    const updated = items.filter((cs) => cs.id !== id)
+    setItems(updated)
+    saveCaseStudies(updated)
+    onSaved()
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Case Studies ({items.length})</h2>
+        <Btn onClick={startNew}>+ Add Case Study</Btn>
+      </div>
+
+      {editing && (
+        <div className="p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Title" value={form.title} onChange={(v) => setForm({ ...form, title: v })} />
+            <Field label="Client" value={form.client} onChange={(v) => setForm({ ...form, client: v })} />
+            <Field label="Category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
+            <Field label="Order" value={String(form.order)} onChange={(v) => setForm({ ...form, order: parseInt(v) || 99 })} type="number" />
+          </div>
+          <Field label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} />
+          <Field label="Results (one per line)" value={form.results} onChange={(v) => setForm({ ...form, results: v })} rows={3} placeholder="30% faster LCP\n99.9% uptime\n25% conversion boost" />
+          <Field label="Technologies (comma-separated)" value={form.technologies} onChange={(v) => setForm({ ...form, technologies: v })} />
+          <PhotoUpload label="Banner Image" desc="Wide banner image for the case study card" value={form.bannerImage} onChange={(url) => setForm({ ...form, bannerImage: url })} onError={onError} />
+          <div className="flex gap-3">
+            <Btn onClick={saveItem}>Save</Btn>
+            <Btn onClick={() => setEditing(null)} variant="ghost">Cancel</Btn>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-3">
+        {items.sort((a, b) => (a.order || 99) - (b.order || 99)).map((cs) => (
+          <div key={cs.id} className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.04] hover:border-white/[0.08] transition-colors">
+            <div className="text-xs text-white/20 w-6 text-center">#{cs.order}</div>
+            {cs.bannerImage ? (
+              <img src={cs.bannerImage} alt="" className="w-16 h-10 object-cover rounded border border-white/[0.06]" />
+            ) : (
+              <div className="w-16 h-10 rounded border border-dashed border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-[8px] text-white/20">No banner</div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-white/80">{cs.title}</div>
+              <div className="text-xs text-white/30">{cs.client} · {cs.category}</div>
+            </div>
+            <Btn small onClick={() => {
+              setEditing(cs.id)
+              setForm({ ...cs, results: cs.results.join('\n'), technologies: cs.technologies.join(', ') })
+            }}>Edit</Btn>
+            <Btn small variant="danger" onClick={() => remove(cs.id)}>Delete</Btn>
           </div>
         ))}
       </div>

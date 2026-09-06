@@ -14,6 +14,7 @@ export interface Project {
   color: string
   screenshots: string[]
   selected: boolean
+  order: number
 }
 
 export const projects: Project[] = [
@@ -30,6 +31,7 @@ export const projects: Project[] = [
     color: '#0ea5e9',
     screenshots: [],
     selected: true,
+    order: 1,
   },
   {
     id: 'project-2',
@@ -44,6 +46,7 @@ export const projects: Project[] = [
     color: '#22c55e',
     screenshots: [],
     selected: true,
+    order: 2,
   },
   {
     id: 'project-3',
@@ -58,6 +61,7 @@ export const projects: Project[] = [
     color: '#f59e0b',
     screenshots: [],
     selected: true,
+    order: 3,
   },
   {
     id: 'project-4',
@@ -72,6 +76,7 @@ export const projects: Project[] = [
     color: '#8b5cf6',
     screenshots: [],
     selected: true,
+    order: 4,
   },
 ]
 
@@ -720,5 +725,77 @@ Use a hybrid approach:
     readTime: '5 min read',
     featured: false,
     coverImage: '',
+  },
+]
+
+// ============================================================
+// WORDPRESS FEATURES — dashboard-ready
+// ============================================================
+export interface WordPressFeature {
+  id: string
+  title: string
+  description: string
+  icon: string
+  color: string
+  order: number
+}
+
+export const wordpressFeatures: WordPressFeature[] = [
+  { id: 'wpf-1', title: 'Custom Theme Development', description: 'Pixel-perfect WordPress themes built from scratch with clean, maintainable code and modern CSS practices.', icon: 'Palette', color: '#3b82f6', order: 1 },
+  { id: 'wpf-2', title: 'Plugin Development', description: 'Custom WordPress plugins tailored to your business logic, extending functionality beyond off-the-shelf solutions.', icon: 'Puzzle', color: '#8b5cf6', order: 2 },
+  { id: 'wpf-3', title: 'WooCommerce Solutions', description: 'Full eCommerce setup with custom product pages, checkout optimization, and payment gateway integrations.', icon: 'ShoppingCart', color: '#22c55e', order: 3 },
+  { id: 'wpf-4', title: 'Performance Optimization', description: 'Core Web Vitals optimization, caching strategies, CDN setup, and image optimization for blazing-fast load times.', icon: 'Zap', color: '#f59e0b', order: 4 },
+  { id: 'wpf-5', title: 'Technical SEO', description: 'Schema markup, site architecture, XML sitemaps, and technical audits to maximize search visibility.', icon: 'Search', color: '#06b6d4', order: 5 },
+  { id: 'wpf-6', title: 'Ongoing Maintenance', description: 'Regular updates, security monitoring, backups, and performance checks to keep your site running smoothly.', icon: 'Shield', color: '#ef4444', order: 6 },
+]
+
+// ============================================================
+// CASE STUDIES — dashboard-ready
+// ============================================================
+export interface CaseStudy {
+  id: string
+  title: string
+  client: string
+  category: string
+  description: string
+  results: string[]
+  bannerImage: string
+  technologies: string[]
+  order: number
+}
+
+export const caseStudies: CaseStudy[] = [
+  {
+    id: 'cs-1',
+    title: 'GAOTek Corporate Platform',
+    client: 'GAOTek Inc.',
+    category: 'WordPress',
+    description: 'Enterprise WordPress infrastructure across 10+ corporate domains with 30% LCP improvement and full GA4/GTM analytics integration.',
+    results: ['30% faster LCP', '10+ domains managed', '99.9% uptime'],
+    bannerImage: '',
+    technologies: ['WordPress', 'CDN', 'GA4', 'GTM', 'Technical SEO'],
+    order: 1,
+  },
+  {
+    id: 'cs-2',
+    title: 'Shopify Store Conversion Boost',
+    client: 'eCommerce Client',
+    category: 'Shopify',
+    description: 'Complete Shopify store redesign with custom Liquid sections, checkout optimization, and 40% conversion rate improvement.',
+    results: ['40% conversion boost', '90+ PageSpeed score', 'Reduced bounce rate'],
+    bannerImage: '',
+    technologies: ['Shopify', 'Liquid', 'JavaScript', 'CSS'],
+    order: 2,
+  },
+  {
+    id: 'cs-3',
+    title: 'WooCommerce Performance Overhaul',
+    client: 'Retail Client',
+    category: 'WordPress',
+    description: 'Full WooCommerce optimization project transforming a slow store into a high-performance eCommerce platform.',
+    results: ['3x faster page loads', '25% revenue increase', '95+ PageSpeed score'],
+    bannerImage: '',
+    technologies: ['WordPress', 'WooCommerce', 'Redis', 'CDN', 'PHP 8'],
+    order: 3,
   },
 ]
