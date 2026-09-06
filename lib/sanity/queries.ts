@@ -5,9 +5,9 @@ export const PROFILE_QUERY = defineQuery(`*[_type == "profile"][0]{
   name,
   tagline,
   bio,
-  "heroPhoto": heroPhoto.asset->url,
-  "aboutPhoto": aboutPhoto.asset->url,
-  "techPhoto": techPhoto.asset->url,
+  heroPhoto,
+  aboutPhoto,
+  techPhoto,
   email,
   location,
   github,
@@ -28,10 +28,10 @@ export const PROJECTS_QUERY = defineQuery(`*[_type == "project"] | order(order a
   description,
   longDescription,
   technologies,
-  "image": image.asset->url,
+  image,
   liveUrl,
   color,
-  "screenshots": screenshots[].asset->url,
+  screenshots,
   selected,
   order
 }`)
@@ -102,7 +102,7 @@ export const CASE_STUDIES_QUERY = defineQuery(`*[_type == "caseStudy"] | order(o
   category,
   description,
   results,
-  "bannerImage": bannerImage.asset->url,
+  bannerImage,
   technologies,
   order
 }`)
@@ -111,7 +111,6 @@ export const CASE_STUDIES_QUERY = defineQuery(`*[_type == "caseStudy"] | order(o
 export const APPS_QUERY = defineQuery(`*[_type == "app"]{
   _id,
   name,
-  slug,
   tagline,
   description,
   status,
@@ -119,14 +118,14 @@ export const APPS_QUERY = defineQuery(`*[_type == "app"]{
   icon,
   color,
   features,
-  "images": images[].asset->url
+  images,
+  order
 }`)
 
 // Articles
 export const ARTICLES_QUERY = defineQuery(`*[_type == "article"] | order(publishedAt desc){
   _id,
   title,
-  slug,
   excerpt,
   content,
   category,
@@ -134,5 +133,6 @@ export const ARTICLES_QUERY = defineQuery(`*[_type == "article"] | order(publish
   publishedAt,
   readTime,
   featured,
-  "coverImage": coverImage.asset->url
+  coverImage,
+  order
 }`)
