@@ -71,23 +71,23 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Cache uploaded images
+      // Uploaded images — short cache, revalidate often (images change)
       {
         source: '/uploads/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=2592000, stale-while-revalidate=86400',
+            value: 'public, max-age=60, must-revalidate',
           },
         ],
       },
-      // Cache API data (short TTL)
+      // API data — NO cache (data changes on every dashboard save)
       {
         source: '/api/data',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=300, stale-while-revalidate=600',
+            value: 'no-store, no-cache, must-revalidate',
           },
         ],
       },

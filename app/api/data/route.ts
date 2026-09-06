@@ -43,7 +43,7 @@ export async function GET() {
     const branch = await getDefaultBranch()
     const res = await fetch(
       `https://api.github.com/repos/${REPO}/contents/${DATA_FILE}?ref=${branch}`,
-      { headers: getHeaders() }
+      { headers: getHeaders(), cache: 'no-store' }
     )
 
     if (!res.ok) {

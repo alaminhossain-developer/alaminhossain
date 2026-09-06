@@ -470,7 +470,8 @@ export async function saveAllToGitHub(): Promise<boolean> {
 
 export async function loadAllFromGitHub(): Promise<boolean> {
   try {
-    const res = await fetch('/api/data')
+    // Cache-bust to always get fresh data from GitHub
+    const res = await fetch(`/api/data?t=${Date.now()}`, { cache: 'no-store' })
     if (!res.ok) return false
     const data = await res.json()
     if (data.profile) saveProfile(data.profile)
