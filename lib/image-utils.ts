@@ -76,9 +76,8 @@ export function wouldExceedQuota(additionalBase64: string[]): boolean {
 }
 
 /**
- * Upload an image to the server via API.
- * Returns the URL path (e.g. /uploads/abc123.jpg).
- * Falls back to base64 if API is unavailable.
+ * Upload an image to Sanity CDN.
+ * Returns the Sanity image URL.
  */
 export async function uploadImage(
   file: File,
@@ -92,11 +91,11 @@ export async function uploadImage(
   const res = await fetch(compressed)
   const blob = await res.blob()
 
-  // Upload to API
+  // Upload to Sanity via API
   const formData = new FormData()
   formData.append('file', blob, file.name || 'image.jpg')
 
-  const uploadRes = await fetch('/api/images', {
+  const uploadRes = await fetch('/api/sanity-upload', {
     method: 'POST',
     body: formData,
   })
@@ -106,7 +105,7 @@ export async function uploadImage(
   }
 
   const data = await uploadRes.json()
-  return data.url as string
+  return data.asset.url as string
 }
 
 /**

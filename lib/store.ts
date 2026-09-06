@@ -442,6 +442,11 @@ export function resetAllData(): void {
 // Save / Load all data from GitHub (persists across browsers)
 // ============================================================
 export async function saveAllToGitHub(): Promise<boolean> {
+  // Now saves to Sanity instead of GitHub
+  return saveAllToSanity()
+}
+
+export async function saveAllToSanity(): Promise<boolean> {
   try {
     const data = {
       profile: getProfile(),
@@ -457,10 +462,10 @@ export async function saveAllToGitHub(): Promise<boolean> {
       caseStudies: getCaseStudies(),
       savedAt: new Date().toISOString(),
     }
-    const res = await fetch('/api/data', {
+    const res = await fetch('/api/sanity-save', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ action: 'save-all', itemData: data }),
     })
     return res.ok
   } catch {
@@ -469,8 +474,12 @@ export async function saveAllToGitHub(): Promise<boolean> {
 }
 
 export async function loadAllFromGitHub(): Promise<boolean> {
+  // Now loads from Sanity instead of GitHub
+  return loadAllFromSanity()
+}
+
+export async function loadAllFromSanity(): Promise<boolean> {
   try {
-    // Cache-bust to always get fresh data from GitHub
     const res = await fetch(`/api/data?t=${Date.now()}`, { cache: 'no-store' })
     if (!res.ok) return false
     const data = await res.json()
@@ -495,10 +504,10 @@ export async function loadAllFromGitHub(): Promise<boolean> {
   }
 }
 
-// Auto-load from GitHub on every page visit — GitHub is the source of truth.
+// Auto-load from Sanity on every page visit — Sanity is the source of truth.
 let _loaded = false
 export function autoLoadFromGitHub() {
   if (_loaded || typeof window === 'undefined') return
   _loaded = true
-  loadAllFromGitHub()
+  loadAllFromSanity()
 }

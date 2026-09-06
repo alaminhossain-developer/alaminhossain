@@ -55,7 +55,7 @@ export default function DashboardPage() {
     }
   }, [router])
 
-  // Auto-load from GitHub if localStorage is empty (incognito / new device)
+  // Auto-load from Sanity if localStorage is empty (incognito / new device)
   useEffect(() => {
     if (!authed) return
     const hasData = typeof window !== 'undefined' && localStorage.getItem('portfolio_projects') !== null
@@ -68,14 +68,14 @@ export default function DashboardPage() {
     }
   }, [authed])
 
-  // Auto-save to GitHub after every local save
+  // Auto-save to Sanity after every local save (instant updates!)
   const autoSaveToGitHub = useCallback(async (msg?: string) => {
     try {
       await saveAllToGitHub()
-      setToastMsg(msg || 'Saved & pushed to GitHub. Live in ~3 min.')
+      setToastMsg(msg || 'Saved to Sanity! Live instantly.')
       setToastType('success')
     } catch {
-      setToastMsg(msg || 'Saved locally (GitHub push failed)')
+      setToastMsg(msg || 'Saved locally (Sanity sync failed)')
       setToastType('success')
     }
     setSaved(true)
@@ -83,7 +83,7 @@ export default function DashboardPage() {
   }, [])
 
   const flash = (msg?: string) => {
-    autoSaveToGitHub(msg || 'Saved & pushing to GitHub...')
+    autoSaveToGitHub(msg || 'Saving to Sanity...')
   }
 
   const flashError = (msg: string) => {
@@ -107,7 +107,7 @@ export default function DashboardPage() {
         <div className="fixed top-0 left-0 right-0 z-[9998] px-5 py-2 bg-cyan-500/10 border-b border-cyan-500/20">
           <div className="flex items-center justify-center gap-2">
             <div className="w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs text-cyan-400">Loading data from GitHub...</span>
+            <span className="text-xs text-cyan-400">Loading data from Sanity...</span>
           </div>
         </div>
       )}
@@ -359,7 +359,7 @@ function ProfileTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onE
         // Best effort — localStorage save still works locally
       }
       setSaving(false)
-      onSaved('Profile saved & pushed to GitHub. Updates live in ~3-4 min.')
+      onSaved('Profile saved to Sanity! Updates live instantly.')
     } catch (err) {
       setSaving(false)
       onError('Save failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
