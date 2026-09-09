@@ -31,13 +31,13 @@ export default function Performance() {
           { scaleX: 0 },
           {
             scaleX: 1,
-            duration: 1.5,
+            duration: 1.1,
             ease: 'power3.out',
             transformOrigin: 'left center',
-            delay: i * 0.1,
+            delay: i * 0.08,
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 70%',
+              start: 'top 75%',
             },
           }
         )
@@ -51,7 +51,7 @@ export default function Performance() {
           start: 'top 70%',
           onEnter: () => {
             const startTime = performance.now()
-            const duration = 2000
+            const duration = 1400
 
             function update(currentTime: number) {
               const elapsed = currentTime - startTime
@@ -85,10 +85,10 @@ export default function Performance() {
           <div className="w-8 h-px bg-cyan-400" />
           <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">Performance</span>
         </div>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-6 text-white">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-6 text-white">
           FAST IS A
         </h2>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] text-cyan-400 mb-10 md:mb-14">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] text-cyan-400 mb-10 md:mb-14">
           FEATURE.
         </h2>
 

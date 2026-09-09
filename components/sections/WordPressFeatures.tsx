@@ -42,9 +42,9 @@ export default function WordPressFeatures() {
           {
             opacity: 1,
             y: 0,
-            duration: 1,
+            duration: 0.5,
             ease: 'power3.out',
-            scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+            scrollTrigger: { trigger: sectionRef.current, start: 'top 85%' },
           }
         )
       }
@@ -58,10 +58,10 @@ export default function WordPressFeatures() {
           {
             opacity: 1,
             y: 0,
-            duration: 0.7,
-            delay: i * 0.08,
+            duration: 0.5,
+            delay: i * 0.05,
             ease: 'power2.out',
-            scrollTrigger: { trigger: card, start: 'top 90%' },
+            scrollTrigger: { trigger: card, start: 'top 95%' },
           }
         )
       })
@@ -79,7 +79,7 @@ export default function WordPressFeatures() {
             <div className="w-8 h-px bg-[#3b82f6]" />
             <span className="text-xs text-[#3b82f6] uppercase tracking-[0.12em] font-medium">WordPress</span>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-4 text-white">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-4 text-white">
             WordPress
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#3b82f6] to-blue-400">
               Features

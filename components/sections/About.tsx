@@ -38,11 +38,11 @@ export default function About() {
           {
             opacity: 1,
             y: 0,
-            duration: 1,
+            duration: 0.6,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: contentRef.current,
-              start: 'top 80%',
+              start: 'top 85%',
             },
           }
         )
@@ -62,7 +62,7 @@ export default function About() {
             ease: 'power2.out',
             scrollTrigger: {
               trigger: pillsRef.current,
-              start: 'top 85%',
+              start: 'top 95%',
             },
           }
         )
@@ -80,7 +80,7 @@ export default function About() {
           <span className="text-xs font-bold text-cyan-400/80 uppercase tracking-[0.2em] block mb-3">
             About Me
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] text-white">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] text-white">
             What I Do
           </h2>
         </div>

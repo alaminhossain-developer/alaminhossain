@@ -127,7 +127,7 @@ export default function Contact() {
         {/* Title */}
         <div ref={titleRef} className="mb-16 lg:mb-24 max-w-4xl">
           <span className="text-xs font-bold text-cyan-400/80 uppercase tracking-[0.2em] block mb-6">Let's Connect</span>
-          <h2 className="text-5xl lg:text-6xl font-black leading-[1.1] tracking-[-0.02em]">
+          <h2 className="text-4xl lg:text-5xl font-black leading-[1.1] tracking-[-0.02em]">
             <div data-line>Have an idea?</div>
             <div data-line className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
               Let's build it.

@@ -58,11 +58,11 @@ export default function Capabilities() {
           {
             y: 0,
             opacity: 1,
-            duration: 0.8,
+            duration: 0.5,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: row,
-              start: 'top 85%',
+              start: 'top 95%',
               toggleActions: 'play none none none',
             },
           }
@@ -82,7 +82,7 @@ export default function Capabilities() {
           <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">Capabilities</span>
         </div>
 
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-10 md:mb-14 text-white">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-10 md:mb-14 text-white">
           WHAT I BUILD
         </h2>
 

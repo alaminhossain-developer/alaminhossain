@@ -90,7 +90,7 @@ export default function Skills() {
       <div className="max-w-7xl mx-auto">
         {/* Title */}
         <div className="mb-20 lg:mb-24 text-center">
-          <h2 className="text-display-lg lg:text-display-xl font-bold tracking-tight mb-4">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
             TECHNOLOGY STACK
           </h2>
           <p className="text-lg text-white/60 max-w-2xl mx-auto">

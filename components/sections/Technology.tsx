@@ -53,12 +53,12 @@ export default function Technology() {
           {
             scale: 1,
             opacity: 1,
-            duration: 0.5,
+            duration: 0.4,
             ease: 'back.out(1.7)',
-            delay: i * 0.04,
+            delay: i * 0.03,
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 70%',
+              start: 'top 80%',
             },
           }
         )
@@ -112,7 +112,7 @@ export default function Technology() {
             Technology
           </span>
         </div>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-10 md:mb-14 text-white">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-10 md:mb-14 text-white">
           TECHNOLOGY MAP
         </h2>
 

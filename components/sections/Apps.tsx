@@ -31,12 +31,12 @@ export default function Apps() {
           {
             opacity: 1,
             y: 0,
-            duration: 0.7,
-            delay: i * 0.12,
+            duration: 0.5,
+            delay: i * 0.06,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: card,
-              start: 'top 90%',
+              start: 'top 95%',
             },
           }
         )
@@ -60,7 +60,7 @@ export default function Apps() {
                 Apps &amp; Tools
               </span>
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] text-white">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] text-white">
               MY APPS
             </h2>
           </div>

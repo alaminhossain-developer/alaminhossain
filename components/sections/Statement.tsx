@@ -101,7 +101,7 @@ export default function Statement() {
           ref={headlineRef}
           className="mb-32 lg:mb-40 space-y-12 max-w-5xl"
         >
-          <h2 className="text-5xl lg:text-7xl font-black leading-[1.1] tracking-[-0.02em]">
+          <h2 className="text-4xl lg:text-6xl font-black leading-[1.1] tracking-[-0.02em]">
             <div data-line className="inline-block">
               Code
             </div>

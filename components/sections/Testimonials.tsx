@@ -60,7 +60,7 @@ export default function Testimonials() {
           <div className="w-8 h-px bg-cyan-400" />
           <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">Testimonials</span>
         </div>
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-10 md:mb-14 text-white">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-10 md:mb-14 text-white">
           WHAT THEY SAY
         </h2>
       </div>
