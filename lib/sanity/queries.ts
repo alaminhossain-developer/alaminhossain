@@ -105,6 +105,7 @@ export const CASE_STUDIES_QUERY = defineQuery(`*[_type == "caseStudy"] | order(o
   results,
   bannerImage,
   technologies,
+  liveUrl,
   order
 }`)
 

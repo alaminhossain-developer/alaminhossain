@@ -13,6 +13,7 @@ interface CaseStudy {
   bannerImage: string
   technologies: string[]
   order: number
+  liveUrl?: string
 }
 
 export default function CaseStudyModal({
@@ -153,12 +154,25 @@ export default function CaseStudyModal({
           <span className="text-[10px] text-white/25">
             Press <kbd className="px-1 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] text-white/40 font-mono text-[9px]">Esc</kbd> to close
           </span>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/60 text-xs font-medium hover:bg-white/[0.1] hover:text-white transition-colors"
-          >
-            Close
-          </button>
+          <div className="flex items-center gap-2">
+            {study.liveUrl && study.liveUrl !== '#' && (
+              <a
+                href={study.liveUrl.startsWith('http') ? study.liveUrl : `https://${study.liveUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-cyan-400/15 border border-cyan-400/30 text-cyan-400 text-xs font-semibold hover:bg-cyan-400/25 transition-colors"
+              >
+                Visit Live Site
+                <ExternalLink size={12} />
+              </a>
+            )}
+            <button
+              onClick={onClose}
+              className="px-4 py-2 rounded-lg bg-white/[0.06] border border-white/[0.08] text-white/60 text-xs font-medium hover:bg-white/[0.1] hover:text-white transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>

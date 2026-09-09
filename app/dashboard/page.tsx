@@ -1096,13 +1096,13 @@ function WordPressFeaturesTab({ onSaved }: { onSaved: () => void }) {
 function CaseStudiesTab({ onSaved, onError }: { onSaved: () => void; onError: (msg: string) => void }) {
   const [items, setItems] = useState<CaseStudy[]>([])
   const [editing, setEditing] = useState<string | null>(null)
-  const [form, setForm] = useState({ title: '', client: '', category: 'WordPress', description: '', results: '', technologies: '', bannerImage: '', order: 1 })
+  const [form, setForm] = useState({ title: '', client: '', category: 'WordPress', description: '', results: '', technologies: '', bannerImage: '', liveUrl: '', order: 1 })
 
   useEffect(() => { setItems(getCaseStudies()) }, [])
 
   const startNew = () => {
     setEditing('new')
-    setForm({ title: '', client: '', category: 'WordPress', description: '', results: '', technologies: '', bannerImage: '', order: items.length + 1 })
+    setForm({ title: '', client: '', category: 'WordPress', description: '', results: '', technologies: '', bannerImage: '', liveUrl: '', order: items.length + 1 })
   }
 
   const saveItem = () => {
@@ -1149,6 +1149,7 @@ function CaseStudiesTab({ onSaved, onError }: { onSaved: () => void; onError: (m
             <Field label="Client" value={form.client} onChange={(v) => setForm({ ...form, client: v })} />
             <Field label="Category" value={form.category} onChange={(v) => setForm({ ...form, category: v })} />
             <Field label="Order" value={String(form.order)} onChange={(v) => setForm({ ...form, order: parseInt(v) || 99 })} type="number" />
+            <Field label="Live URL (optional)" value={form.liveUrl || ''} onChange={(v) => setForm({ ...form, liveUrl: v })} placeholder="https://example.com" />
           </div>
           <Field label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={3} />
           <Field label="Results (one per line)" value={form.results} onChange={(v) => setForm({ ...form, results: v })} rows={3} placeholder="30% faster LCP\n99.9% uptime\n25% conversion boost" />
@@ -1172,7 +1173,7 @@ function CaseStudiesTab({ onSaved, onError }: { onSaved: () => void; onError: (m
             )}
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-white/80">{cs.title}</div>
-              <div className="text-xs text-white/30">{cs.client} · {cs.category}</div>
+              <div className="text-xs text-white/30">{cs.client} · {cs.category}{cs.liveUrl ? ` · ${cs.liveUrl}` : ''}</div>
             </div>
             <Btn small onClick={() => {
               setEditing(cs.id)

@@ -16,6 +16,10 @@ interface CaseStudy {
   order: number
 }
 
+function stripProtocol(url: string): string {
+  return url.replace(/^https?:\/\//, '').replace(/\/+$/, '')
+}
+
 export default function CaseStudiesClient({ caseStudies }: { caseStudies: CaseStudy[] }) {
   const [selectedStudy, setSelectedStudy] = useState<CaseStudy | null>(null)
 
@@ -90,6 +94,7 @@ function CaseStudyCard({
   const [expanded, setExpanded] = useState(false)
   const num = String(study.order || index + 1).padStart(2, '0')
   const isLong = study.description.length > 120
+  const liveUrl = study.liveUrl && study.liveUrl !== '#' ? (study.liveUrl.startsWith('http') ? study.liveUrl : `https://${study.liveUrl}`) : null
 
   const categoryColor =
     study.category === 'WordPress'
@@ -114,9 +119,25 @@ function CaseStudyCard({
           </div>
           <div className="flex-1 flex justify-center">
             <div className="bg-white/[0.03] rounded px-3 py-0.5 text-[10px] text-white/25 truncate max-w-[200px]">
-              {study.client.toLowerCase().replace(/\s+/g, '')}.com
+              {liveUrl ? stripProtocol(liveUrl) : study.client.toLowerCase().replace(/\s+/g, '') + '.com'}
             </div>
           </div>
+          {liveUrl && (
+            <a
+              href={liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-semibold text-cyan-400/80 hover:text-cyan-300 bg-cyan-400/10 hover:bg-cyan-400/20 transition-colors shrink-0"
+              title={`Visit ${liveUrl}`}
+            >
+              Visit
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 17L17 7" />
+                <path d="M7 7h10v10" />
+              </svg>
+            </a>
+          )}
         </div>
 
         {/* Preview content */}

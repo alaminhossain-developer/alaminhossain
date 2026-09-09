@@ -762,6 +762,7 @@ export interface CaseStudy {
   bannerImage: string
   technologies: string[]
   order: number
+  liveUrl?: string
 }
 
 export const caseStudies: CaseStudy[] = [
