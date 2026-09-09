@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { X, ChevronLeft, ChevronRight, ExternalLink, Copy, ArrowLeft, ArrowRight } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, ExternalLink, Copy, Search } from 'lucide-react'
 import type { Project } from '@/lib/data'
 
 function fixUrl(url: string): string {
@@ -18,6 +18,7 @@ export default function ProjectModal({
   onClose: () => void
 }) {
   const [current, setCurrent] = useState(0)
+  const [zoomed, setZoomed] = useState(false)
   const screenshots = project.screenshots || []
   const hasMultiple = screenshots.length > 1
   const [copied, setCopied] = useState(false)
@@ -42,7 +43,10 @@ export default function ProjectModal({
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        if (zoomed) setZoomed(false)
+        else onClose()
+      }
       if (e.key === 'ArrowLeft') prev()
       if (e.key === 'ArrowRight') next()
     }
@@ -52,7 +56,7 @@ export default function ProjectModal({
       document.removeEventListener('keydown', handleKey)
       document.body.style.overflow = ''
     }
-  }, [onClose, prev, next])
+  }, [onClose, prev, next, zoomed])
 
   const liveUrl = fixUrl(project.liveUrl)
 
@@ -65,10 +69,9 @@ export default function ProjectModal({
         className="w-full max-w-6xl max-h-[92vh] flex flex-col rounded-2xl border border-white/[0.06] bg-[#0d1229] overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ── Top Bar: badges + title + close ── */}
+        {/* ── Top Bar ── */}
         <div className="flex items-start justify-between px-5 md:px-6 py-4 border-b border-white/[0.04]">
           <div className="flex-1 min-w-0">
-            {/* Badges */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/20">
                 Project Preview
@@ -89,11 +92,9 @@ export default function ProjectModal({
                 </span>
               )}
             </div>
-            {/* Title */}
             <h2 className="text-lg md:text-xl font-bold text-white leading-tight mb-1 truncate">
               {project.title}
             </h2>
-            <p className="text-xs text-white/30 line-clamp-1">{project.description}</p>
           </div>
           <button
             onClick={onClose}
@@ -107,7 +108,6 @@ export default function ProjectModal({
         <div className="flex-1 min-h-0 flex flex-col md:flex-row">
           {/* Left: Media Gallery */}
           <div className="flex-1 min-w-0 flex flex-col">
-            {/* Gallery header */}
             <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/[0.03]">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">Media Gallery</span>
@@ -135,15 +135,25 @@ export default function ProjectModal({
               )}
             </div>
 
-            {/* Main image */}
+            {/* Main image with magnify icon */}
             <div className="flex-1 min-h-0 relative bg-[#080c1f] flex items-center justify-center p-4">
               {screenshots.length > 0 ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={screenshots[current]}
-                  alt={`${project.title} screenshot ${current + 1}`}
-                  className="max-w-full max-h-full object-contain rounded-lg"
-                />
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={screenshots[current]}
+                    alt={`${project.title} screenshot ${current + 1}`}
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                  />
+                  {/* Magnify icon — bottom right */}
+                  <button
+                    onClick={() => setZoomed(true)}
+                    className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/20 transition-all opacity-0 hover:opacity-100 group-hover:opacity-100"
+                    title="Zoom in"
+                  >
+                    <Search size={16} />
+                  </button>
+                </>
               ) : (
                 <div className="text-white/15 text-sm">No screenshots uploaded</div>
               )}
@@ -152,6 +162,14 @@ export default function ProjectModal({
 
           {/* Right: Sidebar */}
           <div className="w-full md:w-64 lg:w-72 border-t md:border-t-0 md:border-l border-white/[0.04] flex flex-col overflow-y-auto">
+            {/* Full Description */}
+            <div className="px-5 py-4 border-b border-white/[0.03]">
+              <h3 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-3">About This Project</h3>
+              <p className="text-sm text-white/50 leading-relaxed font-light">
+                {project.description}
+              </p>
+            </div>
+
             {/* Tech Stack */}
             <div className="px-5 py-4 border-b border-white/[0.03]">
               <h3 className="text-[10px] font-bold uppercase tracking-wider text-white/40 mb-3">Tech Stack</h3>
@@ -204,6 +222,10 @@ export default function ProjectModal({
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-white/30">
+                  <span>Zoom screenshot</span>
+                  <kbd className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] text-white/40 font-mono text-[9px]">🔍</kbd>
+                </div>
+                <div className="flex items-center justify-between text-white/30">
                   <span>Close preview</span>
                   <kbd className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06] text-white/40 font-mono text-[9px]">Esc</kbd>
                 </div>
@@ -246,6 +268,46 @@ export default function ProjectModal({
           </div>
         )}
       </div>
+
+      {/* ── Zoom Lightbox ── */}
+      {zoomed && screenshots[current] && (
+        <div
+          className="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+          onClick={() => setZoomed(false)}
+        >
+          <button
+            onClick={() => setZoomed(false)}
+            className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors z-10"
+          >
+            <X size={18} />
+          </button>
+
+          {hasMultiple && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prev() }}
+                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors z-10"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); next() }}
+                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors z-10"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </>
+          )}
+
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={screenshots[current]}
+            alt={`${project.title} screenshot ${current + 1}`}
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   )
 }

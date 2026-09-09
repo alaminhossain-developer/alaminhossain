@@ -83,9 +83,9 @@ export default function CaseStudies() {
               <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">Case Studies</span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-4 text-white">
-              Featured
+              Selected
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">
-                Projects
+                Case Studies
               </span>
             </h2>
             <p className="text-base text-white/40 font-light max-w-xl leading-relaxed">
@@ -144,7 +144,6 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
   onClick: () => void
 }>(({ study, index, onClick }, ref) => {
   const [imgError, setImgError] = useState(false)
-  const [expanded, setExpanded] = useState(false)
   const num = String(study.order || index + 1).padStart(2, '0')
   const isLong = study.description.length > 120
   const liveUrl = study.liveUrl && study.liveUrl !== '#' ? (study.liveUrl.startsWith('http') ? study.liveUrl : `https://${study.liveUrl}`) : null
@@ -252,39 +251,21 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
           {study.title}
         </h3>
 
-        {/* Description — clamped with inline red Read More */}
-        {isLong && !expanded ? (
-          <p className="text-sm text-white/40 leading-relaxed font-light mb-5">
-            {study.description.slice(0, 110).replace(/\s+\S*$/, '')}…{' '}
+        {/* Description — clamped with cyan Read More that opens modal */}
+        <p className="text-sm text-white/40 leading-relaxed font-light mb-5">
+          {isLong ? study.description.slice(0, 110).replace(/\s+\S*$/, '') + '… ' : study.description}
+          {isLong && (
             <button
               onClick={(e) => {
                 e.stopPropagation()
-                setExpanded(true)
+                onClick()
               }}
-              className="text-red-400 hover:text-red-300 font-semibold"
+              className="text-cyan-400 hover:text-cyan-300 font-semibold"
             >
               Read More
             </button>
-          </p>
-        ) : (
-          <p className="text-sm text-white/40 leading-relaxed font-light mb-5">
-            {study.description}
-            {isLong && (
-              <>
-                {' '}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setExpanded(false)
-                  }}
-                  className="text-red-400 hover:text-red-300 font-semibold"
-                >
-                  Show Less
-                </button>
-              </>
-            )}
-          </p>
-        )}
+          )}
+        </p>
 
         {/* Results */}
         {study.results.length > 0 && (
