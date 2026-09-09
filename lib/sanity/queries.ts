@@ -23,6 +23,7 @@ export const PROFILE_QUERY = defineQuery(`*[_type == "profile"][0]{
 export const PROJECTS_QUERY = defineQuery(`*[_type == "project"] | order(order asc){
   _id,
   title,
+  slug,
   category,
   year,
   description,
@@ -111,6 +112,7 @@ export const CASE_STUDIES_QUERY = defineQuery(`*[_type == "caseStudy"] | order(o
 export const APPS_QUERY = defineQuery(`*[_type == "app"]{
   _id,
   name,
+  slug,
   tagline,
   description,
   status,
@@ -126,6 +128,7 @@ export const APPS_QUERY = defineQuery(`*[_type == "app"]{
 export const ARTICLES_QUERY = defineQuery(`*[_type == "article"] | order(publishedAt desc){
   _id,
   title,
+  slug,
   excerpt,
   content,
   category,
