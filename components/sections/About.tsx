@@ -104,7 +104,7 @@ export default function About() {
           {/* Left — Bio text (3 cols) */}
           <div className="lg:col-span-3 space-y-5">
             {/* Role line */}
-            <h3 className="text-xl md:text-2xl font-bold text-white leading-snug">
+            <h3 className="text-lg md:text-xl font-bold text-white leading-snug">
               WordPress Developer · Shopify Developer · Web Performance Specialist
             </h3>
 

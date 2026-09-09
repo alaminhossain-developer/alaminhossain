@@ -126,7 +126,7 @@ export default function Hero() {
 
             <div data-animate className="space-y-4 pt-2">
               <h2 className="text-2xl lg:text-3xl font-bold tracking-tight">
-                {profile?.name || 'MD. AL AMIN HOSSAIN'}
+                {profile?.name || 'Md. Al Amin Hossain'}
               </h2>
               <p className="text-base lg:text-lg text-white/60 font-light leading-relaxed max-w-lg">
                 {profile?.bio || 'WordPress specialist. Shopify expert. Performance obsessed.'}

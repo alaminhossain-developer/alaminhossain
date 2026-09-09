@@ -61,7 +61,7 @@ export default function Apps() {
               </span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] text-white">
-              MY APPS
+              My Apps
             </h2>
           </div>
           <Link
@@ -139,7 +139,7 @@ export default function Apps() {
                   )}
 
                   {/* Name + tagline */}
-                  <h3 className="text-xl font-bold text-white mb-1.5 tracking-tight">
+                  <h3 className="text-lg font-bold text-white mb-1.5 tracking-tight">
                     {app.name}
                   </h3>
                   <p className="text-sm text-white/40 font-light mb-3 leading-relaxed">

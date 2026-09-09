@@ -27,7 +27,7 @@ export default function AppsClient({ apps }: { apps: any[] }) {
             <span className="text-xs text-[#22c55e] uppercase tracking-[0.12em] font-medium">Apps &amp; Tools</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] text-white">
-            MY APPS
+            My Apps
           </h1>
           <p className="mt-4 text-white/40 text-base max-w-lg font-light">
             Shopify apps and developer tools built to help merchants optimize their stores and businesses.

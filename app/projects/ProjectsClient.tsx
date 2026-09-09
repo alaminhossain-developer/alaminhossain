@@ -36,7 +36,7 @@ export default function ProjectsClient({ projects }: { projects: any[] }) {
             <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">All Projects</span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] text-white">
-            PORTFOLIO
+            Portfolio
           </h1>
           <p className="mt-4 text-white/40 text-base max-w-lg font-light">
             A complete collection of projects — WordPress, Shopify, performance optimization, and custom web experiences.
@@ -137,7 +137,7 @@ export default function ProjectsClient({ projects }: { projects: any[] }) {
                     {project.year}
                   </span>
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold tracking-tight text-white mb-2 group-hover:text-cyan-400 transition-colors">
+                <h3 className="text-lg md:text-xl font-bold tracking-tight text-white mb-2 group-hover:text-cyan-400 transition-colors">
                   {project.title}
                 </h3>
                 <p className="text-white/40 text-sm leading-relaxed mb-4 line-clamp-2 font-light">

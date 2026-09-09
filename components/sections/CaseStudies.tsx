@@ -226,24 +226,42 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
         </div>
 
         {/* Title */}
-        <h3 className="text-xl md:text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-cyan-400 transition-colors">
+        <h3 className="text-lg md:text-xl font-bold text-white mb-3 tracking-tight group-hover:text-cyan-400 transition-colors">
           {study.title}
         </h3>
 
-        {/* Description — clamped to 2 lines with Read More */}
-        <p className={`text-sm text-white/40 leading-relaxed font-light ${isLong ? 'mb-2' : 'mb-5'} ${expanded ? '' : 'line-clamp-2'}`}>
-          {study.description}
-        </p>
-        {isLong && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              setExpanded(!expanded)
-            }}
-            className="text-xs font-semibold text-cyan-400/80 hover:text-cyan-400 mb-5 transition-colors"
-          >
-            {expanded ? '− Show Less' : '+ Read More'}
-          </button>
+        {/* Description — clamped with inline red Read More */}
+        {isLong && !expanded ? (
+          <p className="text-sm text-white/40 leading-relaxed font-light mb-5">
+            {study.description.slice(0, 110).replace(/\s+\S*$/, '')}…{' '}
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setExpanded(true)
+              }}
+              className="text-red-400 hover:text-red-300 font-semibold"
+            >
+              Read More
+            </button>
+          </p>
+        ) : (
+          <p className="text-sm text-white/40 leading-relaxed font-light mb-5">
+            {study.description}
+            {isLong && (
+              <>
+                {' '}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setExpanded(false)
+                  }}
+                  className="text-red-400 hover:text-red-300 font-semibold"
+                >
+                  Show Less
+                </button>
+              </>
+            )}
+          </p>
         )}
 
         {/* Results */}

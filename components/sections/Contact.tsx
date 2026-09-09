@@ -158,7 +158,7 @@ export default function Contact() {
 
             {/* Direct contact info */}
             <div className="space-y-4 pt-8">
-              <h3 className="text-sm font-semibold text-cyan-400 uppercase tracking-widest">
+              <h3 className="text-xs font-semibold text-cyan-400 uppercase tracking-widest">
                 Get in Touch
               </h3>
 
@@ -174,7 +174,7 @@ export default function Contact() {
 
               {/* Public Profiles */}
               <div className="pt-6">
-                <h3 className="text-sm font-semibold text-white uppercase tracking-widest mb-4">
+                <h3 className="text-xs font-semibold text-white/70 uppercase tracking-widest mb-4">
                   Public Profiles
                 </h3>
                 <div className="flex gap-4 mb-4">
@@ -213,7 +213,7 @@ export default function Contact() {
 
           {/* Right - Contact form */}
           <div className="rounded-2xl p-8 lg:p-10 border border-white/10 bg-white/[0.03] h-fit">
-            <h3 className="text-2xl font-bold text-white mb-2">Send a message</h3>
+            <h3 className="text-xl font-bold text-white mb-2">Send a message</h3>
             <p className="text-sm text-white/40 mb-8">A concise project brief or role summary is enough. I&apos;ll review and reply.</p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -336,7 +336,7 @@ export default function Contact() {
               },
             ].map((group) => (
               <div key={group.title} className="space-y-3">
-                <h4 className="text-sm font-semibold text-cyan-400 uppercase tracking-widest">
+                <h4 className="text-xs font-semibold text-cyan-400/80 uppercase tracking-widest">
                   {group.title}
                 </h4>
                 <ul className="space-y-2">

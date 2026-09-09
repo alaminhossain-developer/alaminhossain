@@ -68,7 +68,7 @@ export default function Articles() {
               </span>
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] text-white">
-              LATEST ARTICLES
+              Latest Articles
             </h2>
           </div>
           <Link
@@ -124,7 +124,7 @@ export default function Articles() {
                   )}
 
                   {/* Title */}
-                  <h3 className="text-lg font-bold text-white mb-3 tracking-tight leading-snug group-hover:text-cyan-400 transition-colors">
+                  <h3 className="text-base font-bold text-white mb-3 tracking-tight leading-snug group-hover:text-cyan-400 transition-colors">
                     {article.title}
                   </h3>
 

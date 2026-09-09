@@ -91,7 +91,7 @@ export default function Skills() {
         {/* Title */}
         <div className="mb-20 lg:mb-24 text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
-            TECHNOLOGY STACK
+            Technology Stack
           </h2>
           <p className="text-lg text-white/60 max-w-2xl mx-auto">
             Tools and frameworks I use to build performant, scalable web experiences
@@ -173,7 +173,7 @@ export default function Skills() {
               },
             ].map((group) => (
               <div key={group.category} className="space-y-4">
-                <h3 className="text-sm font-semibold text-cyan-400 uppercase tracking-widest">
+                <h3 className="text-xs font-semibold text-cyan-400 uppercase tracking-widest">
                   {group.category}
                 </h3>
                 <ul className="space-y-2">

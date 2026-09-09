@@ -65,7 +65,7 @@ export default function Experience() {
           <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">Experience</span>
         </div>
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.02em] mb-12 md:mb-16 text-white">
-          WORK EXPERIENCE
+          WORK Experience
         </h2>
 
         <div className="relative max-w-[900px]">
@@ -99,7 +99,7 @@ export default function Experience() {
                   )}
                 </div>
 
-                <h3 className="text-2xl md:text-3xl font-bold text-white mb-1">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-1">
                   {item.role}
                 </h3>
                 <p className="text-lg text-white/50 mb-4">

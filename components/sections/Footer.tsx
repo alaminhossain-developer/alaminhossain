@@ -66,7 +66,7 @@ export default function Footer() {
 
           {/* Quick links */}
           <div data-footer-item className="space-y-4">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-widest">
+            <h3 className="text-xs font-semibold text-white/70 uppercase tracking-widest">
               Navigation
             </h3>
             <ul className="space-y-2">
@@ -103,7 +103,7 @@ export default function Footer() {
 
           {/* Profiles */}
           <div data-footer-item className="space-y-4">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-widest">
+            <h3 className="text-xs font-semibold text-white/70 uppercase tracking-widest">
               Profiles
             </h3>
             <ul className="space-y-2">
@@ -132,7 +132,7 @@ export default function Footer() {
 
           {/* Downloads */}
           <div data-footer-item className="space-y-4">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-widest">
+            <h3 className="text-xs font-semibold text-white/70 uppercase tracking-widest">
               Downloads
             </h3>
             <ul className="space-y-2">
@@ -146,7 +146,7 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div data-footer-item className="space-y-4">
-            <h3 className="text-sm font-semibold text-white uppercase tracking-widest">
+            <h3 className="text-xs font-semibold text-white/70 uppercase tracking-widest">
               Contact Info
             </h3>
             <ul className="space-y-3">

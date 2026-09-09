@@ -201,7 +201,7 @@ export default function AppDetailPage() {
           <div className="space-y-6">
             {/* Status */}
             <div className="p-5 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Details</h3>
+              <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider">Details</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-white/40">Status</span>
@@ -221,7 +221,7 @@ export default function AppDetailPage() {
 
             {/* Links */}
             <div className="p-5 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-3">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Links</h3>
+              <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider">Links</h3>
               {app.url ? (
                 <a
                   href={app.url}
@@ -241,7 +241,7 @@ export default function AppDetailPage() {
             {/* Tech / Features */}
             {app.features.length > 0 && (
               <div className="p-5 rounded-xl border border-white/[0.06] bg-white/[0.02] space-y-3">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Capabilities</h3>
+                <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider">Capabilities</h3>
                 <div className="flex flex-wrap gap-1.5">
                   {app.features.map((f) => (
                     <span

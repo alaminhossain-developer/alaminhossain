@@ -67,7 +67,7 @@ export default function Process() {
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.03em] text-white">
-            HOW I WORK
+            How I Work
           </h2>
           <p className="text-base lg:text-lg text-white/40 mt-4 max-w-2xl font-light">
             A systematic approach to delivering exceptional digital experiences
@@ -106,7 +106,7 @@ export default function Process() {
 
                 {/* Content */}
                 <div className="pl-0 lg:pl-0">
-                  <h3 className="text-xl lg:text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-cyan-400 transition-colors duration-300">
+                  <h3 className="text-lg lg:text-xl font-bold text-white mb-3 tracking-tight group-hover:text-cyan-400 transition-colors duration-300">
                     {step.title}
                   </h3>
                   <p className="text-sm lg:text-base text-white/40 leading-relaxed font-light">

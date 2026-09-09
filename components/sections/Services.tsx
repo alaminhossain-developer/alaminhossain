@@ -230,7 +230,7 @@ export default function Services() {
           <div className="w-8 h-px bg-cyan-400" />
         </div>
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-[-0.03em] text-white">
-          WHAT I DO
+          What I Do
         </h2>
         <p className="text-base lg:text-lg text-white/40 mt-4 max-w-2xl mx-auto font-light">
           End-to-end digital solutions for WordPress, Shopify, and custom web projects
@@ -273,7 +273,7 @@ export default function Services() {
                   </span>
 
                   {/* Title */}
-                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 tracking-tight leading-tight">
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-4 tracking-tight leading-tight">
                     {service.title}
                   </h3>
 
