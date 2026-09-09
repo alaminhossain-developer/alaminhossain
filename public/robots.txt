@@ -4,12 +4,7 @@ Disallow: /api/
 Disallow: /.next/
 Disallow: /node_modules/
 Disallow: /.git/
-
-# Crawl delay (in seconds)
-Crawl-delay: 1
+Disallow: /dashboard
 
 # Sitemap location
 Sitemap: https://alaminhossain.me/sitemap.xml
-
-# Additional sitemaps
-Sitemap: https://alaminhossain.me/sitemap-projects.xml
