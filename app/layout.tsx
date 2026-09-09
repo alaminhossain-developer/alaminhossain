@@ -18,8 +18,12 @@ export const metadata: Metadata = {
   title: "Md. Al Amin Hossain — WordPress & Shopify Developer",
   description: "WordPress & Shopify developer specializing in high-performance web experiences.",
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: [
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: '/icon-192.png',
   },
   other: {
     'theme-color': '#0a0e27',
