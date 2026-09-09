@@ -89,8 +89,7 @@ export default function Navigation() {
             </div>
             <a
               href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+              download
               className="text-xs font-medium text-white/40 hover:text-cyan-400 transition-colors duration-300 flex items-center gap-1"
             >
               Resume

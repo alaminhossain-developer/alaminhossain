@@ -124,7 +124,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-white/50 hover:text-cyan-400 transition-colors">
+                <a href="/resume.pdf" download className="text-sm text-white/50 hover:text-cyan-400 transition-colors">
                   Download Resume
                 </a>
               </li>

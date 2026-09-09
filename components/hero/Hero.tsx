@@ -149,8 +149,7 @@ export default function Hero() {
               </a>
               <a
                 href="/resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
+                download
                 className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white/80 text-sm font-medium rounded-full hover:border-cyan-400/50 hover:text-cyan-400 transition-all duration-300 group"
               >
                 <span>Download Resume</span>

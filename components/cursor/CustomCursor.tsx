@@ -90,17 +90,17 @@ export default function CustomCursor() {
     <>
       <div
         ref={cursorRef}
-        className="fixed pointer-events-none z-50 w-8 h-8 rounded-full border-2 border-cyan-400 mix-blend-screen"
+        className="fixed pointer-events-none z-[99999] w-8 h-8 rounded-full border-2 border-cyan-400 mix-blend-screen"
         style={{ background: 'transparent', boxShadow: '0 0 10px rgba(0, 217, 255, 0.3)' }}
       />
       <div
         ref={dotRef}
-        className="fixed pointer-events-none z-50 w-2 h-2 rounded-full bg-cyan-400 mix-blend-screen"
+        className="fixed pointer-events-none z-[99999] w-2 h-2 rounded-full bg-cyan-400 mix-blend-screen"
         style={{ boxShadow: '0 0 8px rgba(0, 217, 255, 0.8)' }}
       />
       <div
         ref={textRef}
-        className="fixed pointer-events-none z-50 text-xs font-semibold text-cyan-400 uppercase tracking-widest mix-blend-screen opacity-0"
+        className="fixed pointer-events-none z-[99999] text-xs font-semibold text-cyan-400 uppercase tracking-widest mix-blend-screen opacity-0"
         style={{ textShadow: '0 0 10px rgba(0, 217, 255, 0.5)' }}
       />
     </>
