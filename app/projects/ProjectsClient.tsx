@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import ProjectModal from '@/components/sections/ProjectModal'
 import { ArrowUpRight } from 'lucide-react'
 
@@ -10,8 +10,21 @@ function fixUrl(url: string): string {
   return url
 }
 
+const FILTER_TABS = ['All', 'Shopify', 'Next.js', 'WordPress'] as const
+type FilterTab = (typeof FILTER_TABS)[number]
+
 export default function ProjectsClient({ projects }: { projects: any[] }) {
   const [modalProject, setModalProject] = useState<any | null>(null)
+  const [activeFilter, setActiveFilter] = useState<FilterTab>('All')
+
+  const filteredProjects = useMemo(() => {
+    if (activeFilter === 'All') return projects
+    return projects.filter((p) => {
+      const cat = p.category?.toLowerCase() || ''
+      const filter = activeFilter.toLowerCase()
+      return cat.includes(filter)
+    })
+  }, [projects, activeFilter])
 
   return (
     <main className="bg-[#0a0e27] text-white min-h-screen">
@@ -28,13 +41,30 @@ export default function ProjectsClient({ projects }: { projects: any[] }) {
           <p className="mt-4 text-white/40 text-base max-w-lg font-light">
             A complete collection of projects — WordPress, Shopify, performance optimization, and custom web experiences.
           </p>
+
+          {/* Filter tabs */}
+          <div className="flex flex-wrap gap-2 mt-8">
+            {FILTER_TABS.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveFilter(tab)}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeFilter === tab
+                    ? 'bg-cyan-400/15 text-cyan-400 border border-cyan-400/30'
+                    : 'bg-white/[0.03] text-white/40 border border-white/[0.06] hover:text-white/70 hover:bg-white/[0.06]'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Projects Grid */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-          {projects.map((project: any) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredProjects.map((project: any) => (
             <div
               key={project.id}
               className="group cursor-pointer"
@@ -151,6 +181,12 @@ export default function ProjectsClient({ projects }: { projects: any[] }) {
             </div>
           ))}
         </div>
+
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-24 text-white/20">
+            <p className="text-lg">No projects found for this category.</p>
+          </div>
+        )}
 
         {projects.length === 0 && (
           <div className="text-center py-24 text-white/20">

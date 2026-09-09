@@ -1243,7 +1243,7 @@ function AppsTab({ onSaved, onError }: { onSaved: (msg?: string) => void; onErro
             <Field label="Icon (emoji)" value={form.icon} onChange={(v) => setForm({ ...form, icon: v })} />
             <div className="space-y-1.5">
               <label className="text-xs text-white/40 font-medium">Status</label>
-              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as App['status'] })} className="w-full px-3 py-2 rounded-lg bg-dark-900 border border-white/[0.06] text-white text-sm">
+              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as App['status'] })} className="w-full px-3 py-2 rounded-lg bg-[#111638] border border-white/[0.06] text-white text-sm">
                 <option value="live">Live</option>
                 <option value="development">In Development</option>
                 <option value="planned">Planned</option>
@@ -1391,7 +1391,7 @@ function ArticlesTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
             <Field label="Slug (URL-friendly)" value={form.slug} onChange={(v) => setForm({ ...form, slug: v })} />
             <div className="space-y-1.5">
               <label className="text-xs text-white/40 font-medium">Category</label>
-              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value as Article['category'] })} className="w-full px-3 py-2 rounded-lg bg-dark-900 border border-white/[0.06] text-white text-sm">
+              <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value as Article['category'] })} className="w-full px-3 py-2 rounded-lg bg-[#111638] border border-white/[0.06] text-white text-sm">
                 <option value="shopify">Shopify</option>
                 <option value="wordpress">WordPress</option>
                 <option value="app">App</option>
@@ -1405,7 +1405,7 @@ function ArticlesTab({ onSaved, onError }: { onSaved: (msg?: string) => void; on
           <Field label="Excerpt" value={form.excerpt} onChange={(v) => setForm({ ...form, excerpt: v })} rows={2} />
           <div className="space-y-1.5">
             <label className="text-xs text-white/40 font-medium">Content (Markdown)</label>
-            <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={12} className="w-full px-3 py-2 rounded-lg bg-dark-900 border border-white/[0.06] text-white text-sm font-mono resize-y" placeholder="Write article content in markdown..." />
+            <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={12} className="w-full px-3 py-2 rounded-lg bg-[#111638] border border-white/[0.06] text-white text-sm font-mono resize-y" placeholder="Write article content in markdown..." />
           </div>
           <div className="flex items-center gap-3">
             <label className="flex items-center gap-2 text-sm text-white/60 cursor-pointer">

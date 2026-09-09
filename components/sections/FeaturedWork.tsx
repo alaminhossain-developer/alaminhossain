@@ -17,14 +17,10 @@ function fixUrl(url: string): string {
   return url
 }
 
-const FILTER_TABS = ['All', 'MERN', 'Shopify', 'Next.js', 'WordPress'] as const
-type FilterTab = (typeof FILTER_TABS)[number]
-
 const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
   WordPress: { bg: 'bg-[#21759b]/15', text: 'text-[#21759b]', border: 'border-[#21759b]/30' },
   Shopify: { bg: 'bg-[#95bf47]/15', text: 'text-[#95bf47]', border: 'border-[#95bf47]/30' },
   'Next.js': { bg: 'bg-white/10', text: 'text-white/80', border: 'border-white/20' },
-  MERN: { bg: 'bg-[#61dafb]/15', text: 'text-[#61dafb]', border: 'border-[#61dafb]/30' },
   default: { bg: 'bg-cyan-400/10', text: 'text-cyan-400', border: 'border-cyan-400/30' },
 }
 
@@ -37,7 +33,6 @@ export default function FeaturedWork() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
   const { projects: allProjects } = usePortfolio()
-  const [activeFilter, setActiveFilter] = useState<FilterTab>('All')
   const [modalProject, setModalProject] = useState<Project | null>(null)
 
   const selectedProjects = useMemo(() => {
@@ -45,16 +40,6 @@ export default function FeaturedWork() {
       .filter((p) => p.selected)
       .sort((a, b) => (a.order || 99) - (b.order || 99))
   }, [allProjects])
-
-  const filteredProjects = useMemo(() => {
-    if (activeFilter === 'All') return selectedProjects
-    return selectedProjects.filter((p) => {
-      const cat = p.category.toLowerCase()
-      const filter = activeFilter.toLowerCase()
-      if (filter === 'mern') return cat.includes('mern') || cat.includes('react') || cat.includes('full stack')
-      return cat.includes(filter)
-    })
-  }, [selectedProjects, activeFilter])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -78,7 +63,7 @@ export default function FeaturedWork() {
       })
     }, sectionRef)
     return () => ctx.revert()
-  }, [filteredProjects])
+  }, [])
 
   return (
     <>
@@ -93,26 +78,9 @@ export default function FeaturedWork() {
             SELECTED WORK
           </h2>
 
-          {/* Filter tabs */}
-          <div className="flex flex-wrap gap-2 mb-10">
-            {FILTER_TABS.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveFilter(tab)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeFilter === tab
-                    ? 'bg-cyan-400/15 text-cyan-400 border border-cyan-400/30'
-                    : 'bg-white/[0.03] text-white/40 border border-white/[0.06] hover:text-white/70 hover:bg-white/[0.06]'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
           {/* Project grid — 3 columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredProjects.map((project, i) => (
+            {selectedProjects.map((project, i) => (
               <div
                 key={project.id}
                 ref={(el) => { cardsRef.current[i] = el }}
@@ -238,15 +206,8 @@ export default function FeaturedWork() {
             ))}
           </div>
 
-          {/* Empty state */}
-          {filteredProjects.length === 0 && (
-            <div className="text-center py-16 text-white/30 text-sm">
-              No projects found for this category.
-            </div>
-          )}
-
           {/* Explore More button */}
-          {allProjects.length > 6 && (
+          {allProjects.length > 4 && (
             <div className="mt-14 flex justify-center">
               <Link
                 href="/projects"

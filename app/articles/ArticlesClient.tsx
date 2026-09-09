@@ -28,7 +28,7 @@ export default function ArticlesClient({ articles: allArticles }: { articles: an
   const categories = ['all', 'shopify', 'wordpress', 'app']
 
   return (
-    <main className="bg-dark-950 text-white min-h-screen">
+    <main className="bg-[#0a0e27] text-white min-h-screen">
       <div className="max-w-5xl mx-auto px-6 pt-32 pb-20">
         {/* Header */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-4">

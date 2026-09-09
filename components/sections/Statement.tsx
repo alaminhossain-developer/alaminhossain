@@ -173,7 +173,7 @@ export default function Statement() {
             ].map((tech) => (
               <div
                 key={tech}
-                className="px-4 py-2 rounded-full border border-cyan-500/20 bg-dark-900/50 text-sm text-white/80 hover:border-cyan-400/50 hover:bg-dark-800 transition-all"
+                className="px-4 py-2 rounded-full border border-cyan-500/20 bg-[#111638]/50 text-sm text-white/80 hover:border-cyan-400/50 hover:bg-[#161d4a] transition-all"
               >
                 {tech}
               </div>

@@ -84,7 +84,7 @@ export default function Experience() {
                 ref={(el) => { itemsRef.current[i] = el }}
                 className="relative pl-14 md:pl-16"
               >
-                <div className="absolute left-2 md:left-4 top-1 w-5 h-5 rounded-full border-2 border-cyan-400 bg-dark-950 flex items-center justify-center z-10">
+                <div className="absolute left-2 md:left-4 top-1 w-5 h-5 rounded-full border-2 border-cyan-400 bg-[#0a0e27] flex items-center justify-center z-10">
                   <div className="w-2 h-2 rounded-full bg-cyan-400" />
                 </div>
 

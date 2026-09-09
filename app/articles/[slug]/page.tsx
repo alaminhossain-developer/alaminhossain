@@ -27,7 +27,7 @@ export default function ArticlePage() {
 
   if (!article) {
     return (
-      <main className="bg-dark-950 text-white min-h-screen flex items-center justify-center">
+      <main className="bg-[#0a0e27] text-white min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Article Not Found</h1>
           <Link href="/articles" className="text-cyan-400 hover:underline">
@@ -190,7 +190,7 @@ export default function ArticlePage() {
   }
 
   return (
-    <main className="bg-dark-950 text-white min-h-screen">
+    <main className="bg-[#0a0e27] text-white min-h-screen">
       <article className="max-w-3xl mx-auto px-6 pt-32 pb-20">
         {/* Back link */}
         <Link

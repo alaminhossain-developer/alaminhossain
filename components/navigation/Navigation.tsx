@@ -42,7 +42,7 @@ export default function Navigation() {
         className={cn(
           'fixed top-0 left-0 right-0 z-40 transition-all duration-500',
           isScrolled
-            ? 'bg-dark-950/75 backdrop-blur-xl border-b border-cyan-500/10 py-4'
+            ? 'bg-[#0a0e27]/75 backdrop-blur-xl border-b border-cyan-500/10 py-4'
             : 'bg-transparent py-6'
         )}
       >
@@ -114,7 +114,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="fixed inset-0 z-30 bg-dark-950/95 backdrop-blur-sm pt-24 md:hidden" role="dialog" aria-label="Mobile navigation">
+        <div className="fixed inset-0 z-30 bg-[#0a0e27]/95 backdrop-blur-sm pt-24 md:hidden" role="dialog" aria-label="Mobile navigation">
           <div className="flex flex-col items-center gap-8 p-6">
             {navItems.map((item) => (
               <a

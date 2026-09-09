@@ -24,7 +24,7 @@ const Contact = lazy(() => import('@/components/sections/Contact'))
 
 export default function HomeClient() {
   return (
-    <main className="bg-dark-950 text-white min-h-screen">
+    <main className="bg-[#0a0e27] text-white min-h-screen">
       <Hero />
       <Suspense fallback={null}>
         <Intro />

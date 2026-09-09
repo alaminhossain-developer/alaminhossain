@@ -42,7 +42,7 @@ export default function Footer() {
   return (
     <footer
       ref={containerRef}
-      className="relative bg-dark-900 border-t border-cyan-500/10 py-12 lg:py-16 px-6"
+      className="relative bg-[#111638] border-t border-cyan-500/10 py-12 lg:py-16 px-6"
     >
       <div className="max-w-7xl mx-auto">
         {/* Main footer content */}

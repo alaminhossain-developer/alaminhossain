@@ -139,7 +139,7 @@ export default function Skills() {
                   className={`px-4 py-2 rounded-full border transition-all ${
                     hoveredSkill === skill
                       ? 'border-cyan-400 bg-cyan-400/20 text-cyan-100 shadow-lg shadow-cyan-400/50'
-                      : 'border-cyan-500/30 bg-dark-900/50 text-white/70 hover:border-cyan-400/50'
+                      : 'border-cyan-500/30 bg-[#111638]/50 text-white/70 hover:border-cyan-400/50'
                   }`}
                 >
                   <span className="text-xs font-medium whitespace-nowrap">
