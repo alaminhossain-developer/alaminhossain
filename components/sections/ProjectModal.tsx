@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { X, ChevronLeft, ChevronRight, ExternalLink, Copy, Search } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, ExternalLink, Copy, Search, ArrowLeft, ArrowRight } from 'lucide-react'
 import type { Project } from '@/lib/data'
 
 function fixUrl(url: string): string {
@@ -155,7 +155,22 @@ export default function ProjectModal({
                   </button>
                 </>
               ) : (
-                <div className="text-white/15 text-sm">No screenshots uploaded</div>
+                <div className="flex flex-col items-center gap-4 text-white/15">
+                  <div className="w-20 h-20 rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/20">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                  </div>
+                  <p className="text-sm">No screenshots uploaded yet</p>
+                  {liveUrl !== '#' && (
+                    <a href={liveUrl} target="_blank" rel="noopener noreferrer"
+                      className="text-xs text-cyan-400/60 hover:text-cyan-400 transition-colors underline underline-offset-2">
+                      Visit the live site instead →
+                    </a>
+                  )}
+                </div>
               )}
             </div>
           </div>
