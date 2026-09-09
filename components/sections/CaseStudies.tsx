@@ -5,20 +5,33 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { usePortfolio } from '@/lib/usePortfolio'
 import { ArrowUpRight } from 'lucide-react'
+import CaseStudyModal from './CaseStudyModal'
 
 gsap.registerPlugin(ScrollTrigger)
+
+interface CaseStudy {
+  id?: string
+  title: string
+  client: string
+  category: string
+  description: string
+  results: string[]
+  bannerImage: string
+  technologies: string[]
+  order: number
+}
 
 export default function CaseStudies() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
   const { caseStudies } = usePortfolio()
+  const [selectedStudy, setSelectedStudy] = useState<CaseStudy | null>(null)
 
   const sorted = [...caseStudies].sort((a, b) => (a.order || 99) - (b.order || 99))
 
   useEffect(() => {
     if (!sectionRef.current) return
     const ctx = gsap.context(() => {
-      // Title
       const title = sectionRef.current?.querySelector('[data-title]')
       if (title) {
         gsap.fromTo(
@@ -34,7 +47,6 @@ export default function CaseStudies() {
         )
       }
 
-      // Cards
       cardsRef.current.forEach((card, i) => {
         if (!card) return
         gsap.fromTo(
@@ -56,64 +68,64 @@ export default function CaseStudies() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-16 lg:py-24" id="case-studies">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        {/* Header */}
-        <div data-title className="mb-12 lg:mb-16">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-8 h-px bg-cyan-400" />
-            <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">Case Studies</span>
+    <>
+      <section ref={sectionRef} className="py-16 lg:py-24" id="case-studies">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          {/* Header */}
+          <div data-title className="mb-12 lg:mb-16">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-8 h-px bg-cyan-400" />
+              <span className="text-xs text-cyan-400 uppercase tracking-[0.12em] font-medium">Case Studies</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-4 text-white">
+              Featured
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">
+                Projects
+              </span>
+            </h2>
+            <p className="text-base text-white/40 font-light max-w-xl leading-relaxed">
+              Deep dives into projects that delivered measurable impact for real businesses.
+            </p>
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.02em] mb-4 text-white">
-            Featured
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">
-              Projects
-            </span>
-          </h2>
-          <p className="text-base text-white/40 font-light max-w-xl leading-relaxed">
-            Deep dives into projects that delivered measurable impact for real businesses.
-          </p>
-        </div>
 
-        {/* Case Study Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-          {sorted.map((study, i) => (
-            <CaseStudyCard
-              key={study.id}
-              study={study}
-              index={i}
-              ref={(el) => { cardsRef.current[i] = el }}
-            />
-          ))}
+          {/* Case Study Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            {sorted.map((study, i) => (
+              <CaseStudyCard
+                key={study.id}
+                study={study}
+                index={i}
+                ref={(el) => { cardsRef.current[i] = el }}
+                onClick={() => setSelectedStudy(study)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Modal */}
+      {selectedStudy && (
+        <CaseStudyModal study={selectedStudy} onClose={() => setSelectedStudy(null)} />
+      )}
+    </>
   )
 }
 
 import { forwardRef } from 'react'
 
 const CaseStudyCard = forwardRef<HTMLDivElement, {
-  study: {
-    id?: string
-    title: string
-    client: string
-    category: string
-    description: string
-    results: string[]
-    bannerImage: string
-    technologies: string[]
-    order: number
-  }
+  study: CaseStudy
   index: number
-}>(({ study, index }, ref) => {
+  onClick: () => void
+}>(({ study, index, onClick }, ref) => {
   const [imgError, setImgError] = useState(false)
   const num = String(study.order || index + 1).padStart(2, '0')
 
   return (
     <div
       ref={ref}
-      className="group relative rounded-2xl overflow-hidden border border-white/[0.04] bg-white/[0.015] hover:border-white/[0.08] transition-all duration-500"
+      onClick={onClick}
+      className="group relative rounded-2xl overflow-hidden border border-white/[0.04] bg-white/[0.015] hover:border-white/[0.08] transition-all duration-500 cursor-pointer"
     >
       {/* Browser Preview */}
       <div className="relative w-full aspect-[16/10] bg-[#060918] overflow-hidden">
@@ -165,7 +177,7 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
           />
         </div>
 
-        {/* Hover overlay */}
+        {/* Hover overlay — now clickable */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center z-10">
           <span className="text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 uppercase tracking-[0.12em] font-medium">
             View Case Study
@@ -192,7 +204,7 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
         </div>
 
         {/* Title */}
-        <h3 className="text-xl md:text-2xl font-bold text-white mb-3 tracking-tight">
+        <h3 className="text-xl md:text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-cyan-400 transition-colors">
           {study.title}
         </h3>
 
@@ -215,7 +227,7 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
           </div>
         )}
 
-        {/* Tech tags */}
+        {/* Tech tags + View Details button */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap gap-1.5">
             {study.technologies.slice(0, 5).map((tech) => (
@@ -230,7 +242,13 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
               <span className="text-[10px] text-white/20 self-center">+{study.technologies.length - 5}</span>
             )}
           </div>
-          <button className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:gap-2.5 transition-all duration-300">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onClick()
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-cyan-400 hover:gap-2.5 transition-all duration-300"
+          >
             View Details
             <ArrowUpRight size={12} />
           </button>
