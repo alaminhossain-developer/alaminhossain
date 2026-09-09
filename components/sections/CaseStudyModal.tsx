@@ -74,7 +74,6 @@ export default function CaseStudyModal({
             <h2 className="text-lg md:text-xl font-bold text-white leading-tight mb-1">
               {study.title}
             </h2>
-            <p className="text-xs text-white/30">{study.description}</p>
           </div>
           <button
             onClick={onClose}

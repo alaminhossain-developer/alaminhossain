@@ -139,7 +139,9 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
   onClick: () => void
 }>(({ study, index, onClick }, ref) => {
   const [imgError, setImgError] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const num = String(study.order || index + 1).padStart(2, '0')
+  const isLong = study.description.length > 120
 
   return (
     <div
@@ -228,10 +230,21 @@ const CaseStudyCard = forwardRef<HTMLDivElement, {
           {study.title}
         </h3>
 
-        {/* Description */}
-        <p className="text-sm text-white/40 leading-relaxed mb-5 font-light">
+        {/* Description — clamped to 2 lines with Read More */}
+        <p className={`text-sm text-white/40 leading-relaxed font-light ${isLong ? 'mb-2' : 'mb-5'} ${expanded ? '' : 'line-clamp-2'}`}>
           {study.description}
         </p>
+        {isLong && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setExpanded(!expanded)
+            }}
+            className="text-xs font-semibold text-cyan-400/80 hover:text-cyan-400 mb-5 transition-colors"
+          >
+            {expanded ? '− Show Less' : '+ Read More'}
+          </button>
+        )}
 
         {/* Results */}
         {study.results.length > 0 && (
