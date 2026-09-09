@@ -10,6 +10,7 @@ const sectionIds = ['work', 'services', 'about', 'experience', 'contact']
 
 const pageItems = [
   { label: 'Projects', href: '/projects' },
+  { label: 'Case Studies', href: '/case-studies' },
   { label: 'Apps', href: '/apps' },
   { label: 'Articles', href: '/articles' },
 ]

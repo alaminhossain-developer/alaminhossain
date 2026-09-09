@@ -74,15 +74,28 @@ export default function Footer() {
                 { label: 'Work', href: '#work' },
                 { label: 'Services', href: '#services' },
                 { label: 'About', href: '#about' },
+                { label: 'Projects', href: '/projects' },
+                { label: 'Case Studies', href: '/case-studies' },
+                { label: 'Apps', href: '/apps' },
+                { label: 'Articles', href: '/articles' },
                 { label: 'Contact', href: '#contact' },
               ].map((item) => (
                 <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="text-sm text-white/60 hover:text-cyan-400 transition-colors"
-                  >
-                    {item.label}
-                  </a>
+                  {item.href.startsWith('/') ? (
+                    <Link
+                      href={item.href}
+                      className="text-sm text-white/60 hover:text-cyan-400 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={item.href}
+                      className="text-sm text-white/60 hover:text-cyan-400 transition-colors"
+                    >
+                      {item.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
