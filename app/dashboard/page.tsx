@@ -55,17 +55,15 @@ export default function DashboardPage() {
     }
   }, [router])
 
-  // Auto-load from Sanity if localStorage is empty (incognito / new device)
+  // ALWAYS pull latest data from server on load — server (Sanity) wins over local
+  // localStorage. This keeps every device in sync with the latest saved version.
   useEffect(() => {
     if (!authed) return
-    const hasData = typeof window !== 'undefined' && localStorage.getItem('portfolio_projects') !== null
-    if (!hasData) {
-      setLoadingGitHub(true)
-      loadAllFromGitHub().then((ok) => {
-        setLoadingGitHub(false)
-        if (ok) setRefreshKey((k) => k + 1)
-      })
-    }
+    setLoadingGitHub(true)
+    loadAllFromGitHub().then((ok) => {
+      setLoadingGitHub(false)
+      if (ok) setRefreshKey((k) => k + 1)
+    })
   }, [authed])
 
   // Auto-save to Sanity after every local save (instant updates!)
@@ -1492,17 +1490,31 @@ function DataTab({ onRefresh }: { onRefresh: () => void }) {
   const [importJson, setImportJson] = useState('')
   const [message, setMessage] = useState('')
   const [saving, setSaving] = useState(false)
+  const [loadingLatest, setLoadingLatest] = useState(false)
 
   const handleSaveToGitHub = async () => {
     setSaving(true)
     const ok = await saveAllToGitHub()
     setSaving(false)
     if (ok) {
-      setMessage('All data saved to GitHub! Site will update in ~3-4 minutes.')
+      setMessage('All data saved to Sanity! Live site updated instantly.')
     } else {
-      setMessage('Failed to save to GitHub.')
+      setMessage('Failed to save to Sanity.')
     }
     setTimeout(() => setMessage(''), 5000)
+  }
+
+  const handleLoadLatest = async () => {
+    setLoadingLatest(true)
+    const ok = await loadAllFromGitHub()
+    setLoadingLatest(false)
+    if (ok) {
+      setMessage('Latest data loaded from server!')
+      onRefresh()
+    } else {
+      setMessage('Failed to load from server.')
+    }
+    setTimeout(() => setMessage(''), 4000)
   }
 
   const handleExport = () => {
@@ -1561,11 +1573,18 @@ function DataTab({ onRefresh }: { onRefresh: () => void }) {
         </div>
       )}
 
-      {/* Save to GitHub */}
+      {/* Save to Sanity */}
       <div className="p-6 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.03] space-y-4">
-        <h3 className="text-sm font-semibold text-cyan-400">Save All to GitHub</h3>
-        <p className="text-xs text-white/30">Save all portfolio data (profile, projects, services, articles, etc.) to GitHub. This makes your data visible to all visitors worldwide. Takes ~3-4 minutes to deploy.</p>
-        <Btn onClick={handleSaveToGitHub}>{saving ? 'Saving...' : 'Save All to GitHub'}</Btn>
+        <h3 className="text-sm font-semibold text-cyan-400">Save All to Sanity</h3>
+        <p className="text-xs text-white/30">Save all portfolio data to Sanity. Changes appear on the live site instantly — no deploy wait.</p>
+        <Btn onClick={handleSaveToGitHub}>{saving ? 'Saving...' : 'Save All to Sanity'}</Btn>
+      </div>
+
+      {/* Load latest from server */}
+      <div className="p-6 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] space-y-4">
+        <h3 className="text-sm font-semibold text-emerald-400">Load Latest from Server</h3>
+        <p className="text-xs text-white/30">Pull the newest saved data from Sanity — use this on a second laptop or if your edits look out of date. This overwrites your local copy with the server version.</p>
+        <Btn onClick={handleLoadLatest}>{loadingLatest ? 'Loading...' : '↻ Load Latest Data'}</Btn>
       </div>
 
       {/* Export */}

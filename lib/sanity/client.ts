@@ -5,8 +5,9 @@ export const client = createClient({
   projectId: '44ra77i5',
   dataset: 'production',
   apiVersion: '2024-01-01',
-  useCdn: true,
+  useCdn: false, // always fresh — no stale CDN cache
   token: process.env.SANITY_API_READ_TOKEN,
+  perspective: 'published',
 })
 
 const builder = imageUrlBuilder(client)
